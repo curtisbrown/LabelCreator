@@ -19,4 +19,9 @@ Control::Control(QObject *parent) :
     connect(&m_labelPrint, &LabelPrinter::printDone, this, &Control::printingComplete);
 
     m_cameraProperty.checkforDevice();
+    m_cameraProperty.setCurrentDevice("1", "See3CAM_81");
+
+    m_cameraProperty.openHIDDevice("See3CAM_81 ");
+
+    m_uvc.getFirmWareVersion();
 }

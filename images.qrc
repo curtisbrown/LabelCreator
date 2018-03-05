@@ -4,5 +4,6 @@
         <file>images/fail.png</file>
         <file>images/pass.png</file>
         <file>images/Running.gif</file>
+        <file>images/barcode.png</file>
     </qresource>
 </RCC>

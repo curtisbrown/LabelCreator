@@ -9,6 +9,7 @@
 #include "labelprinter.h"
 
 #include "cameraproperty.h"
+#include "uvccamera.h"
 
 class Control : public QObject
 {
@@ -30,6 +31,8 @@ private:
     CameraCapture m_cameraCapture;
     LabelPrinter m_labelPrint;
     Cameraproperty m_cameraProperty;
+    uvccamera m_uvc;
+
 };
 
 #endif // CONTROL_H

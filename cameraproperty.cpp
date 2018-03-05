@@ -34,8 +34,6 @@ Cameraproperty::Cameraproperty()
      * @brief connect - This signal is used to send the currently selected device to uvccamera.cpp filr
      */
     connect(this,SIGNAL(setCamName(QString)),&uvccam,SLOT(currentlySelectedDevice(QString)));
-    connect(this,SIGNAL(logHandle(QtMsgType,QString)),this,SLOT(logWriter(QtMsgType,QString)));
-    connect(&uvccam,SIGNAL(logHandle(QtMsgType,QString)),this,SLOT(logWriter(QtMsgType,QString)));
     //Added by Dhurka - 13th Oct 2016
     /**
      * @brief connect - This signal is used to send the currently selected camera enum to videostreaming.cpp
@@ -70,6 +68,8 @@ void Cameraproperty::selectedDeviceEnum(CommonEnums::ECameraNames selectedCamera
 
 void Cameraproperty::checkforDevice()
 {
+    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << Q_FUNC_INFO;
+
     int deviceBeginNumber,deviceEndNumber;
     cameraMap.clear();
     deviceNodeMap.clear();
@@ -98,17 +98,17 @@ void Cameraproperty::checkforDevice()
                     deviceIndex++;
                     close();
                 } else {
-                    emit logWriter(QtCriticalMsg, "Cannot open device: /dev/video" + qDevCount);
+                    qDebug() << "Cannot open device: /dev/video" << qDevCount;
                     return void();
                 }
             } else {
-                emit logHandle(QtCriticalMsg, qTempStr+"Device opening failed" + qDevCount);
+                qDebug() << qTempStr+"Device opening failed" << qDevCount;
             }
         }
     } else {
-        emit logHandle(QtCriticalMsg,"/sys/class/video4linux/ path is Not available");
+        qDebug() << "/sys/class/video4linux/ path is Not available";
     }
-    emit logHandle(QtDebugMsg,"Camera devices Connected to System: "+ availableCam.join(", "));
+    qDebug() << "Camera devices Connected to System: " << availableCam.join(", ");
     //Modified by Nithyesh
     /*
      * Removed arg availableCam from function as it was unused.
@@ -127,7 +127,9 @@ void Cameraproperty::checkforDevice()
     uvccam.findEconDevice("hidraw");
 }
 
-void Cameraproperty::setCurrentDevice(QString deviceIndex,QString deviceName) {
+void Cameraproperty::setCurrentDevice(QString deviceIndex,QString deviceName)
+{
+    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << Q_FUNC_INFO;
 
     if(deviceIndex.isEmpty() || deviceName.isEmpty())
     {
@@ -135,7 +137,7 @@ void Cameraproperty::setCurrentDevice(QString deviceIndex,QString deviceName) {
         return;
     }
 
-    emit logHandle(QtDebugMsg,"Selected Device is: "+deviceName);
+    qDebug() << "Selected Device is: " << deviceName;
     //Modified by Dhurka - Aligned the braces - 13th Oct 2016
     if(deviceName == "----Select camera----")
     {
@@ -156,17 +158,6 @@ void Cameraproperty::createLogger() {
     }
 }
 
-void Cameraproperty::logWriter(QtMsgType msgType,QString tmpStr) {
-    //log.logHandler(msgType,tmpStr);
-}
-
-void Cameraproperty::logDebugWriter(QString tmpStr) {
-    //log.logHandler(QtDebugMsg,tmpStr);
-}
-
-void Cameraproperty::logCriticalWriter(QString tmpStr) {
-    //log.logHandler(QtCriticalMsg,tmpStr);
-}
 //Added by Dhurka - 17th Oct 2016
 void Cameraproperty::openHIDDevice(QString deviceName)
 {
@@ -174,9 +165,9 @@ void Cameraproperty::openHIDDevice(QString deviceName)
     deviceName.remove(QRegExp("[\n\t\r]"));
     bool hidInit = uvccam.initExtensionUnit(deviceName);    
     if(hidInit)
-    {
         emit initExtensionUnitSuccess();
-    }
+    else
+        qDebug() << "ERROR";
 }
 
 void Cameraproperty::closeLibUsbDeviceAscella(){

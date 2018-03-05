@@ -90,31 +90,6 @@ public slots:
     void setCurrentDevice(QString,QString);
 
     /**
-     * @brief Write the data into log file by passing the data to Logger class
-     *  - Data passed will be written to the log file
-     * @param
-     * msgType - Message type may debug, critical, warning, fatal
-     * @param
-     * tmpStr - Data to be written in the file
-     */
-    void logWriter(QtMsgType,QString);
-
-    /**
-     * @brief Write the data into log file by passing the data to Logger class
-     *  - Data passed will be written to the log file
-     * @param
-     * tmpStr - Only Debug message type data to be written in the file
-     */
-    void logDebugWriter(QString);
-
-    /**
-     * @brief Write the data into log file by passing the data to Logger class
-     *  - Data passed will be written to the log file
-     * @param
-     * tmpStr - Only Critical message type data to be written in the file
-     */
-    void logCriticalWriter(QString);
-    /**
      * @brief selectedDeviceEnum - This slot contains the selected camera enum
      * @param selectedCameraEnum - Camera enum name
      */

@@ -419,8 +419,6 @@ public slots:
     bool setUvcExtControlValue(struct uvc_xu_control_query xquery);
 
 signals:
-    void logDebugHandle(QString _text);
-    void logCriticalHandle(QString _text);
     void titleTextChanged(QString _title,QString _text);
     void enableCaptureAndRecord();
     void newControlAdded(QString ctrlName,QString ctrlType,QString ctrlID,QString ctrlStepSize = "0",QString ctrlMinValue= "0", QString ctrlMaxValue = "0",QString ctrlDefaultValue="0", QString ctrlHardwareDefault="0");

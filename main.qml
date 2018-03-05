@@ -339,7 +339,7 @@ Window {
                 }
             }
         }
-        // Text from Cropped Imgae that is going to be used to print label
+        // Text from Cropped image that is going to be used to print label
         Rectangle {
             id: infoToBePrinted
             height: parent.height / 2
@@ -368,41 +368,6 @@ Window {
             }
         }
     }
-
-//    Rectangle {
-//        id: pictureContainer
-//        color: "grey"
-//        Text {
-//            id: statusText
-//            text: qsTr("Scan label to start")
-//            color: "white"
-//            anchors.horizontalCenter: parent.horizontalCenter
-//            anchors.verticalCenter: parent.verticalCenter
-//            font.pointSize: 20
-//            SequentialAnimation on color {
-//                ColorAnimation { to: "orange"; duration: 1500 }
-//                ColorAnimation { to: "white"; duration: 800 }
-//                loops: Animation.Infinite
-//            }
-
-//            Connections {
-//                target: control
-//                onCaptureComplete: statusText.visible = false
-//            }
-//        }
-//        Image {
-//            id: scannedImage
-//            source: ""
-//            anchors.centerIn: parent
-//            height: parent.height / 2
-//            width: parent.width / 2
-//        }
-
-//        Connections {
-//            target: control
-//            onCaptureComplete: scannedImage.source = "file:/C:/Users/Curtis/Pictures/porsche.jpg"
-//        }
-//    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
