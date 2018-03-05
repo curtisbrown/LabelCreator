@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>images/ctdiLogo.png</file>
+        <file>images/fail.png</file>
+        <file>images/pass.png</file>
+        <file>images/Running.gif</file>
+    </qresource>
+</RCC>
