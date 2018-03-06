@@ -308,11 +308,10 @@ bool uvccamera::closeAscellaDevice(){
     return true;
 }
 
-bool uvccamera::readFirmwareVersion(quint8 *pMajorVersion, quint8 *pMinorVersion1, quint16 *pMinorVersion2, quint16 *pMinorVersion3) {
-
-
-    if(uvccamera::hid_fd < 0)
-    {
+bool uvccamera::readFirmwareVersion(quint8 *pMajorVersion, quint8 *pMinorVersion1, quint16 *pMinorVersion2, quint16 *pMinorVersion3)
+{
+    if(uvccamera::hid_fd < 0) {
+        qDebug() << "BAD HID";
         return false;
     }
 
