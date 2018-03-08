@@ -1,5 +1,5 @@
 /*
- * uvccamera.cpp -- Filter e-con camera and common features of e-con camera
+ * UvcCamera.cpp -- Filter e-con camera and common features of e-con camera
  * Copyright © 2015  e-con Systems India Pvt. Limited
  *
  * This file is part of Qtcam.
@@ -21,19 +21,19 @@
 #include "uvccamera.h"
 #include "QStringList"
 
-QMap<QString, QString> uvccamera::cameraMap;
-QMap<QString, QString> uvccamera::serialNumberMap;
+QMap<QString, QString> UvcCamera::cameraMap;
+QMap<QString, QString> UvcCamera::serialNumberMap;
 //Added by Dhurka - 13th Oct 2016
 /**
- * @brief uvccamera::selectedDeviceEnum - This is used to compare camera enum value instead of camera name
+ * @brief UvcCamera::selectedDeviceEnum - This is used to compare camera enum value instead of camera name
  */
-CommonEnums::ECameraNames  uvccamera::selectedDeviceEnum;
-QString uvccamera::hidNode;
+CommonEnums::ECameraNames  UvcCamera::selectedDeviceEnum;
+QString UvcCamera::hidNode;
 //Modified by Dhurka
-QString uvccamera::openNode;
+QString UvcCamera::openNode;
 
-int uvccamera::hid_fd;
-libusb_device_handle *uvccamera::handle;
+int UvcCamera::hid_fd;
+libusb_device_handle *UvcCamera::handle;
 //Added by Dhurka - 14th Oct 2016
 /**
  * @brief econCameraVid - to avoid hard coded value checking in findEconDevice()
@@ -41,7 +41,7 @@ libusb_device_handle *uvccamera::handle;
 const QString econCameraVid = "2560";
 const QString ascellaCameraVid = "04b4";
 
-uvccamera::uvccamera()
+UvcCamera::UvcCamera()
 {
     //Added by Dhurka - 13th Oct 2016
     /**
@@ -52,7 +52,7 @@ uvccamera::uvccamera()
     handle = NULL;
 }
 
-void uvccamera::initCameraEnumMap()
+void UvcCamera::initCameraEnumMap()
 {
     //Added by Dhurka - 13th Oct 2016
     QString econVid = "2560"; // This is common for econ camera. So initialize once
@@ -85,7 +85,7 @@ void uvccamera::initCameraEnumMap()
     cameraEnumMap.insert("04b4,0035",CommonEnums::CX3_SNI_CAM); // Cypress Semiconductor Corp : CX3-SNI front and rear camera
 }
 
-unsigned int uvccamera::getTickCount()
+unsigned int UvcCamera::getTickCount()
 {
     struct timeval tv;
     if(gettimeofday(&tv, NULL) != 0)
@@ -94,18 +94,11 @@ unsigned int uvccamera::getTickCount()
     return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
 
-//Modified by Nithyesh
-/*
- * Removed arg QStringList from function as it was unused.
- * Previous fn signature was
- * int uvccamera::findEconDevice(QStringList *econCamera,QString parameter)
- */
-
-int uvccamera::findEconDevice(QString parameter)
+int UvcCamera::findEconDevice(QString parameter)
 {
     qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << Q_FUNC_INFO;
 
-    emit logHandle(QtDebugMsg,"Check Devices of"+ parameter);
+    qDebug() << "Check Devices of" << parameter;
     cameraMap.clear();
     struct udev *udev;
     struct udev_enumerate *enumerate;
@@ -115,8 +108,8 @@ int uvccamera::findEconDevice(QString parameter)
     /* Create the udev object */
     udev = udev_new();
     if (!udev) {
-        emit logHandle(QtCriticalMsg,"Can't create udev\n");
-	return -1;
+        qDebug() << "Can't create udev";
+        return -1;
     }
 
     /* Create a list of the devices in the 'video4linux/hidraw' subsystem. */
@@ -153,7 +146,7 @@ int uvccamera::findEconDevice(QString parameter)
                     "usb_device");
         if (!pdev) {
             emit logHandle(QtCriticalMsg,"Unable to find parent usb device.");
-	    return -1;
+            return -1;
         }
 
         /* From here, we can call get_sysattr_value() for each file
@@ -170,24 +163,21 @@ int uvccamera::findEconDevice(QString parameter)
          * Previous comparision is not using the lower case comparision
          */
         if (((QString::fromUtf8(udev_device_get_sysattr_value(pdev,"idVendor"))).toLower() == econCameraVid.toLower()) ||
-            (QString::fromUtf8(udev_device_get_sysattr_value(pdev,"idVendor"))).toLower() == ascellaCameraVid.toLower())
+                (QString::fromUtf8(udev_device_get_sysattr_value(pdev,"idVendor"))).toLower() == ascellaCameraVid.toLower())
         {
             QString hid_device = udev_device_get_devnode(dev);
             QString productName = udev_device_get_sysattr_value(pdev,"product");
             QString serialNumber = udev_device_get_sysattr_value(pdev,"serial");
             QString vidValue = udev_device_get_sysattr_value(pdev,"idVendor");
             QString pidValue = udev_device_get_sysattr_value(pdev,"idProduct");
-            if(parameter!="video4linux")
-            {
-                emit logHandle(QtDebugMsg, "HID Device found: "+productName + ": Available in: "+hid_device);
-                uvccamera::cameraMap.insertMulti(productName,hid_device);
+            if(parameter!="video4linux") {
+                qDebug() << "HID Device found: " << productName << ": Available in: " << hid_device;
+                UvcCamera::cameraMap.insertMulti(productName,hid_device);
                 if(serialNumber.isEmpty())
                     serialNumberMap.insertMulti(hid_device,tr("Not assigned"));
                 else
                     serialNumberMap.insertMulti(hid_device,serialNumber);
-            }
-            else
-            {
+            } else {
                 //Added by Dhurka - 13th Oct 2016
                 /*
                  * Added the camera name  and corresponding vid,pid in the pidVid map
@@ -206,10 +196,10 @@ int uvccamera::findEconDevice(QString parameter)
 }
 //Added by Dhurka - 13th Oct 2016
 /**
- * @brief uvccamera::currentlySelectedDevice - This is used to get the currently selected
+ * @brief UvcCamera::currentlySelectedDevice - This is used to get the currently selected
  * camera enum value.
  */
-void uvccamera::currentlySelectedDevice(QString deviceName)
+void UvcCamera::currentlySelectedDevice(QString deviceName)
 {
     deviceName.remove(QRegExp("[\n\t\r]"));
     if(pidVidMap.contains(deviceName))
@@ -234,12 +224,11 @@ void uvccamera::currentlySelectedDevice(QString deviceName)
     emit currentlySelectedCameraEnum(selectedDeviceEnum);
 }
 
-int uvccamera::initExtensionUnitAscella(){
+int UvcCamera::initExtensionUnitAscella(){
     int ret;
 
     exitExtensionUnitAscella();
 
-    //Added by Nithyesh
     ret = -1;
     kernelDriverDetached = 0;
     libusb_init(NULL);
@@ -248,9 +237,9 @@ int uvccamera::initExtensionUnitAscella(){
     handle = libusb_open_device_with_vid_pid(NULL, ASCELLA_VID, ASCELLA_PID);
 
     if(!handle) {
-        emit logHandle(QtCriticalMsg, "\nunable to open the device\n");
+        qDebug() <<"unable to open the device";
     } else {
-        emit logHandle(QtDebugMsg, "Device accessed successfully\n");
+        qDebug() << "Device accessed successfully";
 
         if (libusb_kernel_driver_active(handle, 2))
         {
@@ -258,48 +247,46 @@ int uvccamera::initExtensionUnitAscella(){
             if (ret == 0)
             {
                 kernelDriverDetached = 1;
-                emit logHandle(QtDebugMsg, "driver detachment successful\n");
+                qDebug() << "driver detachment successful";
             }
         }
 
         ret = libusb_claim_interface(handle, 2);
-        if(ret == 0){
-            emit logHandle(QtDebugMsg, "Interface Claimed successfully\n");
+        if(ret == 0) {
+            qDebug() << "Interface Claimed successfully";
         }
         else{
-            emit logHandle(QtCriticalMsg, "error claiming interface\n");
+            qDebug() << "error claiming interface";
         }
 
-     }
+    }
 
-     return ret;
+    return ret;
 
 }
 
-bool uvccamera::closeAscellaDevice(){
+bool UvcCamera::closeAscellaDevice()
+{
     int res;
 
-    if(handle == NULL){
+    if (handle == NULL)
         return false;
-    }
+
     res = libusb_release_interface(handle, 2);
 
-    if (0 != res)
-    {
-       emit logHandle(QtCriticalMsg, "Error releasing interface\n");
-       return false;
+    if (res != 0) {
+        qDebug() <<"Error releasing interface";
+        return false;
     }
 
-    if (kernelDriverDetached)
-    {
+    if (kernelDriverDetached) {
         libusb_attach_kernel_driver(handle, 2);
-        emit logHandle(QtDebugMsg, "Attaching libusb kernel driver\n");
+        qDebug() << "Attaching libusb kernel driver";
     }
 
-    if(handle)
-    {
+    if(handle) {
         libusb_close(handle);
-        emit logHandle(QtDebugMsg, "Closing libusb\n");
+        qDebug() << "Closing libusb";
     }
 
     libusb_exit(NULL);
@@ -308,12 +295,10 @@ bool uvccamera::closeAscellaDevice(){
     return true;
 }
 
-bool uvccamera::readFirmwareVersion(quint8 *pMajorVersion, quint8 *pMinorVersion1, quint16 *pMinorVersion2, quint16 *pMinorVersion3)
+bool UvcCamera::readFirmwareVersion(quint8 *pMajorVersion, quint8 *pMinorVersion1, quint16 *pMinorVersion2, quint16 *pMinorVersion3)
 {
-    if(uvccamera::hid_fd < 0) {
-        qDebug() << "BAD HID";
+    if(UvcCamera::hid_fd < 0)
         return false;
-    }
 
     bool timeout = true;
     int ret = 0;
@@ -345,7 +330,7 @@ bool uvccamera::readFirmwareVersion(quint8 *pMajorVersion, quint8 *pMinorVersion
         ret = read(hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
-        } else {            
+        } else {
             if(g_in_packet_buf[0] == READFIRMWAREVERSION) {
                 sdk_ver = (g_in_packet_buf[3]<<8)+g_in_packet_buf[4];
                 svn_ver = (g_in_packet_buf[5]<<8)+g_in_packet_buf[6];
@@ -360,7 +345,7 @@ bool uvccamera::readFirmwareVersion(quint8 *pMajorVersion, quint8 *pMinorVersion
         }
         end = getTickCount();
         if(end - start > TIMEOUT)
-        {            
+        {
             timeout = false;
             return false;
         }
@@ -368,29 +353,23 @@ bool uvccamera::readFirmwareVersion(quint8 *pMajorVersion, quint8 *pMinorVersion
     return true;
 }
 
-bool uvccamera::initExtensionUnit(QString cameraName) {
-    if(cameraName.isEmpty())
-    {
-        emit logHandle(QtCriticalMsg,"cameraName not passed as parameter\n");
+bool UvcCamera::initExtensionUnit(QString cameraName)
+{
+    if(cameraName.isEmpty()) {
+        qDebug() << "Empty Camera Name!";
         return false;
     }
-    if(hid_fd >= 0)
-    {
+
+    if (hid_fd >= 0)
         close(hid_fd);
-    }
 
     if(hidNode == "")
-    {
         return false;
-    }
 
-    //Commented by Nithyesh
-    //uint i;
     int ret, desc_size = 0;
     char buf[256];
     struct hidraw_devinfo info;
     struct hidraw_report_descriptor rpt_desc;
-
 
     /* Open the Device with non-blocking reads. In real life,
            don't use a hard coded path; use libudev instead. */
@@ -459,7 +438,7 @@ bool uvccamera::initExtensionUnit(QString cameraName) {
     if (ret < 0) {
         perror("HIDIOCGRAWPHYS");
         return false;
-    }    
+    }
 
     /* Get Raw Info */
     ret = ioctl(hid_fd, HIDIOCGRAWINFO, &info);
@@ -472,44 +451,42 @@ bool uvccamera::initExtensionUnit(QString cameraName) {
      * Added camera enum comparision
      * Before its like camera name comparision
      */
-    if(selectedDeviceEnum != CommonEnums::SEE3CAM_CU130 && selectedDeviceEnum != CommonEnums::SEE3CAM_CU40)//this condition is put temporary until cu130 and cu40 hardware
-    {                                // does not support sendOSCode implementation
-        ret = sendOSCode();
-        if (ret == false) {
-            emit logHandle(QtCriticalMsg,"OS Identification failed\n");
-        }
-    }    
+    if (selectedDeviceEnum != CommonEnums::SEE3CAM_CU130 && selectedDeviceEnum != CommonEnums::SEE3CAM_CU40) { //this condition is put temporary until cu130 and cu40 hardware support this
+        if (!sendOSCode())
+            qDebug() << "OS Identification failed";
+    }
     return true;
 }
 
-void uvccamera::getDeviceNodeName(QString hidDeviceNode) {
-    if(hidDeviceNode.isEmpty())
-    {
-        emit logHandle(QtCriticalMsg,"hid Device usbAddress Not found as parameter\n");
+void UvcCamera::getDeviceNodeName(QString hidDeviceNode)
+{
+    if(hidDeviceNode.isEmpty()) {
+        qDebug() << "hid Device usbAddress Not found as parameter";
         return;
     }
     hidNode = hidDeviceNode;
 }
 
-void uvccamera::exitExtensionUnit() {
-        close(hid_fd);
+void UvcCamera::exitExtensionUnit()
+{
+    close(hid_fd);
 }
 
-bool uvccamera::exitExtensionUnitAscella(){
-    bool ret = false;        
-    if(handle != NULL){        
-        ret = closeAscellaDevice();
-    }
-    return ret;
+bool UvcCamera::exitExtensionUnitAscella()
+{
+    if(handle != NULL)
+        return closeAscellaDevice();
+    else
+        return true;
 }
 
 
-bool uvccamera::sendOSCode() {
+bool UvcCamera::sendOSCode()
+{
 
     if(hid_fd < 0)
-    {
         return false;
-    }
+
     int ret = 0;
     bool timeout = true;
     unsigned int start, end = 0;
@@ -525,34 +502,28 @@ bool uvccamera::sendOSCode() {
     ret = write(hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
-        emit logHandle(QtCriticalMsg, "\nOS Identification Failed\n");
+        qDebug() <<"\nOS Identification Failed";
         return false;
     }
     start = getTickCount();
-    while(timeout)
-    {
+    while(timeout)  {
         /* Get a report from the device */
         ret = read(hid_fd, g_in_packet_buf, BUFFER_LENGTH);
-        if (ret < 0) {
-            //perror("read");
-        } else {            
-            if(g_in_packet_buf[0] == OS_CODE &&
+        if (ret > 0) {
+            if (g_in_packet_buf[0] == OS_CODE &&
                     g_in_packet_buf[1] == LINUX_OS ) {
-                if(g_in_packet_buf[2] == SET_SUCCESS){
+                if (g_in_packet_buf[2] == SET_SUCCESS){
                     // set success
-                }
-                else if (g_in_packet_buf[2] == SET_FAIL){                    
+                } else if (g_in_packet_buf[2] == SET_FAIL){
                     return false;
-                }
-                else {  
+                } else {
                     return false;
                 }
                 timeout = false;
             }
         }
         end = getTickCount();
-        if(end - start > TIMEOUT)
-        {
+        if(end - start > TIMEOUT) {
             timeout = false;
             return false;
         }
@@ -560,29 +531,24 @@ bool uvccamera::sendOSCode() {
     return true;
 }
 
-void uvccamera::getFirmWareVersion() {
-    emit logHandle(QtDebugMsg,"Firmware version:");
-    _title = tr("Firmware Version");
+void UvcCamera::getFirmWareVersion() {
+    qDebug() << Q_FUNC_INFO;
     quint8 MajorVersion = 0, MinorVersion1= 0;
     quint16 MinorVersion2= 0, MinorVersion3= 0;
     readFirmwareVersion(&MajorVersion, &MinorVersion1, &MinorVersion2, &MinorVersion3);
-    _text.clear();
-    _text.append("Version: ");
-    _text.append(QString::number(MajorVersion).append(".").append(QString::number(MinorVersion1)).append(".").append(QString::number(MinorVersion2)).append(".").append(QString::number(MinorVersion3)));
+    qDebug() << "Version: " << QString::number(MajorVersion).append(".").append(QString::number(MinorVersion1)).append(".").append(QString::number(MinorVersion2)).append(".").append(QString::number(MinorVersion3));
     emit titleTextChanged(_title,_text);
 }
 
-void uvccamera::getSerialNumber(){
-    emit serialNumber("Serial Number: "+serialNumberMap.value(openNode));
+void UvcCamera::getSerialNumber(){
+    emit serialNumber("Serial Number: "+ serialNumberMap.value(openNode));
 }
 
 bool See3CAM_Control::getFlashState(quint8 *flashState) {
 
-    *flashState = 0;    
-    if(uvccamera::hid_fd < 0)
-    {
+    *flashState = 0;
+    if(UvcCamera::hid_fd < 0)
         return false;
-    }
 
     bool timeout = true;
     int ret =0;
@@ -591,51 +557,36 @@ bool See3CAM_Control::getFlashState(quint8 *flashState) {
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
 
     //Set the Report Number
-    //Modified by Dhurka - 14th Oct 2016
-    /*
-     * Added camera enum comparision
-     * Before its like camera name comparision
-     */
     if(selectedDeviceEnum == CommonEnums::ECON_8MP_CAMERA)
-    {
         g_out_packet_buf[1] = CAMERA_CONTROL_80; /* Report Number */
-    }
     else if(selectedDeviceEnum == CommonEnums::SEE3CAM_CU50)
-    {
         g_out_packet_buf[1] = CAMERA_CONTROL_50; /* Report Number */
-    }
     else if(selectedDeviceEnum == CommonEnums::SEE3CAM_12CUNIR)
-    {
         g_out_packet_buf[1] = CAMERA_CONTROL_AR0130; /* Report Number */
-    }
 
-    //g_out_packet_buf[1] = CAMERA_CONTROL_80; /* Report Number */
     g_out_packet_buf[2] = GET_FLASH_LEVEL; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
         return false;
     }
+
     /* Read the Status code from the device */
     start = getTickCount();
-    while(timeout)
-    {
+    while(timeout) {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
-        if (ret < 0) {
-            //perror("read");
-        } else {            
-            if((g_in_packet_buf[0] == g_out_packet_buf[1])&&
-                    (g_in_packet_buf[1]==GET_FLASH_LEVEL)) {
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        if (ret > 0) {
+            if((g_in_packet_buf[0] == g_out_packet_buf[1]) && (g_in_packet_buf[1]==GET_FLASH_LEVEL)) {
                 *flashState = (g_in_packet_buf[2]);
                 timeout=false;
             }
         }
+
         end = getTickCount();
-        if(end - start > TIMEOUT)
-        {            
+        if(end - start > TIMEOUT) {
             timeout = false;
             return false;
         }
@@ -645,59 +596,44 @@ bool See3CAM_Control::getFlashState(quint8 *flashState) {
 
 bool See3CAM_Control::setFlashState(flashTorchState flashState)
 {   
-    if(uvccamera::hid_fd < 0)
-    {
+    if (UvcCamera::hid_fd < 0)
         return false;
-    }
 
     bool timeout = true;
-    int ret =0;
+    int ret = 0;
     unsigned int start, end = 0;
 
 
-    if(flashState == flashOff || flashState == flashOn)
-    {
+    if(flashState == flashOff || flashState == flashOn) {
         //Initialize the buffer
         memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
         //Set the Report Number
-        //Modified by Dhurka - 14th Oct 2016
-        /*
-         * Added camera enum comparision
-         * Before its like camera name comparision
-         */
         if(selectedDeviceEnum == CommonEnums::ECON_8MP_CAMERA)
-        {
             g_out_packet_buf[1] = CAMERA_CONTROL_80; /* Report Number */
-        }
         else if(selectedDeviceEnum == CommonEnums::SEE3CAM_CU50)
-        {
             g_out_packet_buf[1] = CAMERA_CONTROL_50; /* Report Number */
-        }
         else if(selectedDeviceEnum == CommonEnums::SEE3CAM_12CUNIR)
-        {
             g_out_packet_buf[1] = CAMERA_CONTROL_AR0130; /* Report Number */
-        }
+
         g_out_packet_buf[2] = SET_FLASH_LEVEL; 	/* Report Number */
         g_out_packet_buf[3] = flashState;		/* Flash mode */
 
-        ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+        ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
         if (ret < 0) {
             perror("write");
             return false;
         }
+
         /* Read the Status code from the device */
         start = getTickCount();
-        while(timeout)
-        {
+        while(timeout) {
             /* Get a report from the device */
-            ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
-            if (ret < 0) {
-                //perror("read");
-            } else {                
-                if((g_in_packet_buf[0] == g_out_packet_buf[1])&&
-                        (g_in_packet_buf[1]==SET_FLASH_LEVEL) &&
-                        (g_in_packet_buf[2]==flashState )) {
+            ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+            if (ret > 0) {
+                if((g_in_packet_buf[0] == g_out_packet_buf[1])
+                        && (g_in_packet_buf[1] == SET_FLASH_LEVEL)
+                        && (g_in_packet_buf[2] == flashState )) {
                     if(g_in_packet_buf[3] == SET_FAIL) {
                         return false;
                     } else if(g_in_packet_buf[3]==SET_SUCCESS) {
@@ -706,15 +642,12 @@ bool See3CAM_Control::setFlashState(flashTorchState flashState)
                 }
             }
             end = getTickCount();
-            if(end - start > TIMEOUT)
-            {                
+            if(end - start > TIMEOUT) {
                 timeout = false;
                 return false;
             }
         }
-    }
-    else
-    {
+    } else {
         return false;
     }
     return true;
@@ -723,60 +656,48 @@ bool See3CAM_Control::setFlashState(flashTorchState flashState)
 bool See3CAM_Control::getTorchState(quint8 *torchState)
 {
 
-    *torchState = 0;    
-    if(uvccamera::hid_fd < 0)
-    {
+    *torchState = 0;
+    if(UvcCamera::hid_fd < 0)
         return false;
-    }
 
     bool timeout = true;
-    int ret =0;
+    int ret = 0;
     unsigned int start, end = 0;
+
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
 
     //Set the Report Number
-    //Modified by Dhurka - 14th Oct 2016
-    /*
-     * Added camera enum comparision
-     * Before its like camera name comparision
-     */
     if(selectedDeviceEnum == CommonEnums::ECON_8MP_CAMERA)
-    {
         g_out_packet_buf[1] = CAMERA_CONTROL_80; /* Report Number */
-    }
     else if(selectedDeviceEnum == CommonEnums::SEE3CAM_CU50)
-    {
         g_out_packet_buf[1] = CAMERA_CONTROL_50; /* Report Number */
-    }
-    else if(selectedDeviceEnum == CommonEnums::SEE3CAM_CU51)
-    {
-        g_out_packet_buf[1] = CAMERA_CONTROL_51; /* Report Number */
-    }
+    else if(selectedDeviceEnum == CommonEnums::SEE3CAM_12CUNIR)
+        g_out_packet_buf[1] = CAMERA_CONTROL_AR0130; /* Report Number */
+
     g_out_packet_buf[2] = GET_TORCH_LEVEL; /* Report Number */
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         return false;
     }
+
     /* Read the Status code from the device */
     start = getTickCount();
     while(timeout)
     {
         /* Get a report from the device */
         ret = read(hid_fd, g_in_packet_buf, BUFFER_LENGTH);
-        if (ret < 0) {
-            //perror("read");
-        } else {            
-            if((g_in_packet_buf[0] == g_out_packet_buf[1])&&
+        if (ret > 0) {
+            if((g_in_packet_buf[0] == g_out_packet_buf[1]) &&
                     (g_in_packet_buf[1] == GET_TORCH_LEVEL)) {
                 *torchState = (g_in_packet_buf[2]);
                 timeout=false;
             }
         }
         end = getTickCount();
-        if(end - start > TIMEOUT)
-        {            
+        if(end - start > TIMEOUT) {
             timeout = false;
             return false;
         }
@@ -786,50 +707,33 @@ bool See3CAM_Control::getTorchState(quint8 *torchState)
 
 bool See3CAM_Control::setTorchState(flashTorchState torchState)
 {    
-    if(uvccamera::hid_fd < 0)
-    {
+    if(UvcCamera::hid_fd < 0)
         return false;
-    }
 
     bool timeout = true;
     int ret =0;
     unsigned int start, end = 0;
 
-    if(torchState == torchOff || torchState == torchOn)
-    {
+    if(torchState == torchOff || torchState == torchOn) {
         //Initialize the buffer
         memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
 
         //Set the Report Number
-        //Modified by Dhurka - 14th Oct 2016
-        /*
-         * Added camera enum comparision
-         * Before its like camera name comparision
-         */
         if(selectedDeviceEnum == CommonEnums::ECON_8MP_CAMERA)
-        {
             g_out_packet_buf[1] = CAMERA_CONTROL_80; /* Report Number */
-        }
         else if(selectedDeviceEnum == CommonEnums::SEE3CAM_CU50)
-        {
             g_out_packet_buf[1] = CAMERA_CONTROL_50; /* Report Number */
-        }
         else if(selectedDeviceEnum == CommonEnums::SEE3CAM_CU51)
-        {
             g_out_packet_buf[1] = CAMERA_CONTROL_51; /* Report Number */
-        }
+
         g_out_packet_buf[2] = SET_TORCH_LEVEL; 	/* Report Number */
 
         if(selectedDeviceEnum == CommonEnums::SEE3CAM_CU51 && torchState == torchOff)
-        {
             g_out_packet_buf[3] = 2;		/* Torch mode */
-        }
         else
-        {
-             g_out_packet_buf[3] = torchState;		/* Torch mode */
-        }
+            g_out_packet_buf[3] = torchState;		/* Torch mode */
 
-        ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+        ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
         if (ret < 0) {
             perror("write");
@@ -837,13 +741,10 @@ bool See3CAM_Control::setTorchState(flashTorchState torchState)
         }
         /* Read the Status code from the device */
         start = getTickCount();
-        while(timeout)
-        {
+        while(timeout) {
             /* Get a report from the device */
-            ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
-            if (ret < 0) {
-                //perror("read");
-            } else {                
+            ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+            if (ret > 0) {
                 if((g_in_packet_buf[0] == g_out_packet_buf[1])&&
                         (g_in_packet_buf[1]==SET_TORCH_LEVEL) &&
                         (g_in_packet_buf[2]==g_out_packet_buf[3] )) {
@@ -855,15 +756,12 @@ bool See3CAM_Control::setTorchState(flashTorchState torchState)
                 }
             }
             end = getTickCount();
-            if(end - start > TIMEOUT)
-            {                
+            if(end - start > TIMEOUT) {
                 timeout = false;
                 return false;
             }
         }
-    }
-    else
-    {
+    } else {
         return false;
     }
     return true;
@@ -888,13 +786,12 @@ void See3CAM_Control::setTorchControlState(const int torchState) {
 
 bool See3CAM_GPIOControl::getGpioLevel(camGpioPin gpioPinNumber)
 {    
-    if(uvccamera::hid_fd < 0)
-    {
+    if(UvcCamera::hid_fd < 0)
         return false;
-    }    
+
     bool timeout = true;
     int ret = 0;
-    unsigned int start, end = 0;    
+    unsigned int start, end = 0;
 
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
@@ -905,17 +802,16 @@ bool See3CAM_GPIOControl::getGpioLevel(camGpioPin gpioPinNumber)
     g_out_packet_buf[3] = gpioPinNumber; 		/* GPIO Pin Number */
 
     /* Send a Report to the Device */
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         return false;
     }
     /* Read the GPIO level and status of read from the device */
     start = uvc.getTickCount();
-    while(timeout)
-    {
+    while(timeout) {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
 
         if (ret < 0) {
             perror("read");
@@ -932,8 +828,7 @@ bool See3CAM_GPIOControl::getGpioLevel(camGpioPin gpioPinNumber)
             }
         }
         end = uvc.getTickCount();
-        if(end - start > TIMEOUT)
-        {
+        if(end - start > TIMEOUT) {
             timeout = false;
             return false;
         }
@@ -943,10 +838,8 @@ bool See3CAM_GPIOControl::getGpioLevel(camGpioPin gpioPinNumber)
 
 bool See3CAM_GPIOControl::setGpioLevel(camGpioPin gpioPin,camGpioValue gpioValue)
 {
-    if(uvccamera::hid_fd < 0)
-    {
+    if(UvcCamera::hid_fd < 0)
         return false;
-    }
 
     bool timeout = true;
     int ret = 0;
@@ -962,17 +855,16 @@ bool See3CAM_GPIOControl::setGpioLevel(camGpioPin gpioPin,camGpioValue gpioValue
     g_out_packet_buf[4] = gpioValue; 	/* GPIO Value */
 
     /* Send a Report to the Device */
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         return false;
     }
     /* Read the GPIO level and status of read from the device */
     start = uvc.getTickCount();
-    while(timeout)
-    {
+    while(timeout) {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             perror("read");
         } else {
@@ -989,8 +881,7 @@ bool See3CAM_GPIOControl::setGpioLevel(camGpioPin gpioPin,camGpioValue gpioValue
             }
         }
         end = uvc.getTickCount();
-        if(end - start > TIMEOUT)
-        {
+        if(end - start > TIMEOUT) {
             timeout = false;
             return false;
         }
@@ -1001,18 +892,16 @@ bool See3CAM_GPIOControl::setGpioLevel(camGpioPin gpioPin,camGpioValue gpioValue
 //Modified by Dhurka - Braces alignment - 14th Oct 2016
 bool See3CAM_ModeControls::enableMasterMode()
 {
-    int ret =0;
+    int ret = 0;
 
-    if(uvccamera::hid_fd < 0)
-    {
+    if(UvcCamera::hid_fd < 0)
         return false;
-    }
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
 
     //Set the Report Number
     g_out_packet_buf[1] = ENABLEMASTERMODE; /* Report Number */
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         return false;
@@ -1023,19 +912,19 @@ bool See3CAM_ModeControls::enableMasterMode()
 //Modified by Dhurka - Braces alignment - 14th Oct 2016
 bool See3CAM_ModeControls::enableTriggerMode()
 {
-    int ret =0;
+    int ret = 0;
 
-    if(uvccamera::hid_fd < 0)
-    {
+    if(UvcCamera::hid_fd < 0) {
         return false;
     }
+
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
 
     //Set the Report Number
     g_out_packet_buf[1] = ENABLETRIGGERMODE; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         return false;
@@ -1051,12 +940,12 @@ bool See3CAM_ModeControls::enableTriggerMode()
  * @param len    - Buffer length
  * return true/false
  * */
-bool uvccamera::sendHidCmd(unsigned char *outBuf, unsigned char *inBuf, int len)
+bool UvcCamera::sendHidCmd(unsigned char *outBuf, unsigned char *inBuf, int len)
 {
     // Write data into camera
     int ret = write(hid_fd, outBuf, len);
 
-    if (ret < 0) {        
+    if (ret < 0) {
         perror("write");
         return false;
     }
@@ -1072,7 +961,7 @@ bool uvccamera::sendHidCmd(unsigned char *outBuf, unsigned char *inBuf, int len)
 
     // Monitor read file descriptor for 5 secs
     if(0 > select(1, &rfds, NULL, NULL, &tv)){
-      perror("select");
+        perror("select");
         return false;
     }
 

@@ -8,69 +8,76 @@
 
 #define CMD_TIMEOUT_81CAM 3000
 
-class See3CAM_81: public QObject {
+class See3CAM_81: public QObject
+{
     Q_OBJECT
 
 public:    
-    uvccamera uvc;        
+    UvcCamera uvc;
 
     See3CAM_81();
-    ~See3CAM_81();
 
-    enum flipMirrorControls{
+    Q_ENUMS(flipMirrorControls)
+    Q_ENUMS(specialEffects)
+    Q_ENUMS(strobeValues)
+    Q_ENUMS(focusModes)
+    Q_ENUMS(focusModeStatus)
+    Q_ENUMS(gpioLevel)
+    Q_ENUMS(gpoUIIndex)
+    Q_ENUMS(gpiUIIndex)
+    Q_ENUMS(gpioControlsCam81)
+    Q_ENUMS(camGpioValue)
+    Q_ENUMS(camFocusModesComboIndex)
+    Q_ENUMS(camRGBcolor)
+    Q_ENUMS(camRGBcolorGet)
+    Q_ENUMS(camROIAfMode)
+
+    enum flipMirrorControls {
         FLIP_OFF_MIRROR_OFF_81 = 0x00,
         FLIP_ON_MIRROR_OFF_81  = 0x01,
         FLIP_OFF_MIRROR_ON_81  = 0x02,
         FLIP_ON_MIRROR_ON_81   = 0x03
     };
-    Q_ENUMS(flipMirrorControls)
 
     enum specialEffects {
         EFFECT_NORMAL = 0x01,
         EFFECT_GRAYSCALE = 0x02
     };
-    Q_ENUMS(specialEffects)
 
-    enum strobeValues{
+    enum strobeValues {
         STROBE_OFF_81 = 0x00,
-        STROBE_FLASH_VS_81 = 0x01,        
+        STROBE_FLASH_VS_81 = 0x01,
         STROBE_TORCH_81 = 0x03
     };
-    Q_ENUMS(strobeValues)
 
-    enum focusModes{
+    enum focusModes {
         CONTINUOUS_FOCUS_81 = 0x01,
         MANUAL_FOCUS_81 = 0x02,
         SINGLETRIGGER_FOCUS_81 = 0x03
     };
-    Q_ENUMS(focusModes)
 
-    enum focusModeStatus{
+    enum focusModeStatus {
         CAM_FOCUS_FAILED = 0x00,
         CAM_FOCUS_SUCCESS = 0x01,
         CAM_FOCUS_BUSY = 0x02
     };
-    Q_ENUMS(focusModeStatus)
 
-    enum gpioLevel{
+    enum gpioLevel {
         GPIO_LOW_81 = 0x00,
         GPIO_HIGH_81 = 0x01
     };
-    Q_ENUMS(gpioLevel)
 
-    enum gpoUIIndex{
+    enum gpoUIIndex {
         GPIO_OUT8_INDEX = 0x00,
         GPIO_OUT9_INDEX = 0x01
     };
-    Q_ENUMS(gpoUIIndex)
 
-    enum gpiUIIndex{
+    enum gpiUIIndex {
         GPIO_IN3_INDEX = 0x00,
         GPIO_IN6_INDEX = 0x01
     };
-    Q_ENUMS(gpiUIIndex)
 
-    enum gpioControlsCam81{
+    enum gpioControlsCam81 {
         CAM81_IN3 = 0x01,
         CAM81_IN6 = 0x02,
         CAM81_OUT8 = 0x01,
@@ -80,47 +87,40 @@ public:
         CAM81_IN3_READVAL = 21,
         CAM81_IN6_READVAL = 23,
     };
-    Q_ENUMS(gpioControlsCam81)
 
     /**
      * @brief The camGpioValue enum are used to set status (High/Low) for the Gpio pin.
      */
-    enum camGpioValue{
-    High = 1,
-    Low = 0
+    enum camGpioValue {
+        High = 1,
+        Low = 0
     };
-    Q_ENUMS(camGpioValue)
 
-    enum camFocusModesComboIndex{
+    enum camFocusModesComboIndex {
         AUTO_MODE_INDEX = 0,
         MANUAL_MODE_INDEX,
         SINGLE_TRIGGER_MODE_INDEX
     };
-    Q_ENUMS(camFocusModesComboIndex)
 
     // This is used to set RGB gain value
-    enum camRGBcolor{
+    enum camRGBcolor {
         Red = 0x12,
         Green = 0x10,
         Blue = 0x0E
     };
-    Q_ENUMS(camRGBcolor)
 
     // This is used to get RGB gain value
-    enum camRGBcolorGet{
+    enum camRGBcolorGet {
         GetRed = 0x11,
         GetGreen = 0x0F,
         GetBlue = 0x0D
     };
-
-    Q_ENUMS(camRGBcolorGet)
 
     enum camROIAfMode {
         AFCentered = 0x01,
         AFManual = 0x02,
         AFDisabled = 0x03
     };
-    Q_ENUMS(camROIAfMode)
 
     // APIs running in background to avoid preview hang
     static bool setGpioLevelBackgrndFn(See3CAM_81 *see3cam81obj, gpioControlsCam81 gpioPin,camGpioValue gpioValue);

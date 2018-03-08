@@ -44,18 +44,16 @@ public:
    int decodeH264(uint8_t *out_buf, uint8_t *in_buf, int buf_size);
 
 protected:
-      AVCodecContext *pH264CodecCtx;
-      AVCodec *pH264Codec;
-      AVFrame *pH264picture;
-      uint8_t *h264pictureBuf;
-      int h264PictureSize;
+   void initVars();
+   bool initCodec();
+   void freeFrame();
 
-      void initVars();
-      bool initCodec();
-
-      //free a frame
-      void freeFrame();
-
+private:
+   AVCodecContext *m_pH264CodecCtx;
+   AVCodec *m_pH264Codec;
+   AVFrame *m_pH264picture;
+   uint8_t *m_h264pictureBuf;
+   int m_h264PictureSize;
 };
 
 #endif // H264DECODER_H

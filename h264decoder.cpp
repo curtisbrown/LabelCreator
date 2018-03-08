@@ -39,63 +39,63 @@ bool H264Decoder::initH264Decoder(unsigned width, unsigned height)
 {
     // find the decoder
 #if !LIBAVCODEC_VER_AT_LEAST(54, 25)
-    pH264Codec = avcodec_find_decoder(CODEC_ID_H264);
+    m_pH264Codec = avcodec_find_decoder(CODEC_ID_H264);
 #else
-    pH264Codec = avcodec_find_decoder(AV_CODEC_ID_H264);
+    m_pH264Codec = avcodec_find_decoder(AV_CODEC_ID_H264);
 #endif
-    if (!pH264Codec)
+    if (!m_pH264Codec)
     {        
         return false;
     }
 
 #if LIBAVCODEC_VER_AT_LEAST(53,6)
-    pH264CodecCtx = avcodec_alloc_context3(pH264Codec);
-    avcodec_get_context_defaults3 (pH264CodecCtx, pH264Codec);
+    m_pH264CodecCtx = avcodec_alloc_context3(m_pH264Codec);
+    avcodec_get_context_defaults3 (m_pH264CodecCtx, m_pH264Codec);
 #else
-    pH264CodecCtx = avcodec_alloc_context();
-    avcodec_get_context_defaults(pH264CodecCtx);
+    m_pH264CodecCtx = avcodec_alloc_context();
+    avcodec_get_context_defaults(m_pH264CodecCtx);
 #endif
 
-    pH264CodecCtx->flags2 |= CODEC_FLAG2_FAST;
+    m_pH264CodecCtx->flags2 |= CODEC_FLAG2_FAST;
 
 #if !LIBAVCODEC_VER_AT_LEAST(54, 25)
-    pH264CodecCtx->pix_fmt = PIX_FMT_YUV420P;
+    m_pH264CodecCtx->pix_fmt = PIX_FMT_YUV420P;
 #else
-    pH264CodecCtx->pix_fmt = AV_PIX_FMT_YUV420P;
+    m_pH264CodecCtx->pix_fmt = AV_PIX_FMT_YUV420P;
 #endif
 
-    pH264CodecCtx->width = width;
-    pH264CodecCtx->height = height;
+    m_pH264CodecCtx->width = width;
+    m_pH264CodecCtx->height = height;
 
 #if LIBAVCODEC_VER_AT_LEAST(53,6)
-    if (avcodec_open2(pH264CodecCtx, pH264Codec, NULL) < 0)
+    if (avcodec_open2(m_pH264CodecCtx, m_pH264Codec, NULL) < 0)
 #else
-    if (avcodec_open(pH264CodecCtx, pH264Codec) < 0)
+    if (avcodec_open(m_pH264CodecCtx, m_pH264Codec) < 0)
 #endif
     {        
         return false;
     }
 
 #if LIBAVCODEC_VER_AT_LEAST(55,28)
-    pH264picture = av_frame_alloc();
+    m_pH264picture = av_frame_alloc();
 #else
-    pH264picture = avcodec_alloc_frame();
+    m_pH264picture = avcodec_alloc_frame();
 #endif
-    if(pH264picture==0)
+    if(m_pH264picture == 0)
         return false;
 
 #if LIBAVCODEC_VER_AT_LEAST(55,28)
-    av_frame_unref(pH264picture);
+    av_frame_unref(m_pH264picture);
 #else
-    avcodec_get_frame_defaults(pH264picture);
+    avcodec_get_frame_defaults(m_pH264picture);
 #endif
 
-    h264PictureSize = avpicture_get_size(pH264CodecCtx->pix_fmt, pH264CodecCtx->width, pH264CodecCtx->height);
-    h264pictureBuf = new uint8_t[h264PictureSize];
-    if(h264pictureBuf==0)
+    m_h264PictureSize = avpicture_get_size(m_pH264CodecCtx->pix_fmt, m_pH264CodecCtx->width, m_pH264CodecCtx->height);
+    m_h264pictureBuf = new uint8_t[m_h264PictureSize];
+    if(m_h264pictureBuf == 0)
     {
-        av_free(pH264picture);
-        pH264picture=0;
+        av_free(m_pH264picture);
+        m_pH264picture = 0;
         return false;
     }    
     return true;
@@ -105,54 +105,49 @@ bool H264Decoder::initH264Decoder(unsigned width, unsigned height)
 int H264Decoder::decodeH264(u_int8_t *outBuf, u_int8_t *inBuf, int bufSize)
 {
     AVPacket avpkt;
-
     avpkt.size = bufSize;
     avpkt.data = inBuf;
 
     int gotPicture = 0;
 
-    int len = avcodec_decode_video2(pH264CodecCtx, pH264picture, &gotPicture, &avpkt);
-    if(len < 0)
-    {
+    int len = avcodec_decode_video2(m_pH264CodecCtx, m_pH264picture, &gotPicture, &avpkt);
+    if (len < 0)
         return len;
-    }
 
-    if(gotPicture)
-    {
-        avpicture_layout((AVPicture *) pH264picture, pH264CodecCtx->pix_fmt
-            ,pH264CodecCtx->width, pH264CodecCtx->height, outBuf, h264PictureSize);
+    if (gotPicture) {
+        avpicture_layout((AVPicture *) m_pH264picture, m_pH264CodecCtx->pix_fmt
+                         ,m_pH264CodecCtx->width, m_pH264CodecCtx->height, outBuf, m_h264PictureSize);
         return len;
-    }
-    else
+    } else {
         return 0;
+    }
 }
 
 
 void H264Decoder::closeFile()
 {
-    avcodec_close(pH264CodecCtx);
+    avcodec_close(m_pH264CodecCtx);
     freeFrame();
 }
 
 
 void H264Decoder::initVars()
 {
-    pH264CodecCtx = 0;
-    pH264Codec = 0;
-    pH264picture = 0;
+    m_pH264CodecCtx = 0;
+    m_pH264Codec = 0;
+    m_pH264picture = 0;
 }
 
 
 void H264Decoder::freeFrame()
 {
-    if(h264pictureBuf)
-    {
-        delete[] h264pictureBuf;
-        h264pictureBuf = 0;
+    if(m_h264pictureBuf) {
+        delete[] m_h264pictureBuf;
+        m_h264pictureBuf = 0;
     }
-    if(pH264picture)
-    {
-        av_free(pH264picture);
-        pH264picture = 0;
+
+    if(m_pH264picture) {
+        av_free(m_pH264picture);
+        m_pH264picture = 0;
     }
 }

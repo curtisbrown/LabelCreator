@@ -28,41 +28,38 @@
 #include <QDir>
 #include <QStringList>
 #include <QStringListModel>
-#include <QQuickView>
 #include <QQmlContext>
 #include <QStandardItemModel>
 #include <QTimer>
-//#include <qtquick2applicationviewer.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <locale.h>
-#include <unistd.h>
+
 #include "v4l2-api.h"
 #include "uvccamera.h"
 #include "videostreaming.h"
 #include "libudev.h"
+
 class Cameraproperty : public QObject, public v4l2
 {
     Q_OBJECT
+
 public:
     Cameraproperty();
-    Cameraproperty(bool enableLog);
-    ~Cameraproperty();
-    QStringList availableCam;
-
-    uvccamera uvccam;
-    Videostreaming vidStr;
-    void checkforEconDevice(QStringList*);
 
     static QStringListModel modelCam;
-    static bool saveLog;
 
-private:
-    QDir qDir;
-    struct v4l2_capability m_querycap;
-    QMap<int, QString> cameraMap;
-    QMap<int, QString> deviceNodeMap;
+signals:
+    void setFirstCamDevice(int);
+    void setCamName(QString);
+    /**
+     * @brief currentlySelectedCameraEnum - This signal is used to emit selected camera enum value to qtcam.qml file
+     */
+    void currentlySelectedCameraEnum(int selectedDevice);
+    /**
+     * @brief initExtensionUnitSuccess - This signal is used to emit after HID initialization is success
+     */
+    void initExtensionUnitSuccess();
 
+    // TO BE DELETED
+    void notifyUserInfo(QString title, QString text);
 
 public slots:
     /**
@@ -75,12 +72,6 @@ public slots:
     void checkforDevice();
 
     /**
-     * @brief Create a log file by passing to Logger class
-     *  - A Log file will be created if the user call this function
-     */
-    void createLogger();
-
-    /**
      * @brief setCurrentDevice
      *  - Used to get device index and pass it to the signals
      * @param
@@ -91,42 +82,26 @@ public slots:
 
     /**
      * @brief selectedDeviceEnum - This slot contains the selected camera enum
-     * @param selectedCameraEnum - Camera enum name
      */
     void selectedDeviceEnum(CommonEnums::ECameraNames selectedCameraEnum);
-    //Added by Dhurka - 17th Oct 2016
     /**
      * @brief openHIDDevice - This slot is used to open HID device
-     * @param deviceName - device name
      */
     void openHIDDevice(QString deviceName);
 
     void closeLibUsbDeviceAscella();
 
-    // Added by Sankari: To notify user about warning : This slot will be called when warning from uvccamera.cpp[Ex: hid access needs sudo ]
-    // 07 Dec 2017
+    // TO BE DELETED
     void notifyUser(QString title, QString text);
 
-signals:
 
-    void setFirstCamDevice(int);
-    void setCamName(QString);
-    void logHandle(QtMsgType,QString);
-    /**
-     * @brief currentlySelectedCameraEnum - This signal is used to emit selected camera enum value to
-     * qtcam.qml file
-     * @param selectedDevice
-     */
-    void currentlySelectedCameraEnum(int selectedDevice);
-    //Added by Dhurka - 18th Oct 2016
-    /**
-     * @brief initExtensionUnitSuccess - This signal is used to emit after HID initialization is success
-     */
-    void initExtensionUnitSuccess();
+private:
+    UvcCamera m_uvcCam;
+    Videostreaming m_vidStr;
 
-    // Added by Sankari: To notify user about warning[Ex: hid access from uvccamera.cpp]
-    // 07 Dec 2017
-    void notifyUserInfo(QString title, QString text);
+    QStringList m_availableCam;
+    QMap<int, QString> m_cameraMap;
+    QMap<int, QString> m_deviceNodeMap;
 };
 
 

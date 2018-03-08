@@ -31,7 +31,7 @@ private:
     CameraCapture m_cameraCapture;
     LabelPrinter m_labelPrint;
     Cameraproperty m_cameraProperty;
-    uvccamera m_uvc;
+    UvcCamera m_uvc;
 
 };
 

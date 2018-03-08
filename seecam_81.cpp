@@ -19,18 +19,9 @@
  */
 
 
-//Added By Sankari : 17 Dec 2016
-
 #include "seecam_81.h"
 
-See3CAM_81::See3CAM_81(){
-
-}
-
-See3CAM_81::~See3CAM_81(){
-
-
-}
+See3CAM_81::See3CAM_81(){}
 
 /**
  * @brief See3CAM_81::setEffectMode - Setting effect mode in the camera.
@@ -42,7 +33,7 @@ bool See3CAM_81::setEffectMode(const See3CAM_81::specialEffects &specialEffect)
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -59,7 +50,7 @@ bool See3CAM_81::setEffectMode(const See3CAM_81::specialEffects &specialEffect)
     g_out_packet_buf[2] = SETSPECIALEFFECT_81; /* Report Number */
     g_out_packet_buf[3] = specialEffect; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         return false;
@@ -71,7 +62,7 @@ bool See3CAM_81::setEffectMode(const See3CAM_81::specialEffects &specialEffect)
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -103,7 +94,7 @@ bool See3CAM_81::getEffectMode()
 {
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -120,7 +111,7 @@ bool See3CAM_81::getEffectMode()
     g_out_packet_buf[1] = CAMERA_CONTROL_81; /* camera id  */
     g_out_packet_buf[2] = GETSPECIALEFFECT_81; /* special effect */
 
-    ret = write(uvccamera::hid_fd , g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd , g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -133,7 +124,7 @@ bool See3CAM_81::getEffectMode()
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
 
         if (ret < 0) {
             //perror("read");
@@ -168,7 +159,7 @@ bool See3CAM_81::setFlipMirrorMode(bool flipMode, bool mirrorMode){
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -193,7 +184,7 @@ bool See3CAM_81::setFlipMirrorMode(bool flipMode, bool mirrorMode){
     }else
         g_out_packet_buf[3] = See3CAM_81::FLIP_OFF_MIRROR_OFF_81; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -206,7 +197,7 @@ bool See3CAM_81::setFlipMirrorMode(bool flipMode, bool mirrorMode){
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -237,7 +228,7 @@ bool See3CAM_81::getFlipMirrorMode()
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -255,7 +246,7 @@ bool See3CAM_81::getFlipMirrorMode()
     g_out_packet_buf[1] = CAMERA_CONTROL_81; /* Report Number */
     g_out_packet_buf[2] = GETFLIPMIRRORSTATUS_81; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -268,7 +259,7 @@ bool See3CAM_81::getFlipMirrorMode()
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
 
         if (ret < 0) {
             //perror("read");
@@ -303,7 +294,7 @@ bool See3CAM_81::setStrobeMode(const See3CAM_81::strobeValues &strobeMode){
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -320,7 +311,7 @@ bool See3CAM_81::setStrobeMode(const See3CAM_81::strobeValues &strobeMode){
     g_out_packet_buf[2] = SETSTROBE_STATUS; /* Report Number */
     g_out_packet_buf[3] = strobeMode; /* Report Number */    
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -333,7 +324,7 @@ bool See3CAM_81::setStrobeMode(const See3CAM_81::strobeValues &strobeMode){
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);        
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -365,7 +356,7 @@ bool See3CAM_81::getStrobeMode()
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -382,7 +373,7 @@ bool See3CAM_81::getStrobeMode()
     g_out_packet_buf[1] = CAMERA_CONTROL_81; /* Report Number */
     g_out_packet_buf[2] = GETSTROBE_STATUS; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -395,7 +386,7 @@ bool See3CAM_81::getStrobeMode()
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
 
         if (ret < 0) {
             //perror("read");
@@ -441,7 +432,7 @@ bool See3CAM_81::setFocusModeBackgrndFn(See3CAM_81 *see3cam81obj, uint focusMode
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {        
         emit see3cam81obj->returnFromSetFocusMode(false);
         return false;
@@ -460,7 +451,7 @@ bool See3CAM_81::setFocusModeBackgrndFn(See3CAM_81 *see3cam81obj, uint focusMode
     g_out_packet_buf[2] = SET_FOCUS_MODE; /* Report Number */
     g_out_packet_buf[3] = focusMode; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");        
@@ -473,7 +464,7 @@ bool See3CAM_81::setFocusModeBackgrndFn(See3CAM_81 *see3cam81obj, uint focusMode
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -506,7 +497,7 @@ bool See3CAM_81::getFocusStatus()
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {	
         return false;
     }
@@ -522,7 +513,7 @@ bool See3CAM_81::getFocusStatus()
     g_out_packet_buf[1] = CAMERA_CONTROL_81; /* Report Number */
     g_out_packet_buf[2] = GETFOCUS_STATUS; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {	
         perror("write");
@@ -535,7 +526,7 @@ bool See3CAM_81::getFocusStatus()
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -567,7 +558,7 @@ bool See3CAM_81::setFocusPosition(int focusPosition)
 {
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -582,7 +573,7 @@ bool See3CAM_81::setFocusPosition(int focusPosition)
     g_out_packet_buf[2] = SET_FOCUS_POSITION; /* Report Number */
     g_out_packet_buf[3] = ((focusPosition&0xFF00)>>8); /* MSB of focus postion */
     g_out_packet_buf[4] = (focusPosition&0x00FF); /* LSB of focus postion */
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -600,7 +591,7 @@ bool See3CAM_81::getFocusMode() {
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {	
         return false;
     }
@@ -617,7 +608,7 @@ bool See3CAM_81::getFocusMode() {
     g_out_packet_buf[1] = CAMERA_CONTROL_81; /* Report Number */
     g_out_packet_buf[2] = GET_FOCUS_MODE; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -628,7 +619,7 @@ bool See3CAM_81::getFocusMode() {
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);	
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -655,7 +646,7 @@ bool See3CAM_81::getFocusPosition() {
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -672,7 +663,7 @@ bool See3CAM_81::getFocusPosition() {
     //Set the Report Number
     g_out_packet_buf[1] = CAMERA_CONTROL_81; /* Report Number */
     g_out_packet_buf[2] = GET_FOCUS_POSITION; /* Report Number */
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {        
         perror("write");
@@ -683,7 +674,7 @@ bool See3CAM_81::getFocusPosition() {
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);        
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -716,7 +707,7 @@ bool See3CAM_81::setToDefault(){
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -732,7 +723,7 @@ bool See3CAM_81::setToDefault(){
     g_out_packet_buf[1] = CAMERA_CONTROL_81; /* Report Number */
     g_out_packet_buf[2] = SET_TO_DEFAULT_CAM81; /* Report Number */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -746,7 +737,7 @@ bool See3CAM_81::setToDefault(){
     {
 
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
 
         if (ret < 0) {
             //perror("read");
@@ -786,7 +777,7 @@ bool See3CAM_81::getOutputGpioLevelBackgrndFn(See3CAM_81 *see3cam81obj, gpioCont
 
     QMutex mutex;
     mutex.lock();
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         mutex.unlock();
         return false;
@@ -805,7 +796,7 @@ bool See3CAM_81::getOutputGpioLevelBackgrndFn(See3CAM_81 *see3cam81obj, gpioCont
     g_out_packet_buf[3] = gpioPinNumber; 		/* GPIO Pin Number */
 
     /* Send a Report to the Device */
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         mutex.unlock();
@@ -816,7 +807,7 @@ bool See3CAM_81::getOutputGpioLevelBackgrndFn(See3CAM_81 *see3cam81obj, gpioCont
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
 
         if (ret < 0) {
             //perror("read");
@@ -856,7 +847,7 @@ bool See3CAM_81::getInputGpioLevel(gpioControlsCam81 gpioPinNumber)
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -874,7 +865,7 @@ bool See3CAM_81::getInputGpioLevel(gpioControlsCam81 gpioPinNumber)
     g_out_packet_buf[3] = gpioPinNumber; 		/* GPIO Pin Number */
 
     /* Send a Report to the Device */
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         return false;
@@ -884,7 +875,7 @@ bool See3CAM_81::getInputGpioLevel(gpioControlsCam81 gpioPinNumber)
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
            // perror("read");
         } else {
@@ -976,7 +967,7 @@ bool See3CAM_81::setGpioLevelBackgrndFn(See3CAM_81 *see3cam81obj, gpioControlsCa
 
     QMutex mutex;
     mutex.lock();
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         mutex.unlock();
         return false;
@@ -997,7 +988,7 @@ bool See3CAM_81::setGpioLevelBackgrndFn(See3CAM_81 *see3cam81obj, gpioControlsCa
     g_out_packet_buf[4] = gpioValue; 	/* GPIO Value */
 
     /* Send a Report to the Device */
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         mutex.unlock();
@@ -1008,7 +999,7 @@ bool See3CAM_81::setGpioLevelBackgrndFn(See3CAM_81 *see3cam81obj, gpioControlsCa
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -1058,7 +1049,7 @@ bool See3CAM_81::setWbValuesBackgrndFn(See3CAM_81 *see3cam81obj, camRGBcolor rgb
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];    
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {        
         return false;
     }
@@ -1076,7 +1067,7 @@ bool See3CAM_81::setWbValuesBackgrndFn(See3CAM_81 *see3cam81obj, camRGBcolor rgb
     g_out_packet_buf[3] = (u_int8_t)((rgbValue & 0xFF00)>> 8);
     g_out_packet_buf[4] = (u_int8_t)((rgbValue & 0x00FF));
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         return false;
@@ -1085,7 +1076,7 @@ bool See3CAM_81::setWbValuesBackgrndFn(See3CAM_81 *see3cam81obj, camRGBcolor rgb
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);        
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -1121,7 +1112,7 @@ bool See3CAM_81::getWbValues(camRGBcolor rgbColor)
 
     int whiteBalanceGain;
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -1138,7 +1129,7 @@ bool See3CAM_81::getWbValues(camRGBcolor rgbColor)
 
     g_out_packet_buf[2] = rgbColor; /* red / blue / green */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
         return false;
@@ -1147,7 +1138,7 @@ bool See3CAM_81::getWbValues(camRGBcolor rgbColor)
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);               
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -1190,7 +1181,7 @@ bool See3CAM_81::setROIAutoFoucs(camROIAfMode see3camAfROIMode, QString winSize)
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -1209,7 +1200,7 @@ bool See3CAM_81::setROIAutoFoucs(camROIAfMode see3camAfROIMode, QString winSize)
         g_out_packet_buf[4] = winSize.toUInt();
     }
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -1223,7 +1214,7 @@ bool See3CAM_81::setROIAutoFoucs(camROIAfMode see3camAfROIMode, QString winSize)
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -1272,7 +1263,7 @@ bool See3CAM_81::setROIAutoFoucsCoordinates(uint vidResolnWidth, uint vidResolnH
     double inputYCord = yCord;
     int outputYCord = ((inputYCord - inputYLow) / (inputYHigh - inputYLow)) * (outputHigh - outputLow) + outputLow;
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -1289,7 +1280,7 @@ bool See3CAM_81::setROIAutoFoucsCoordinates(uint vidResolnWidth, uint vidResolnH
     g_out_packet_buf[3] = outputXCord; /* x coordinate */
     g_out_packet_buf[4] = outputYCord; /* y coordinate */
 
-    ret = write(uvccamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -1303,7 +1294,7 @@ bool See3CAM_81::setROIAutoFoucsCoordinates(uint vidResolnWidth, uint vidResolnH
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {
@@ -1335,7 +1326,7 @@ bool See3CAM_81::getAutoFocusROIModeAndWindowSize(){
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(uvccamera::hid_fd < 0)
+    if(UvcCamera::hid_fd < 0)
     {
         return false;
     }
@@ -1350,7 +1341,7 @@ bool See3CAM_81::getAutoFocusROIModeAndWindowSize(){
     g_out_packet_buf[1] = CAMERA_CONTROL_81;  /* camera control id */
     g_out_packet_buf[2] = GET_AF_ROI_MODE_81; /* 81 cam get auto focus ROI mode */
 
-    ret = write(uvccamera::hid_fd , g_out_packet_buf, BUFFER_LENGTH);
+    ret = write(UvcCamera::hid_fd , g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
         perror("write");
@@ -1363,7 +1354,7 @@ bool See3CAM_81::getAutoFocusROIModeAndWindowSize(){
     while(timeout)
     {
         /* Get a report from the device */
-        ret = read(uvccamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
+        ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
             //perror("read");
         } else {

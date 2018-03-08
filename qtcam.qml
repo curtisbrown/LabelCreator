@@ -1000,7 +1000,7 @@ Rectangle {
     }    
 
     Component.onCompleted: {
-        camproperty.createLogger()
+        //camproperty.createLogger()
         //When No camera is selected, click extension tab need to display no extension settings message
         if(device_box.currentIndex === 0)
         {
