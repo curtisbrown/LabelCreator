@@ -217,6 +217,7 @@ private:
 
 
 public slots:
+    void printControlsToText(QString ctrlName,QString ctrlType,QString ctrlID,QString ctrlStepSize = "0",QString ctrlMinValue= "0", QString ctrlMaxValue = "0",QString ctrlDefaultValue="0", QString ctrlHardwareDefault="0");
     // Added by Sankari : 10 Dec 2016
     // To Disable image capture dialog when taking trigger shot in trigger mode for 12cunir camera
     void disableImageCaptureDialog();
@@ -288,7 +289,7 @@ public slots:
      * @brief To set the camera resolution.
      * @param resolution - Actual resolution set to the camera.  For example, 640x480.
      */
-    void setResoultion(QString resolution);
+    void setResolution(QString resolution);
 
     /**
      * @brief To open the camera device(video node).

@@ -92,6 +92,8 @@ Videostreaming::Videostreaming()
     yuvpad = 1;
     frameToSkip = 1;
     fpsChangedForStill = false;
+
+    connect(this, &Videostreaming::newControlAdded, this, &Videostreaming::printControlsToText);
 }
 
 Videostreaming::~Videostreaming()
@@ -481,7 +483,7 @@ void Videostreaming::capFrame()
                     if(m_burstNumber > m_burstLength){
                         stopCapture();
                         vidCapFormatChanged(lastFormat);
-                        setResoultion(lastPreviewSize);
+                        setResolution(lastPreviewSize);
                         startAgain();
                         break;
                     }
@@ -554,7 +556,7 @@ void Videostreaming::doAfterChangeFPSAndShot(){
     if(fpsChangedForStill){
         stopCapture();
         vidCapFormatChanged(lastFormat);
-        setResoultion(lastPreviewSize);
+        setResolution(lastPreviewSize);
         frameIntervalChanged(lastFPSValue.toUInt());
         startAgain();
     }
@@ -948,7 +950,7 @@ void Videostreaming::makeShot(QString filePath,QString imgFormatType) {
     {
         stopCapture();
         vidCapFormatChanged(stillOutFormat);
-        setResoultion(stillSize);
+        setResolution(stillSize);
         startAgain();
     }
 }
@@ -982,7 +984,7 @@ void  Videostreaming::changeFPSandTakeShot(QString filePath,QString imgFormatTyp
         emit stillSkipCountWhenFPSChange(true);
         stopCapture();
         vidCapFormatChanged(stillOutFormat);
-        setResoultion(stillSize);
+        setResolution(stillSize);
         frameIntervalChanged(fpsIndex);
         startAgain();
         fpsChangedForStill = true;
@@ -1105,7 +1107,7 @@ void Videostreaming::makeBurstShot(QString filePath,QString imgFormatType, uint 
         updateStop = true;
         stopCapture();
         vidCapFormatChanged(stillOutFormat);
-        setResoultion(stillSize);
+        setResolution(stillSize);
         startAgain();
     }
 }
@@ -1140,6 +1142,23 @@ bool Videostreaming::getInterval(struct v4l2_fract &interval)
     if (m_has_interval)
         interval = m_interval;
     return m_has_interval;
+}
+
+void Videostreaming::printControlsToText(QString ctrlName,QString ctrlType,QString ctrlID,QString ctrlStepSize,QString ctrlMinValue, QString ctrlMaxValue,QString ctrlDefaultValue, QString ctrlHardwareDefault)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    QFile m_file("/home/curtis/Desktop/controls.txt");
+
+    if (m_file.open(QIODevice::Append)) {
+        QDataStream in(&m_file);
+        in << ctrlName << "," << ctrlType << "," << ctrlID << "," << ctrlStepSize << "," << ctrlMinValue
+           << "," << ctrlMaxValue << "," << ctrlDefaultValue << "," << ctrlHardwareDefault;
+
+        m_file.close();
+    } else {
+        qDebug() << "COULD NOT OPEN FILE";
+    }
 }
 
 void Videostreaming::displayFrame() {
@@ -1271,7 +1290,7 @@ void Videostreaming::lastFPS(QString fps) {
     lastFPSValue = fps;
 }
 
-void Videostreaming::setResoultion(QString resolution)
+void Videostreaming::setResolution(QString resolution)
 {
 
     qDebug() << "Resolution set at::" << resolution;
@@ -1572,33 +1591,20 @@ void Videostreaming::cameraFilterControls(bool actualValue) {
 QString Videostreaming::getSettings(unsigned int id) {
     struct v4l2_control c;
     c.id = id;
-    //Modified by Nithyesh
-    /*
-     * Previosuly it was
-     * if (ioctl(VIDIOC_G_CTRL, &c)) {
-     *      v4l2_queryctrl qctrl;
-     *      qctrl.id = id;
-     *      emit qDebug() << "Unable to get the Value, setting the Default value: "+ QString::number(c.value,10));
-     *      return QString::number(c.value,10);
-     *  }
-     *  QString value = QString::number(c.value,10);
-     *  return value;
-     */
     c.value = 0;
-    if (ioctl(VIDIOC_G_CTRL, &c)) {
-        //v4l2_queryctrl qctrl;
-        //qctrl.id = id;
+
+    if (ioctl(VIDIOC_G_CTRL, &c))
         qDebug() << "Unable to get the Value, setting the Default value: " << QString::number(c.value,10);
-        return QString::number(c.value,10);
-    }
-    QString value = QString::number(c.value,10);
-    return value;
+
+    return QString::number(c.value,10);
 }
 
 void Videostreaming::changeSettings(unsigned int id, QString value) {
     struct v4l2_control c;
     c.id = id;
     c.value = value.toInt();
+
+    // ioctl returns 0 (false) if positive outcome, otherwise -1 (true)
     if (ioctl(VIDIOC_S_CTRL, &c)) {
         qDebug() <<"Error in setting the Value";
     }

@@ -793,7 +793,7 @@ Rectangle {
         vidstreamproperty.lastFPS(fps)
         vidstreamproperty.vidCapFormatChanged(format)
         if (!vidFormatChanged){
-            vidstreamproperty.setResoultion(str)
+            vidstreamproperty.setResolution(str)
         }
         vidstreamproperty.frameIntervalChanged(fps)
         console.log("<<<<<<< line 799")
@@ -812,7 +812,7 @@ Rectangle {
         if(JS.videoCaptureFormat !== JS.stillCaptureFormat  || JS.stillCaptureResolution !== JS.videoCaptureResolution)
         {
             vidstreamproperty.vidCapFormatChanged(JS.videoCaptureFormat)
-            vidstreamproperty.setResoultion(JS.videoCaptureResolution)
+            vidstreamproperty.setResolution(JS.videoCaptureResolution)
         }
         console.log("<<<<<<< line 817")
         vidstreamproperty.startAgain()
@@ -823,14 +823,14 @@ Rectangle {
     function getFPSList(str, format) {
         vidstreamproperty.stopCapture()
         vidstreamproperty.vidCapFormatChanged(JS.stillCaptureFormat)
-        vidstreamproperty.setResoultion(JS.stillCaptureResolution)
+        vidstreamproperty.setResolution(JS.stillCaptureResolution)
         vidstreamproperty.updateFrameInterval(stillSettingsRootObject.stillClorComboValue, stillSettingsRootObject.stillOutputTextValue)
         JS.videoCaptureFormat = videoSettingsRootObject.videoColorComboIndex
         JS.stillCaptureResolution = stillSettingsRootObject.stillOutputTextValue
         if(JS.videoCaptureFormat !== JS.stillCaptureFormat  || JS.stillCaptureResolution !== JS.videoCaptureResolution)
         {
             vidstreamproperty.vidCapFormatChanged(JS.videoCaptureFormat)
-            vidstreamproperty.setResoultion(JS.videoCaptureResolution)
+            vidstreamproperty.setResolution(JS.videoCaptureResolution)
         }
         console.log("<<<<<<< line 834")
         vidstreamproperty.startAgain()
@@ -872,7 +872,7 @@ Rectangle {
         vidstreamproperty.triggerModeEnabled()
         vidstreamproperty.stopCapture()
         vidstreamproperty.vidCapFormatChanged(JS.stillCaptureFormat)
-        vidstreamproperty.setResoultion(JS.stillCaptureResolution);
+        vidstreamproperty.setResolution(JS.stillCaptureResolution);
         console.log("<<<<<<< line 876")
         vidstreamproperty.startAgain();
     }
@@ -889,7 +889,7 @@ Rectangle {
         {
             vidstreamproperty.stopCapture()
             vidstreamproperty.vidCapFormatChanged(JS.videoCaptureFormat)
-            vidstreamproperty.setResoultion(JS.videoCaptureResolution);
+            vidstreamproperty.setResolution(JS.videoCaptureResolution);
             console.log("<<<<<<< line 893")
             vidstreamproperty.startAgain();            
         }
