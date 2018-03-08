@@ -23,15 +23,16 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<Cameraproperty>("econ.camera.property",1,0,"Camproperty");
     qmlRegisterType<Videostreaming>("econ.camera.stream", 1, 0, "Videostreaming");
-    qmlRegisterType<uvccamera>("econ.camera.uvcsettings", 1, 0, "Uvccamera");
     qmlRegisterType<See3CAM_81>("econ.camera.see3cam81", 1, 0, "See3Cam81");
-    qmlRegisterType<See3CAM_Control>("econ.camera.see3camControl", 1, 0, "See3CamCtrl");
     qmlRegisterType<See3CAM_GPIOControl>("econ.camera.see3camGpioControl", 1, 0, "See3CamGpio");
+    qmlRegisterType<CommonEnums>("cameraenum", 1, 0, "CommonEnums");
 
     Control control;
+    Cameraproperty camProperty;
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("control", &control);
+    engine.rootContext()->setContextProperty("camModels", &camProperty.modelCam);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

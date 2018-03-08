@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Window 2.3
 import QtQuick.Controls 2.2
+import QtQuick.Controls.Styles 1.4
 import QtMultimedia 5.9
 import com.ctdi.labelcreator.control 1.0
 
@@ -13,6 +14,7 @@ Window {
     width: 1024
     height: 768
     title: qsTr("CTDI Label Creator")
+
     property int buttonMargin: 20
     property bool animateScan : false
     property bool animatePrint : false
@@ -77,8 +79,8 @@ Window {
             onCaptureComplete: { scanStatus.source = "qrc:/images/images/pass.png"; animateScan = false }
         }
     }
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     Grid {
         id: pictureActivityGrid
         width: parent.width
@@ -94,176 +96,12 @@ Window {
             height: parent.height / 2
             width: parent.width / 2
             border.color: "black"
-            Videostreaming {
-                id: vidstreamproperty
-                focus: true
-                //onTitleTextChanged:{
-                    enabled: true
-                    //captureBtnEnable(true)
-                    //videoRecordBtnEnable(true)
-                    //webcamKeyAccept: true
-                    //keyEventFiltering: false
-                    //messageDialog.title = _title.toString()
-                    //messageDialog.text = _text.toString()
-                    //messageDialog.visible = true
-                    //if(mouseClickCap){
-                        //Added by Sankari : 08 Mar 2017
-                        //Enable camera settings/extension settings tab after capturing image
-                      //  enableAllSettingsTab()
-                      //  mouseClickCap = false
-                    //}
-                //}
-                onEnableRfRectBackInPreview:{
-                    afterBurst() // signal to do anything need to do after capture continuous[burst] shots.
-                }
+            Loader {
+                id: qtCam
+                source: "qtcam.qml"
 
-                // Enable Face detection rect in preview
-                onEnableFactRectInPreview:{
-                    enableFaceRectafterBurst()
-                }
-
-                onNewControlAdded: {
-                    setControlValues(ctrlName.toString(),ctrlType,ctrlMinValue,ctrlMaxValue, ctrlStepSize, ctrlDefaultValue,ctrlID);
-                }
-
-                onDeviceUnplugged: {
-                    captureBtnEnable(false)
-                    videoRecordBtnEnable(false)
-                    keyEventFiltering = true
-                    //statusText = ""
-                    messageDialog.title = _title.toString()
-                    messageDialog.text = _text.toString()
-                    messageDialog.open()
-                    cameraDeviceUnplugged();
-                    device_box.oldIndex = 0
-                    device_box.currentIndex = 0
-                    disableImageSettings();
-                    // Added by Sankari: 25 May 2017. When device is unplugged, make preview area disabled
-                    vidstreamproperty.enabled = false
-
-                    if(captureVideoRecordRootObject.recordStopBtnVisible) {
-                        //statusText = "Saving..."
-                        vidstreamproperty.recordStop()
-                        captureVideoRecordRootObject.videoTimerUpdate(false)
-                        messageDialog.title = qsTr("Saved")
-                        messageDialog.text = qsTr("Video saved in the location:"+videofileName)
-                        messageDialog.open()
-                        videoPropertyItemEnable(true)
-                        stillPropertyItemEnable(true)
-                        device_box.enabled = true
-                        device_box.opacity = 1
-                        videoRecordBtnVisible(true)
-                        uvc_settings.enabled = true
-                        uvc_settings.opacity = 1
-                    }
-                    if(sideBarItems.visible){ // only when side bar items visible
-                        //When device is unplugged,need to destroy the active camera qml and create default qml file
-                        if(see3cam){
-                            see3cam.destroy()
-                            see3cam = Qt.createComponent("../UVCSettings/others/others.qml").createObject(root)
-                            see3cam.visible = !cameraColumnLayout.visible
-                            extensionTabVisible(see3cam.visible)
-                        }
-                    }
-                }
-
-                onLogDebugHandle: {
-                    camproperty.logDebugWriter(_text.toString())
-                }
-
-                onLogCriticalHandle: {
-                    camproperty.logCriticalWriter(_text.toString())
-                }
-
-                onAverageFPS: {
-                    if(device_box.opacity === 0.5)
-                    {
-                        //statusText = "Recording..." + " " + "Current FPS: " + fps + " Preview Resolution: "+ vidstreamproperty.width +"x"+vidstreamproperty.height + " " + "Color Format: " + videoSettingsRootObject.videoColorComboText
-                    }
-                    else
-                    {
-                        //statusText = "Current FPS: " + fps + " Preview Resolution: "+ vidstreamproperty.width +"x"+vidstreamproperty.height + " " + stillSettingsRootObject.captureTime + " " + "Color Format: " + videoSettingsRootObject.videoColorComboText
-                    }
-                }
-
-                onDefaultFrameSize: {
-                    if(m_Snap) {
-                        setColorComboOutputIndex(false,outputIndexValue)
-                    }
-                    setVideoColorComboOutputIndex(false,outputIndexValue)
-                    vidstreamproperty.width = defaultWidth
-                    vidstreamproperty.height = defaultHeight
-                }
-
-                onDefaultStillFrameSize: {
-                    setColorComboOutputIndex(false,outputIndexValue)
-                }
-
-                onDefaultOutputFormat: {
-                    if(m_Snap){
-                        setColorComboOutputIndex(true,formatIndexValue)
-                    }
-                    if(!stillPreview){
-                        setVideoColorComboOutputIndex(true,formatIndexValue)
-                    }
-                }
-
-                onDefaultFrameInterval:{
-                    videoFrameInterval(frameInterval)
-                }
-                onRcdStop: {
-                    recordFailedDialog.title = "Failed"
-                    recordFailedDialog.text = recordFail
-                    recordFailedDialog.open()
-                    vidstreamproperty.recordStop()
-                    captureVideoRecordRootObject.videoTimerUpdate(false)
-                }
-                onCaptureSaveTime: {
-                    stillSettingsRootObject.startCaptureTimer(saveTime);
-                }
-
-                onVideoRecord: {
-                    videofileName = fileName
-                }
-
-                onStillSkipCount:{
-                    frameSkipCount(stillResoln, videoResoln);
-                }
-
-                onStillSkipCountWhenFPSChange:{
-                    frameSkipCountWhenFPSChange(fpsChange)
-                }
-
-                // Added by Sankari - get FPS list
-                onSendFPSlist:{
-                    availableFpslist = fpsList;
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    onReleased:
-                    {
-                        if (mouse.button === Qt.LeftButton){
-                            if(closeSideBarClicked){
-                                captureRecordWhenSideBarItemsClosed()
-                            }
-                            else{
-                                if(captureVideoRecordRootObject.captureBtnVisible){
-                                    mouseClickCapture()
-                                } else if(captureVideoRecordRootObject.recordBtnVisible){
-                                    videoRecordBegin()
-                                } else if(captureVideoRecordRootObject.recordStopBtnVisible){
-                                    videoSaveVideo()
-                                }
-                            }
-                        }else if(mouse.button === Qt.RightButton){
-                            // passing mouse x,y cororinates, preview width and height
-                            mouseRightClicked(mouse.x, mouse.y, vidstreamproperty.width, vidstreamproperty.height)
-                        }
-                    }
-                }
             }
+
         }
         // Last Picture Taken by Camera
         Rectangle {
@@ -369,8 +207,8 @@ Window {
         }
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     Item {
         id: printButtonContainer
         height: 40
