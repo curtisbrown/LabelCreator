@@ -96,7 +96,7 @@ unsigned int UvcCamera::getTickCount()
 
 int UvcCamera::findEconDevice(QString parameter)
 {
-    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 
     qDebug() << "Check Devices of" << parameter;
     cameraMap.clear();
