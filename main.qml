@@ -7,6 +7,7 @@ import com.ctdi.labelcreator.control 1.0
 
 import econ.camera.property 1.0
 import econ.camera.stream 1.0
+import cameraenum 1.0
 
 Window {
     id: mainWindow
@@ -55,6 +56,7 @@ Window {
             onPressed: {
                 scanStatus.source = "qrc:/images/images/Running.gif"
                 animateScan = true
+                vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
                 control.captureImage()
             }
         }
@@ -96,10 +98,39 @@ Window {
             height: parent.height / 2
             width: parent.width / 2
             border.color: "black"
-            Loader {
-                id: qtCam
-                source: "qtcam.qml"
+            Text {
+                text: qsTr("Loading Camera...")
+                color: "black"
+                anchors.centerIn: parent
+                font.pointSize: 20
+            }
+//            Loader {
+//                id: qtCam
+//                source: "qtcam.qml"
 
+//            }
+
+            Videostreaming {
+                id: vidstreamproperty
+                Component.onCompleted: {
+                    stopCapture()
+                    closeDevice()
+                    setDevice("/dev/video")
+                    displayOutputFormat()
+                    displayStillResolution()
+                    displayVideoResolution()
+                    displayEncoderList()
+                    vidCapFormatChanged("0")
+                    setResolution("1920x1080")
+                    updateFrameInterval("YUYV (YUYV 4:2:2)", "1920x1080")
+                    setResolution("640x480")
+                    updateFrameInterval("YUYV (YUYV 4:2:2)", "640x480")
+                    startAgain()
+                    width = "640"
+                    height = "480"
+                    lastFPS("0")
+                    masterModeEnabled()
+                }
             }
 
         }

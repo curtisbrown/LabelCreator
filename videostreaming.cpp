@@ -923,6 +923,8 @@ void Videostreaming::updateFrameToSkip(uint stillSkip){
 }
 
 void Videostreaming::makeShot(QString filePath,QString imgFormatType) {
+
+    qDebug() << filePath << imgFormatType;
     captureTime.start();
 	// Added by Sankari : to set still skip
     emit stillSkipCount(stillSize, lastPreviewSize);
@@ -933,10 +935,10 @@ void Videostreaming::makeShot(QString filePath,QString imgFormatType) {
     m_saveImage = true;
 
     /* cu40 - IR image in bmp format */
-    if(imgFormatType == "IR data(8bit BMP)"){
+    if (imgFormatType == "IR data(8bit BMP)") {
         formatType = imgFormatType;
         imgFormatType = "bmp";
-    }else{ // other image formats or other cameras
+    } else { // other image formats or other cameras
         formatType = imgFormatType;
     }
 
@@ -946,8 +948,8 @@ void Videostreaming::makeShot(QString filePath,QString imgFormatType) {
     changeFpsAndShot = false;
     m_displayCaptureDialog = true;   
 
-    if (!((stillSize == lastPreviewSize) && (stillOutFormat == lastFormat)))
-    {
+    if (!((stillSize == lastPreviewSize) && (stillOutFormat == lastFormat))) {
+        qDebug() << "HELLOOOOOOOOOOOOOOOO";
         stopCapture();
         vidCapFormatChanged(stillOutFormat);
         setResolution(stillSize);
@@ -1225,7 +1227,8 @@ void Videostreaming::displayFrame() {
     }
 }
 
-void Videostreaming::stopCapture() {
+void Videostreaming::stopCapture()
+{
     if (fd() >= 0) {
         qDebug() << "Stop Previewing...";
         const char *m_data;
@@ -1246,7 +1249,7 @@ void Videostreaming::stopCapture() {
         // Free all buffers.
         reqbufs_mmap(reqbufs, V4L2_BUF_TYPE_VIDEO_CAPTURE, 1);  // videobuf workaround
         reqbufs_mmap(reqbufs, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0);
-        qDebug() << "Value of FD is:"+ QString::number(fd(),10);
+        qDebug() << "Value of FD is:" << QString::number(fd(),10);
         if (m_capNotifier) {
             delete m_capNotifier;
             delete m_capImage;
