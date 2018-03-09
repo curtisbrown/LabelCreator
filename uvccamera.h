@@ -285,7 +285,8 @@ public slots:
     void currentlySelectedDevice(QString deviceName);
 };
 
-class See3CAM_Control: public UvcCamera {
+class See3CAM_Control: public UvcCamera
+{
     Q_OBJECT
 public:
 
@@ -293,17 +294,17 @@ public:
      * @brief The flashTorchState enum are used to set state(Disable/Enable) of flash/torch of the camera.
      */
     enum flashTorchState {
-    flashOn = 1,
-    flashOff = 0,
-    torchOn = 1,
-    torchOff = 0
+        flashOn = 1,
+        flashOff = 0,
+        torchOn = 1,
+        torchOff = 0
     };
 
     /**
      * @brief Get the torch state
      *  - Reads the torch state from the device
      * @param torchState
-     * This value will hold the state level of the torch (either 0-torch not enabled or 1-torch enabled)     
+     * This value will hold the state level of the torch (either 0-torch not enabled or 1-torch enabled)
      * @return
      * true - read successfully the torch state level, false- fails to read the torch state level
      */
@@ -322,7 +323,7 @@ public:
     /**
      * @brief Get the flash state
      * @param Level
-     * This value will hold the state level of the flash (either 0-flash not enabled or 1-flash is enabled)     
+     * This value will hold the state level of the flash (either 0-flash not enabled or 1-flash is enabled)
      * @return
      * true - read successfully the flash state level, false- fails to read the flash state level
      */
@@ -366,20 +367,20 @@ public:
      * @brief The camGpioPin enum are used to set/read value for gpio Pin (OUT1,OUT2,OUT3,IN1,IN2,IN3) of the camera.
      */
     enum  camGpioPin{
-    OUT1 = 24,
-    OUT2 = 20,
-    OUT3 = 21,
-    IN1 = 19,
-    IN2 = 22,
-    IN3 = 33,
-    CAM81_IN3 = 0x01,
-    CAM81_IN6 = 0x02,
-    CAM81_OUT8 = 0x01,
-    CAM81_OUT9 = 0x02,
-    CAM81_OUT8_READVAL = 25,
-    CAM81_OUT9_READVAL = 24,
-    CAM81_IN3_READVAL = 21,
-    CAM81_IN6_READVAL = 23,
+        OUT1 = 24,
+        OUT2 = 20,
+        OUT3 = 21,
+        IN1 = 19,
+        IN2 = 22,
+        IN3 = 33,
+        CAM81_IN3 = 0x01,
+        CAM81_IN6 = 0x02,
+        CAM81_OUT8 = 0x01,
+        CAM81_OUT9 = 0x02,
+        CAM81_OUT8_READVAL = 25,
+        CAM81_OUT9_READVAL = 24,
+        CAM81_IN3_READVAL = 21,
+        CAM81_IN6_READVAL = 23,
     };
 
     Q_ENUMS(camGpioPin)
@@ -387,11 +388,11 @@ public:
      * @brief The camGpioValue enum are used to set status (High/Low) for the Gpio pin.
      */
     enum camGpioValue{
-    High = 1,
-    Low = 0
+        High = 1,
+        Low = 0
     };
 
-     Q_ENUMS(camGpioValue)
+    Q_ENUMS(camGpioValue)
 
 public slots:
     /**
@@ -414,7 +415,7 @@ public slots:
      * @return
      * false - Failed to change the GPIO level.
      */
-     bool setGpioLevel(camGpioPin gpioPin,camGpioValue gpioValue);
+    bool setGpioLevel(camGpioPin gpioPin,camGpioValue gpioValue);
 };
 
 class See3CAM_ModeControls {
