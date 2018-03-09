@@ -17,7 +17,6 @@ Window {
     title: qsTr("CTDI Label Creator")
 
     property int buttonMargin: 20
-    property bool animateScan : false
     property bool animatePrint : false
 
     Item {
@@ -55,7 +54,7 @@ Window {
 
             onPressed: {
                 scanStatus.source = "qrc:/images/images/Running.gif"
-                animateScan = true
+                loadingAnimation.start()
                 vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
                 control.captureImage()
             }
@@ -67,18 +66,23 @@ Window {
             anchors.right: scanButton.right
             anchors.verticalCenter: parent.verticalCenter
             RotationAnimator {
+                id: loadingAnimation
                 target: scanStatus;
                 from: 0;
                 to: 360;
                 duration: 2000;
                 loops: Animation.Infinite
-                running: animateScan
             }
         }
 
         Connections {
-            target: control
-            onCaptureComplete: { scanStatus.source = "qrc:/images/images/pass.png"; animateScan = false }
+            target: vidstreamproperty
+            onTitleTextChanged: {
+                loadingAnimation.duration = 10
+                loadingAnimation.loops = 1
+                loadingAnimation.restart()
+                scanStatus.source = "qrc:/images/images/pass.png"
+            }
         }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
