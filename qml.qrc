@@ -1,15 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>aboutview.qml</file>
-        <file>captureandvideorecord.qml</file>
-        <file>imagequalitysettings.qml</file>
-        <file>qtcam.qml</file>
-        <file>statusbar.qml</file>
-        <file>stillcapturesettings.qml</file>
-        <file>uvc81.qml</file>
-        <file>videocapturesettings.qml</file>
-        <file>about.qml</file>
-        <file>others.qml</file>
     </qresource>
 </RCC>
