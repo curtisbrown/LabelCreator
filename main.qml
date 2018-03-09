@@ -43,12 +43,12 @@ Window {
         Button {
             id: scanButton
             height: parent.height
-            width: 140
+            width: 200
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: text
-                text: qsTr("Scan Label")
+                text: qsTr("Capture Image")
                 color: "blue"
                 anchors.centerIn: parent
             }
@@ -104,11 +104,6 @@ Window {
                 anchors.centerIn: parent
                 font.pointSize: 20
             }
-//            Loader {
-//                id: qtCam
-//                source: "qtcam.qml"
-
-//            }
 
             Videostreaming {
                 id: vidstreamproperty
@@ -121,10 +116,17 @@ Window {
                     displayVideoResolution()
                     displayEncoderList()
                     vidCapFormatChanged("0")
-                    setResolution("1920x1080")
-                    updateFrameInterval("YUYV (YUYV 4:2:2)", "1920x1080")
                     setResolution("640x480")
                     updateFrameInterval("YUYV (YUYV 4:2:2)", "640x480")
+                    // Camera settings section
+                    vidstreamproperty.changeSettings("9963776", "2")    //Brightness
+                    vidstreamproperty.changeSettings("9963777", "5")    //Contrast
+                    vidstreamproperty.changeSettings("9963778", "3")    //Saturation
+                    vidstreamproperty.changeSettings("9963788", "1")    //White Balance Temperature, Auto
+                    vidstreamproperty.changeSettings("9963802", "2")    //White Balance Temperature
+                    vidstreamproperty.changeSettings("9963803", "1")    //Sharpness
+                    vidstreamproperty.changeSettings("9963856", "0")    //Pan (Absolute)
+                    vidstreamproperty.changeSettings("9963857", "0")    //Tilt (Absolute)
                     startAgain()
                     width = "640"
                     height = "480"
@@ -161,8 +163,8 @@ Window {
                     loops: Animation.Infinite
                 }
                 Connections {
-                    target: control
-                    onCaptureComplete: statusText.visible = false
+                    target: vidstreamproperty
+                    onTitleTextChanged: statusText.visible = false
                 }
             }
             Image {
@@ -172,12 +174,11 @@ Window {
                 height: parent.height / 2
                 width: parent.width / 2
                 fillMode: Image.PreserveAspectFit
-
             }
 
             Connections {
-                target: control
-                onCaptureComplete: scannedImage.source = "file:/home/curtis/Pictures/Tux.png"
+                target: vidstreamproperty
+                onTitleTextChanged: scannedImage.source = "file:/home/curtis/Pictures/Tux.png"
             }
         }
         // Cropped Image
