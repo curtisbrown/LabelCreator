@@ -8,6 +8,7 @@ import com.ctdi.labelcreator.control 1.0
 import econ.camera.property 1.0
 import econ.camera.stream 1.0
 import cameraenum 1.0
+import econ.camera.see3cam81 1.0
 
 Window {
     id: mainWindow
@@ -45,6 +46,7 @@ Window {
             width: 200
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
+
             Text {
                 id: text
                 text: qsTr("Capture Image")
@@ -64,6 +66,7 @@ Window {
             id: scanStatus
             source: ""
             anchors.right: scanButton.right
+            anchors.rightMargin: 5
             anchors.verticalCenter: parent.verticalCenter
             RotationAnimator {
                 id: loadingAnimation
@@ -111,6 +114,16 @@ Window {
 
             Videostreaming {
                 id: vidstreamproperty
+                anchors.centerIn: parent
+                See3Cam81 {
+                    id: see3Cam81
+                    Component.onCompleted: {
+                        //setEffectMode(See3Cam81.EFFECT_GRAYSCALE)
+                        setEffectMode(See3Cam81.EFFECT_NORMAL)
+                        setFocusMode(See3Cam81.CONTINUOUS_FOCUS_81)
+                    }
+                }
+
                 Component.onCompleted: {
                     stopCapture()
                     closeDevice()
