@@ -83,7 +83,7 @@ public:
     bool startCapture();
 
     // get current resoution set in v4l2
-    QString getResoultion();
+    QString getResolution();
 
     // Things need to do after change FPS and take shot
     void doAfterChangeFPSAndShot();
