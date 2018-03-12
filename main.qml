@@ -44,48 +44,48 @@ Window {
         Item {
             height: parent.height
             width: 200
-        Button {
-            id: captureButton
-            anchors.fill: parent
-            onPressed: {
-                captureStatus.source = "qrc:/images/images/Running.gif"
-                loadingAnimation.start()
-                vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
-                control.captureImage()
-            }
-            Text {
-                id: captureText
-                text: qsTr("Capture Image")
-                color: "blue"
-                anchors.centerIn: parent
-            }
-
-            Image {
-                id: captureStatus
-                source: ""
-                anchors.right: captureButton.right
-                anchors.rightMargin: 5
-                anchors.verticalCenter: parent.verticalCenter
-                RotationAnimator {
-                    id: loadingAnimation
-                    target: captureStatus;
-                    from: 0;
-                    to: 360;
-                    duration: 2000;
-                    loops: Animation.Infinite
+            Button {
+                id: captureButton
+                anchors.fill: parent
+                onPressed: {
+                    captureStatus.source = "qrc:/images/images/Running.gif"
+                    loadingAnimation.start()
+                    vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
+                    control.captureImage()
+                }
+                Text {
+                    id: captureText
+                    text: qsTr("Capture image")
+                    color: "blue"
+                    anchors.centerIn: parent
                 }
 
-                Connections {
-                    target: vidstreamproperty
-                    onTitleTextChanged: {
-                        loadingAnimation.duration = 10
-                        loadingAnimation.loops = 1
-                        loadingAnimation.restart()
-                        captureStatus.source = "qrc:/images/images/pass.png"
+                Image {
+                    id: captureStatus
+                    source: ""
+                    anchors.right: captureButton.right
+                    anchors.rightMargin: 5
+                    anchors.verticalCenter: parent.verticalCenter
+                    RotationAnimator {
+                        id: loadingAnimation
+                        target: captureStatus;
+                        from: 0;
+                        to: 360;
+                        duration: 2000;
+                        loops: Animation.Infinite
+                    }
+
+                    Connections {
+                        target: vidstreamproperty
+                        onTitleTextChanged: {
+                            loadingAnimation.duration = 10
+                            loadingAnimation.loops = 1
+                            loadingAnimation.restart()
+                            captureStatus.source = "qrc:/images/images/pass.png"
+                        }
                     }
                 }
             }
-        }
         }
 
         Button {
@@ -94,7 +94,7 @@ Window {
             width: 200
             onPressed: {
                 printStatus.source = "qrc:/images/images/Running.gif"
-                animatePrint = true
+                printingAnimation.start()
                 control.printLabel()
             }
             Text {
@@ -110,20 +110,17 @@ Window {
                 anchors.rightMargin: 5
                 anchors.verticalCenter: parent.verticalCenter
                 RotationAnimator {
+                    id: printingAnimation
                     target: printStatus;
                     from: 0;
                     to: 360;
                     duration: 2000;
                     loops: Animation.Infinite
-                    running: animatePrint
                 }
 
                 Connections {
                     target: control
-                    onPrintingComplete: {
-                        scanStatus.source = "qrc:/images/images/pass.png"
-                        animatePrint = false
-                    }
+                    onPrintingComplete: printStatus.source = "qrc:/images/images/pass.png"
                 }
             }
         }
@@ -137,8 +134,12 @@ Window {
                 statusText.visible = true
                 scannedImage.source = ""
                 captureStatus.source = ""
+                loadingAnimation.duration = 2000
+                loadingAnimation.loops = Animation.Infinite
                 printStatus.source = ""
-                animatePrint = false;
+                printingAnimation.duration = 2000
+                printingAnimation.loops = Animation.Infinite
+
             }
             Text {
                 id: resetText

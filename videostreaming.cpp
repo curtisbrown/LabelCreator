@@ -1534,7 +1534,7 @@ void Videostreaming::changeSettings(unsigned int id, QString value)
 
     // ioctl returns 0 (false) if positive outcome, otherwise -1 (true)
     if (ioctl(VIDIOC_S_CTRL, &c))
-        qDebug() << "Error in setting the Value";
+        qDebug() << "Error in setting the Value of: " << c.id << ", with a value of: " << value;
     else
         qDebug() <<  "Set Camera value SUCCESS";
 }
