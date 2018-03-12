@@ -26,7 +26,6 @@ Control::Control(QObject *parent) :
 
 void Control::setFocus()
 {
-    m_utilities.debugLogMessage("......................");
     m_utilities.debugLogMessage(Q_FUNC_INFO);
 
     m_see3Cam81.setFocusMode(See3CAM_81::MANUAL_FOCUS_81);
