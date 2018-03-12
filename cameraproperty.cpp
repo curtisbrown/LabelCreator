@@ -133,10 +133,7 @@ void Cameraproperty::openHIDDevice(QString deviceName)
         qDebug() << "ERROR opening HID device";
 }
 
-void Cameraproperty::closeLibUsbDeviceAscella(){
-    m_uvcCam.exitExtensionUnitAscella();
-}
-
-void Cameraproperty::notifyUser(QString title, QString text){
+void Cameraproperty::notifyUser(QString title, QString text)
+{
     emit notifyUserInfo(title, text);
 }

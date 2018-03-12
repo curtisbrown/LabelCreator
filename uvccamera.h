@@ -165,7 +165,6 @@ public:
 
     int findEconDevice(QString);
     void getDeviceNodeName(QString);
-    bool closeAscellaDevice();
 
     static libusb_device_handle* handle;  /* handle for USB device */
     int kernelDriverDetached;
@@ -265,19 +264,6 @@ public slots:
      */
     void exitExtensionUnit();
 
-    /**
-     * @brief initExtensionUnitAscella
-     *  - Open the hid handle for Ascella
-     * @return
-     */
-    int initExtensionUnitAscella();
-
-    /**
-     * @brief Close the hid handle
-     *  - This function will close the last opened HID device
-     * @
-     */
-    bool exitExtensionUnitAscella();
     /**
      * @brief currentlySelectedDevice - This slot contains currently selected device name
      * @param deviceName - Name of the camera device

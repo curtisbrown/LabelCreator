@@ -224,77 +224,6 @@ void UvcCamera::currentlySelectedDevice(QString deviceName)
     emit currentlySelectedCameraEnum(selectedDeviceEnum);
 }
 
-int UvcCamera::initExtensionUnitAscella(){
-    int ret;
-
-    exitExtensionUnitAscella();
-
-    ret = -1;
-    kernelDriverDetached = 0;
-    libusb_init(NULL);
-    libusb_set_debug(NULL, 3);
-
-    handle = libusb_open_device_with_vid_pid(NULL, ASCELLA_VID, ASCELLA_PID);
-
-    if(!handle) {
-        qDebug() <<"unable to open the device";
-    } else {
-        qDebug() << "Device accessed successfully";
-
-        if (libusb_kernel_driver_active(handle, 2))
-        {
-            ret = libusb_detach_kernel_driver(handle, 2);
-            if (ret == 0)
-            {
-                kernelDriverDetached = 1;
-                qDebug() << "driver detachment successful";
-            }
-        }
-
-        ret = libusb_claim_interface(handle, 2);
-        if(ret == 0) {
-            qDebug() << "Interface Claimed successfully";
-        }
-        else{
-            qDebug() << "error claiming interface";
-        }
-
-    }
-
-    return ret;
-
-}
-
-bool UvcCamera::closeAscellaDevice()
-{
-    int res;
-
-    if (handle == NULL)
-        return false;
-
-    res = libusb_release_interface(handle, 2);
-
-    if (res != 0) {
-        qDebug() <<"Error releasing interface";
-        return false;
-    }
-
-    if (kernelDriverDetached) {
-        libusb_attach_kernel_driver(handle, 2);
-        qDebug() << "Attaching libusb kernel driver";
-    }
-
-    if(handle) {
-        libusb_close(handle);
-        qDebug() << "Closing libusb";
-    }
-
-    libusb_exit(NULL);
-    handle = NULL;
-
-    return true;
-}
-
 bool UvcCamera::readFirmwareVersion(quint8 *pMajorVersion, quint8 *pMinorVersion1, quint16 *pMinorVersion2, quint16 *pMinorVersion3)
 {
     if(UvcCamera::hid_fd < 0)
@@ -471,15 +400,6 @@ void UvcCamera::exitExtensionUnit()
 {
     close(hid_fd);
 }
-
-bool UvcCamera::exitExtensionUnitAscella()
-{
-    if(handle != NULL)
-        return closeAscellaDevice();
-    else
-        return true;
-}
-
 
 bool UvcCamera::sendOSCode()
 {

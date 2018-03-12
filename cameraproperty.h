@@ -89,8 +89,6 @@ public slots:
      */
     void openHIDDevice(QString deviceName);
 
-    void closeLibUsbDeviceAscella();
-
     // TO BE DELETED
     void notifyUser(QString title, QString text);
 
