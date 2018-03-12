@@ -13,8 +13,8 @@ import econ.camera.see3cam81 1.0
 Window {
     id: mainWindow
     visible: true
-    width: 1024
-    height: 768
+    width: Screen.width
+    height: Screen.height
     title: qsTr("CTDI Label Creator")
 
     property int buttonMargin: 20
@@ -34,57 +34,117 @@ Window {
         }
     }
 
-    Item {
-        id: scanButtonContainer
+    Row {
+        id: buttonRow
         height: 40
-        width: parent.width
         anchors.top: logo.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 5
 
-        Button {
-            id: scanButton
+        Item {
             height: parent.height
             width: 200
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-
+        Button {
+            id: captureButton
+            anchors.fill: parent
+            onPressed: {
+                captureStatus.source = "qrc:/images/images/Running.gif"
+                loadingAnimation.start()
+                vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
+                control.captureImage()
+            }
             Text {
-                id: text
+                id: captureText
                 text: qsTr("Capture Image")
                 color: "blue"
                 anchors.centerIn: parent
             }
 
+            Image {
+                id: captureStatus
+                source: ""
+                anchors.right: captureButton.right
+                anchors.rightMargin: 5
+                anchors.verticalCenter: parent.verticalCenter
+                RotationAnimator {
+                    id: loadingAnimation
+                    target: captureStatus;
+                    from: 0;
+                    to: 360;
+                    duration: 2000;
+                    loops: Animation.Infinite
+                }
+
+                Connections {
+                    target: vidstreamproperty
+                    onTitleTextChanged: {
+                        loadingAnimation.duration = 10
+                        loadingAnimation.loops = 1
+                        loadingAnimation.restart()
+                        captureStatus.source = "qrc:/images/images/pass.png"
+                    }
+                }
+            }
+        }
+        }
+
+        Button {
+            id: printButton
+            height: parent.height
+            width: 200
             onPressed: {
-                scanStatus.source = "qrc:/images/images/Running.gif"
-                loadingAnimation.start()
-                vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
-                control.captureImage()
+                printStatus.source = "qrc:/images/images/Running.gif"
+                animatePrint = true
+                control.printLabel()
+            }
+            Text {
+                id: printText
+                text: qsTr("Print label")
+                color: "blue"
+                anchors.centerIn: parent
+            }
+            Image {
+                id: printStatus
+                source: ""
+                anchors.right: printButton.right
+                anchors.rightMargin: 5
+                anchors.verticalCenter: parent.verticalCenter
+                RotationAnimator {
+                    target: printStatus;
+                    from: 0;
+                    to: 360;
+                    duration: 2000;
+                    loops: Animation.Infinite
+                    running: animatePrint
+                }
+
+                Connections {
+                    target: control
+                    onPrintingComplete: {
+                        scanStatus.source = "qrc:/images/images/pass.png"
+                        animatePrint = false
+                    }
+                }
             }
         }
 
-        Image {
-            id: scanStatus
-            source: ""
-            anchors.right: scanButton.right
-            anchors.rightMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            RotationAnimator {
-                id: loadingAnimation
-                target: scanStatus;
-                from: 0;
-                to: 360;
-                duration: 2000;
-                loops: Animation.Infinite
+        Button {
+            id: resetButton
+            height: parent.height
+            width: 200
+            onPressed: {
+                control.resetAllContent()
+                statusText.visible = true
+                scannedImage.source = ""
+                captureStatus.source = ""
+                printStatus.source = ""
+                animatePrint = false;
             }
-        }
-
-        Connections {
-            target: vidstreamproperty
-            onTitleTextChanged: {
-                loadingAnimation.duration = 10
-                loadingAnimation.loops = 1
-                loadingAnimation.restart()
-                scanStatus.source = "qrc:/images/images/pass.png"
+            Text {
+                id: resetText
+                text: qsTr("Reset")
+                color: "red"
+                anchors.centerIn: parent
             }
         }
     }
@@ -93,8 +153,10 @@ Window {
     Grid {
         id: pictureActivityGrid
         width: parent.width
-        height: parent.height - (mainWindow.buttonMargin * 2) - 20 - 40 - 40
-        anchors.top: scanButtonContainer.bottom
+        height: parent.height - (mainWindow.buttonMargin * 2) - 20 - 40 - 10
+
+        anchors.top: buttonRow.bottom
+        anchors.topMargin: 20
 
         rows: 2
         columns: 2
@@ -146,7 +208,7 @@ Window {
                     vidstreamproperty.changeSettings("9963857", "0")    //Tilt (Absolute)
                     startAgain()
                     width = "640"
-                    height = "480"
+                    height = "460"
                     lastFPS("0")
                     masterModeEnabled()
                 }
@@ -258,73 +320,4 @@ Window {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    Item {
-        id: printButtonContainer
-        height: 40
-        width: parent.width
-        anchors.top: pictureActivityGrid.bottom
-        anchors.bottom: parent.bottom
-        Row {
-            id: buttonRow
-            height: parent.height
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 20
-            Button {
-                id: printButton
-                height: parent.height
-                width: 140
-                onPressed: {
-                    printStatus.source = "qrc:/images/images/Running.gif"
-                    animatePrint = true
-                    control.printLabel()
-                }
-                Text {
-                    id: printText
-                    text: qsTr("Print label")
-                    color: "blue"
-                    anchors.centerIn: parent
-                }
-                Image {
-                    id: printStatus
-                    source: ""
-                    anchors.right: printButton.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    RotationAnimator {
-                        target: printStatus;
-                        from: 0;
-                        to: 360;
-                        duration: 2000;
-                        loops: Animation.Infinite
-                        running: animatePrint
-                    }
-
-                    Connections {
-                        target: control
-                        onPrintingComplete: { scanStatus.source = "qrc:/images/images/pass.png"; animatePrint = false }
-                    }
-                }
-            }
-
-            Button {
-                id: resetButton
-                height: parent.height
-                width: 140
-                onPressed: {
-                    control.resetAllContent()
-                    statusText.visible = true
-                    scannedImage.source = ""
-                    scanStatus.source = ""
-                    printStatus.source = ""
-                    animatePrint = false;
-                    animateScan = false;
-                }
-                Text {
-                    id: resetText
-                    text: qsTr("Reset")
-                    color: "red"
-                    anchors.centerIn: parent
-                }
-            }
-        }
-    }
 }
