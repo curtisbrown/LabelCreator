@@ -23,3 +23,14 @@ Control::Control(QObject *parent) :
     m_cameraProperty.openHIDDevice("See3CAM_81 ");
     m_uvc.getFirmWareVersion();
 }
+
+void Control::setFocus()
+{
+    m_utilities.debugLogMessage("......................");
+    m_utilities.debugLogMessage(Q_FUNC_INFO);
+
+    m_see3Cam81.setFocusMode(See3CAM_81::MANUAL_FOCUS_81);
+    m_see3Cam81.setFocusPosition(311);
+
+    m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE);
+}

@@ -1195,7 +1195,7 @@ void Videostreaming::closeDevice() {
 }
 
 void Videostreaming::startAgain() {
-    if(openSuccess) {
+    if (openSuccess) {
         displayFrame();
     }
 }

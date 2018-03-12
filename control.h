@@ -10,6 +10,7 @@
 
 #include "cameraproperty.h"
 #include "uvccamera.h"
+#include "seecam_81.h"
 
 class Control : public QObject
 {
@@ -25,6 +26,7 @@ signals:
     void printingComplete();
 
 public slots:
+    Q_INVOKABLE void setFocus();
 
 private:
     Utilities m_utilities;
@@ -32,6 +34,7 @@ private:
     LabelPrinter m_labelPrint;
     Cameraproperty m_cameraProperty;
     UvcCamera m_uvc;
+    See3CAM_81 m_see3Cam81;
 
 };
 

@@ -34,11 +34,10 @@ bool See3CAM_81::setEffectMode(const See3CAM_81::specialEffects &specialEffect)
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
     if(UvcCamera::hid_fd < 0)
-    {
         return false;
-    }
+
     bool timeout = true;
-    int ret =0;
+    int ret = 0;
     unsigned int start, end = 0;
 
     //Initialize the buffer
@@ -52,32 +51,30 @@ bool See3CAM_81::setEffectMode(const See3CAM_81::specialEffects &specialEffect)
 
     ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
-        perror("write");
+        qDebug() << Q_FUNC_INFO << "ERROR: write";
         return false;
     }
 
     /* Read the Status code from the device */
     start = uvc.getTickCount();
 
-    while(timeout)
-    {
+    while (timeout) {
         /* Get a report from the device */
         ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
-            //perror("read");
+            //qDebug() << Q_FUNC_INFO << "ERROR: read";
         } else {
-            if (g_in_packet_buf[3]==SET_FAIL) {
+            if (g_in_packet_buf[3] == SET_FAIL) {
                 return false;
             } else if(g_in_packet_buf[0] == CAMERA_CONTROL_81 &&
-                g_in_packet_buf[1]==SETSPECIALEFFECT_81 &&
-                g_in_packet_buf[2]==specialEffect &&
-                g_in_packet_buf[3]==SET_SUCCESS) {
+                g_in_packet_buf[1] == SETSPECIALEFFECT_81 &&
+                g_in_packet_buf[2] == specialEffect &&
+                g_in_packet_buf[3] == SET_SUCCESS) {
                     timeout=false;
             }
         }
         end = uvc.getTickCount();
-        if(end - start > TIMEOUT)
-        {
+        if(end - start > TIMEOUT) {
             timeout = false;
             return false;
         }
@@ -432,8 +429,7 @@ bool See3CAM_81::setFocusModeBackgrndFn(See3CAM_81 *see3cam81obj, uint focusMode
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
-    if(UvcCamera::hid_fd < 0)
-    {        
+    if(UvcCamera::hid_fd < 0) {
         emit see3cam81obj->returnFromSetFocusMode(false);
         return false;
     }
@@ -454,7 +450,7 @@ bool See3CAM_81::setFocusModeBackgrndFn(See3CAM_81 *see3cam81obj, uint focusMode
     ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
-        perror("write");        
+        qDebug() << Q_FUNC_INFO << "ERROR: write";
         emit see3cam81obj->returnFromSetFocusMode(false);
         return false;
     }
@@ -466,7 +462,7 @@ bool See3CAM_81::setFocusModeBackgrndFn(See3CAM_81 *see3cam81obj, uint focusMode
         /* Get a report from the device */
         ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
-            //perror("read");
+            //qDebug() << Q_FUNC_INFO << "ERROR: read";
         } else {
             if((g_in_packet_buf[0] == CAMERA_CONTROL_81)&&
                     (g_in_packet_buf[1]==SET_FOCUS_MODE)&&
@@ -477,8 +473,7 @@ bool See3CAM_81::setFocusModeBackgrndFn(See3CAM_81 *see3cam81obj, uint focusMode
             }
         }
         end = see3cam81obj->uvc.getTickCount();
-        if(end - start > TIMEOUT)
-        {            
+        if(end - start > TIMEOUT) {
             timeout = false;            
             emit see3cam81obj->returnFromSetFocusMode(false);
             return false;
@@ -558,12 +553,10 @@ bool See3CAM_81::setFocusPosition(int focusPosition)
 {
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
 
-    if(UvcCamera::hid_fd < 0)
-    {
+    if (UvcCamera::hid_fd < 0)
         return false;
-    }
 
-    int ret =0;
+    int ret = 0;
 
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
@@ -571,12 +564,12 @@ bool See3CAM_81::setFocusPosition(int focusPosition)
     //Set the Report Number
     g_out_packet_buf[1] = CAMERA_CONTROL_81; /* Report Number */
     g_out_packet_buf[2] = SET_FOCUS_POSITION; /* Report Number */
-    g_out_packet_buf[3] = ((focusPosition&0xFF00)>>8); /* MSB of focus postion */
-    g_out_packet_buf[4] = (focusPosition&0x00FF); /* LSB of focus postion */
+    g_out_packet_buf[3] = ((focusPosition & 0xFF00 ) >> 8); /* MSB of focus postion */
+    g_out_packet_buf[4] = (focusPosition & 0x00FF); /* LSB of focus postion */
     ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
-        perror("write");
+        qDebug() << ("ERROR: write to Fd invalid");
         return false;
     }
     return true;
@@ -586,18 +579,16 @@ bool See3CAM_81::setFocusPosition(int focusPosition)
  * @brief See3CAM_81::getFocusMode - get focus mode from camera
  * @return true/false
  */
-bool See3CAM_81::getFocusMode() {
-
+bool See3CAM_81::getFocusMode()
+{
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 
     if(UvcCamera::hid_fd < 0)
-    {	
         return false;
-    }
 
     bool timeout = true;
-    int ret =0;
+    int ret = 0;
     unsigned int start, end = 0;
 
     //Initialize the buffer
@@ -611,17 +602,16 @@ bool See3CAM_81::getFocusMode() {
     ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
-        perror("write");
+        qDebug() << Q_FUNC_INFO << "write";
         return false;
     }
     /* Read the Status code from the device */
     start = uvc.getTickCount();
-    while(timeout)
-    {
+    while(timeout) {
         /* Get a report from the device */
         ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
-            //perror("read");
+            //qDebug() << Q_FUNC_INFO << " ERROR: read";
         } else {
             if((g_in_packet_buf[0] == CAMERA_CONTROL_81)&&
                     (g_in_packet_buf[1]==GET_FOCUS_MODE)) {		

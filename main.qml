@@ -181,7 +181,6 @@ Window {
                 See3Cam81 {
                     id: see3Cam81
                     Component.onCompleted: {
-                        //setEffectMode(See3Cam81.EFFECT_GRAYSCALE)
                         setEffectMode(See3Cam81.EFFECT_NORMAL)
                         setFocusMode(See3Cam81.CONTINUOUS_FOCUS_81)
                     }
@@ -199,19 +198,22 @@ Window {
                     setResolution("640x480")
                     updateFrameInterval("YUYV (YUYV 4:2:2)", "640x480")
                     // Camera settings section
-                    vidstreamproperty.changeSettings("9963776", "2")    //Brightness
-                    vidstreamproperty.changeSettings("9963777", "5")    //Contrast
-                    vidstreamproperty.changeSettings("9963778", "3")    //Saturation
-                    vidstreamproperty.changeSettings("9963788", "1")    //White Balance Temperature, Auto
-                    vidstreamproperty.changeSettings("9963802", "2")    //White Balance Temperature
-                    vidstreamproperty.changeSettings("9963803", "1")    //Sharpness
-                    vidstreamproperty.changeSettings("9963856", "0")    //Pan (Absolute)
-                    vidstreamproperty.changeSettings("9963857", "0")    //Tilt (Absolute)
+                    vidstreamproperty.changeSettings("9963776", "2")    // Brightness
+                    vidstreamproperty.changeSettings("9963777", "5")    // Contrast
+                    vidstreamproperty.changeSettings("9963778", "3")    // Saturation
+                    vidstreamproperty.changeSettings("9963788", "0")    // White Balance Temperature, Auto
+                    vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
+                    vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
+                    vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
                     startAgain()
                     width = "640"
                     height = "460"
                     lastFPS("0")
                     masterModeEnabled()
+                }
+                Timer {
+                    interval: 5000; running: true; repeat: false
+                    onTriggered: control.setFocus()
                 }
             }
 
