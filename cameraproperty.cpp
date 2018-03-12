@@ -89,7 +89,7 @@ void Cameraproperty::checkforDevice()
                     return void();
                 }
             } else {
-                qDebug() << qTempStr+"Device opening failed" << qDevCount;
+                qDebug() << qTempStr << "Device opening failed" << qDevCount;
             }
         }
     } else {
@@ -130,7 +130,7 @@ void Cameraproperty::openHIDDevice(QString deviceName)
     if(hidInit)
         emit initExtensionUnitSuccess();
     else
-        qDebug() << "ERROR";
+        qDebug() << "ERROR opening HID device";
 }
 
 void Cameraproperty::closeLibUsbDeviceAscella(){
