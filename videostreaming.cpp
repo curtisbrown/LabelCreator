@@ -27,6 +27,8 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QRectF>
+#include <QStandardPaths>
+
 #include <fcntl.h>
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
@@ -948,48 +950,66 @@ void Videostreaming::triggerModeShot(QString filePath,QString imgFormatType)
 
 void Videostreaming::getFileName(QString filePath, QString imgFormatType)
 {
-    QDateTime dateTime = QDateTime::currentDateTime();
-    QDir tmpDir;
+    qDebug() << Q_FUNC_INFO;
+    Q_UNUSED(filePath);
 
-    if (tmpDir.cd(filePath)) {
-        QStringList filters,list;
-        filters << "Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-*"+imgFormatType;
-        tmpDir.setNameFilters(filters);
-        list << tmpDir.entryList(filters,QDir::Files);
-        if(!list.isEmpty()) {
-            QList<int> tmpStr;
-            for(int i=0;i<list.count();i++) {
-                tmpStr.append(list.at(i).split(".").at(0).split("-").at(1).toInt());
-            }
+    QString picturePath = QStandardPaths::QStandardPaths::locate(QStandardPaths::PicturesLocation, QString(), QStandardPaths::LocateDirectory);
 
-            int lastNumber = findMax(&tmpStr);
-            lastNumber++;
-            filename = filePath +"/Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-" +QString::number(lastNumber,10)+"."+ imgFormatType;
-        } else {
-            filename = filePath +"/Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-" +QString::number(1,10)+"."+ imgFormatType;
-        }
-    } else {
-        QStringList filters,list;
-        filters << "Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-*"+imgFormatType;
-        tmpDir.cd(tmpDir.currentPath());
-        tmpDir.setNameFilters(filters);
-        list << tmpDir.entryList(filters,QDir::Files);
-        if(!list.isEmpty()) {
-            QList<int> tmpStr;
-            for(int i=0;i<list.count();i++) {
-                tmpStr.append(list.at(i).split(".").at(0).split("-").at(1).toInt());
-            }
-            int lastNumber = findMax(&tmpStr);
-            lastNumber++;
-            filename = "Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-" +QString::number(lastNumber,10)+"."+ imgFormatType;
-        } else {
-            filename = "Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-" +QString::number(1,10)+"."+ imgFormatType;
-        }
+    filename = picturePath + "latestCapture." + imgFormatType;
+
+    QFile newCapture(filename);
+    if (newCapture.exists()) {
+        newCapture.remove();
     }
 
-    setFilePath(filePath);
+    setFilePath(picturePath);
     setImageFormatType(imgFormatType);
 }
+
+//void Videostreaming::getFileName(QString filePath, QString imgFormatType)
+//{
+//    QDateTime dateTime = QDateTime::currentDateTime();
+//    QDir tmpDir;
+
+//    if (tmpDir.cd(filePath)) {
+//        QStringList filters,list;
+//        filters << "Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-*"+imgFormatType;
+//        tmpDir.setNameFilters(filters);
+//        list << tmpDir.entryList(filters,QDir::Files);
+//        if(!list.isEmpty()) {
+//            QList<int> tmpStr;
+
+//            for (int i = 0; i < list.count(); i++)
+//                tmpStr.append(list.at(i).split(".").at(0).split("-").at(1).toInt());
+
+//            int lastNumber = findMax(&tmpStr);
+//            lastNumber++;
+//            filename = filePath +"/Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-" +QString::number(lastNumber,10)+"."+ imgFormatType;
+//        } else {
+//            filename = filePath +"/Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-" +QString::number(1,10)+"."+ imgFormatType;
+//        }
+//    } else {
+//        QStringList filters,list;
+//        filters << "Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-*"+imgFormatType;
+//        tmpDir.cd(tmpDir.currentPath());
+//        tmpDir.setNameFilters(filters);
+//        list << tmpDir.entryList(filters,QDir::Files);
+//        if(!list.isEmpty()) {
+//            QList<int> tmpStr;
+//            for(int i=0;i<list.count();i++) {
+//                tmpStr.append(list.at(i).split(".").at(0).split("-").at(1).toInt());
+//            }
+//            int lastNumber = findMax(&tmpStr);
+//            lastNumber++;
+//            filename = "Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-" +QString::number(lastNumber,10)+"."+ imgFormatType;
+//        } else {
+//            filename = "Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-" +QString::number(1,10)+"."+ imgFormatType;
+//        }
+//    }
+
+//    setFilePath(filePath);
+//    setImageFormatType(imgFormatType);
+//}
 
 void Videostreaming::setFilePath(QString filePath)
 {

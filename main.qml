@@ -3,6 +3,7 @@ import QtQuick.Window 2.3
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Styles 1.4
 import QtMultimedia 5.9
+import Qt.labs.platform 1.0
 import com.ctdi.labelcreator.control 1.0
 
 import econ.camera.property 1.0
@@ -260,7 +261,9 @@ Window {
 
             Connections {
                 target: vidstreamproperty
-                onTitleTextChanged: scannedImage.source = "file:/home/curtis/Pictures/Tux.png"
+                onTitleTextChanged: {
+                    scannedImage.source = StandardPaths.standardLocations(StandardPaths.PicturesLocation) + "/latestCapture.jpg"
+                }
             }
         }
         // Cropped Image
