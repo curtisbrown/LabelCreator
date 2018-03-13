@@ -812,16 +812,15 @@ bool Videostreaming::startCapture()
 int Videostreaming::findMax(QList<int> *list) {
 
     int array[list->count()];
-    for(int j=0;j<list->count();j++)
-        array[j] = list->at(j);
     int index_of_min = 0;
-    for(int x=0; x<list->count(); x++)
-    {
+
+    for(int j = 0; j < list->count(); j++)
+        array[j] = list->at(j);
+
+    for(int x=0; x<list->count(); x++) {
         index_of_min = x;
-        for(int y=x; y<list->count(); y++)
-        {
-            if(array[index_of_min] > array[y])
-            {
+        for (int y = x; y < list->count(); y++) {
+            if(array[index_of_min] > array[y]) {
                 index_of_min = y;
             }
         }
@@ -829,6 +828,7 @@ int Videostreaming::findMax(QList<int> *list) {
         array[x] = array[index_of_min];
         array[index_of_min] = temp;
     }
+
     return array[index_of_min];
 }
 
@@ -836,12 +836,13 @@ int Videostreaming::findMax(QList<int> *list) {
  * @brief Videostreaming::updateFrameToSkip
  * @param stillSkip
  */
-void Videostreaming::updateFrameToSkip(uint stillSkip){
+void Videostreaming::updateFrameToSkip(uint stillSkip)
+{
     frameToSkip = stillSkip;
 }
 
-void Videostreaming::makeShot(QString filePath,QString imgFormatType) {
-
+void Videostreaming::makeShot(QString filePath,QString imgFormatType)
+{
     qDebug() << filePath << imgFormatType;
     captureTime.start();
     // Added by Sankari : to set still skip
@@ -881,7 +882,8 @@ void Videostreaming::makeShot(QString filePath,QString imgFormatType) {
  * @param imgFormatType - image format type like jpg,png,raw,bmp
  * @param fpsIndex - fps list index value need to set
  */
-void  Videostreaming::changeFPSandTakeShot(QString filePath,QString imgFormatType, uint fpsIndex){
+void Videostreaming::changeFPSandTakeShot(QString filePath,QString imgFormatType, uint fpsIndex)
+{
     captureTime.start();
     m_snapShot = true;
     m_burstShot = false;
@@ -914,7 +916,8 @@ void  Videostreaming::changeFPSandTakeShot(QString filePath,QString imgFormatTyp
 
 }
 
-void Videostreaming::triggerModeShot(QString filePath,QString imgFormatType) {
+void Videostreaming::triggerModeShot(QString filePath,QString imgFormatType)
+{
 
     captureTime.restart();
     m_snapShot = true;
@@ -943,10 +946,12 @@ void Videostreaming::triggerModeShot(QString filePath,QString imgFormatType) {
     m_frame = 3;
 }
 
-void Videostreaming::getFileName(QString filePath,QString imgFormatType){
+void Videostreaming::getFileName(QString filePath, QString imgFormatType)
+{
     QDateTime dateTime = QDateTime::currentDateTime();
     QDir tmpDir;
-    if(tmpDir.cd(filePath)) {
+
+    if (tmpDir.cd(filePath)) {
         QStringList filters,list;
         filters << "Qtcam_" + dateTime.toString("yy_MM_dd:hh_mm_ss")+"-*"+imgFormatType;
         tmpDir.setNameFilters(filters);
@@ -986,24 +991,29 @@ void Videostreaming::getFileName(QString filePath,QString imgFormatType){
     setImageFormatType(imgFormatType);
 }
 
-void Videostreaming::setFilePath(QString filePath){
+void Videostreaming::setFilePath(QString filePath)
+{
     m_filePath = filePath;
 }
 
-QString Videostreaming::getFilePath(){
+QString Videostreaming::getFilePath()
+{
     return m_filePath;
 }
 
-void Videostreaming::setImageFormatType(QString imgFormatType){
+void Videostreaming::setImageFormatType(QString imgFormatType)
+{
     m_imgFormatType = imgFormatType;
 }
 
-QString Videostreaming::getImageFormatType(){
+QString Videostreaming::getImageFormatType()
+{
     return m_imgFormatType;
 }
 
 
-void Videostreaming::makeBurstShot(QString filePath,QString imgFormatType, uint burstLength){
+void Videostreaming::makeBurstShot(QString filePath,QString imgFormatType, uint burstLength)
+{
     captureTime.start();
     m_burstShot = true;
     m_snapShot = false;
@@ -1032,13 +1042,14 @@ void Videostreaming::makeBurstShot(QString filePath,QString imgFormatType, uint 
     }
 }
 
-void Videostreaming::formatSaveSuccess(uint imgSaveSuccessCount, bool burstFlag) {
+void Videostreaming::formatSaveSuccess(uint imgSaveSuccessCount, bool burstFlag)
+{
     QString imgSaveSuccessCntStr = QString::number(imgSaveSuccessCount);
-    if(imgSaveSuccessCount) {
-        if(burstFlag){
+    if (imgSaveSuccessCount) {
+        if (burstFlag){
             _title = "Captured";
             _text = "Captured " +imgSaveSuccessCntStr+ " image(s) and saved successfully in the location:" + m_filePath;
-        }else{
+        } else {
             _title = "Captured";
             _text = "Image saved in the location:" + filename;
         }
@@ -1061,6 +1072,7 @@ bool Videostreaming::getInterval(struct v4l2_fract &interval)
 {
     if (m_has_interval)
         interval = m_interval;
+
     return m_has_interval;
 }
 
@@ -1180,7 +1192,8 @@ void Videostreaming::stopCapture()
     }
 }
 
-void Videostreaming::closeDevice() {
+void Videostreaming::closeDevice()
+{
     qDebug() << "Closing the current camera device";
     if (fd() >= 0) {
         if (m_capNotifier) {
@@ -1194,13 +1207,15 @@ void Videostreaming::closeDevice() {
     }
 }
 
-void Videostreaming::startAgain() {
+void Videostreaming::startAgain()
+{
     if (openSuccess) {
         displayFrame();
     }
 }
 
-void Videostreaming::lastPreviewResolution(QString resolution,QString format) {
+void Videostreaming::lastPreviewResolution(QString resolution,QString format)
+{
     lastPreviewSize = resolution;
     lastFormat = format;
     qDebug() << "Last Resolution displayed at::" << resolution;
@@ -1210,7 +1225,8 @@ void Videostreaming::lastPreviewResolution(QString resolution,QString format) {
  * @brief Videostreaming::lastFPS - setting lastly set FPS
  * @param fps
  */
-void Videostreaming::lastFPS(QString fps) {
+void Videostreaming::lastFPS(QString fps)
+{
     lastFPSValue = fps;
 }
 
@@ -1238,7 +1254,6 @@ void Videostreaming::setResolution(QString resolution)
  */
 QString Videostreaming::getResolution()
 {
-
     v4l2_format fmt;
     unsigned int width, height;
     QString resolutionStr;
@@ -1301,7 +1316,8 @@ void Videostreaming::displayEncoderList()
     }
 }
 
-void Videostreaming::displayVideoResolution() {
+void Videostreaming::displayVideoResolution()
+{
     g_fmt_cap(V4L2_BUF_TYPE_VIDEO_CAPTURE, fmt);
 
     QStringList dispVideoRes;
@@ -1366,7 +1382,8 @@ void Videostreaming::updateVidOutFormat()
     qDebug() << "Color Space set to: "+pixfmt2s(m_pixelformat);
 }
 
-void Videostreaming::displayOutputFormat() {
+void Videostreaming::displayOutputFormat()
+{
     QStringList dispOutFormat;
     v4l2_fmtdesc fmt;
     pixFormat.clear();
@@ -1440,7 +1457,8 @@ void Videostreaming::frameIntervalChanged(int idx)
     }
 }
 
-void Videostreaming::cameraFilterControls(bool actualValue) {
+void Videostreaming::cameraFilterControls(bool actualValue)
+{
     v4l2_queryctrl qctrl;
     v4l2_querymenu qmenu;
     int indexValue;
@@ -1514,7 +1532,8 @@ void Videostreaming::cameraFilterControls(bool actualValue) {
     }
 }
 
-QString Videostreaming::getSettings(unsigned int id) {
+QString Videostreaming::getSettings(unsigned int id)
+{
     struct v4l2_control c;
     c.id = id;
     c.value = 0;
@@ -1540,7 +1559,8 @@ void Videostreaming::changeSettings(unsigned int id, QString value)
 }
 
 
-void Videostreaming::selectMenuIndex(unsigned int id, int value) {
+void Videostreaming::selectMenuIndex(unsigned int id, int value)
+{
     v4l2_queryctrl qctrl;
     v4l2_querymenu qmenu;
     qctrl.id = id;
@@ -1557,7 +1577,8 @@ void Videostreaming::selectMenuIndex(unsigned int id, int value) {
     changeSettings(id,QString::number(i,10));
 }
 
-int Videostreaming::getMenuIndex(unsigned int id,int value) {
+int Videostreaming::getMenuIndex(unsigned int id,int value)
+{
     v4l2_queryctrl qctrl;
     v4l2_querymenu qmenu;
     qctrl.id = id;
@@ -1577,12 +1598,14 @@ int Videostreaming::getMenuIndex(unsigned int id,int value) {
     return j;
 }
 
-void Videostreaming::setStillVideoSize(QString stillValue, QString stillFormat) {
+void Videostreaming::setStillVideoSize(QString stillValue, QString stillFormat)
+{
     stillSize = stillValue;
     stillOutFormat = stillFormat;
 }
 
-void Videostreaming::recordBegin(int videoEncoderType, QString videoFormatType, QString fileLocation) {
+void Videostreaming::recordBegin(int videoEncoderType, QString videoFormatType, QString fileLocation)
+{
     m_VideoRecord = true;
     videoEncoder=new VideoEncoder();
     if(videoFormatType.isEmpty()) {
@@ -1674,8 +1697,8 @@ void Videostreaming::recordBegin(int videoEncoderType, QString videoFormatType, 
     }
 }
 
-void Videostreaming::recordStop() {
-
+void Videostreaming::recordStop()
+{
     emit videoRecord(fileName);
     m_VideoRecord = false;
     if(videoEncoder!=NULL){
@@ -1685,11 +1708,13 @@ void Videostreaming::recordStop() {
     }
 }
 
-void Videostreaming::triggerModeEnabled() {
+void Videostreaming::triggerModeEnabled()
+{
     updateStop = true;
 }
 
-void Videostreaming::masterModeEnabled() {
+void Videostreaming::masterModeEnabled()
+{
     updateStop = false;
 }
 //Added by Dhurka - 13th Oct 2016
@@ -1704,14 +1729,16 @@ void Videostreaming::selectedCameraEnum(CommonEnums::ECameraNames selectedDevice
 /**
  * @brief Videostreaming::disableImageCaptureDialog - Disable image saving pop up for trigger shots
  */
-void Videostreaming::disableImageCaptureDialog(){
+void Videostreaming::disableImageCaptureDialog()
+{
     m_displayCaptureDialog = false;
 }
 
 /**
  * @brief Videostreaming::disableSavingImage - disable writing image file
  */
-void Videostreaming::disableSavingImage(){
+void Videostreaming::disableSavingImage()
+{
     m_saveImage = false;
 }
 
@@ -1720,8 +1747,8 @@ void Videostreaming::disableSavingImage(){
  * @param xquery
  * @return true/false
  */
-bool Videostreaming::setUvcExtControlValue(struct uvc_xu_control_query xquery){
-
+bool Videostreaming::setUvcExtControlValue(struct uvc_xu_control_query xquery)
+{
     int ret = extQueryCtrl(xquery);
     if (ret)
         return true;
