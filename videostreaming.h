@@ -422,6 +422,7 @@ public slots:
 signals:
     void captureSuccess();
     void captureFail();
+    void unableToOpenCam();
     void enableCaptureAndRecord();
     void newControlAdded(QString ctrlName,QString ctrlType,QString ctrlID,QString ctrlStepSize = "0",QString ctrlMinValue= "0", QString ctrlMaxValue = "0",QString ctrlDefaultValue="0", QString ctrlHardwareDefault="0");
     void deviceUnplugged(QString _title,QString _text);    

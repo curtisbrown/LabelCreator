@@ -132,6 +132,8 @@ Window {
             width: 200
             onPressed: {
                 control.resetAllContent()
+                cameraText.color = "black"
+                cameraText.text = "Loading Camera..."
                 statusText.visible = true
                 statusText.color = "white"
                 statusText.text = "Capture Image to start"
@@ -172,10 +174,19 @@ Window {
             width: parent.width / 2
             border.color: "black"
             Text {
+                id: cameraText
                 text: qsTr("Loading Camera...")
                 color: "black"
                 anchors.centerIn: parent
                 font.pointSize: 20
+
+                Connections {
+                    target: vidstreamproperty
+                    onUnableToOpenCam: {
+                        cameraText.text = "Error opening Camera"
+                        cameraText.color = "red"
+                    }
+                }
             }
 
             Videostreaming {

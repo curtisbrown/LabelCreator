@@ -1121,6 +1121,7 @@ void Videostreaming::displayFrame()
             v4lconvert_destroy(m_convertData);
             close();
         }
+        emit unableToOpenCam();
         return;
     }
 
