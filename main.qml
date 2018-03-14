@@ -78,7 +78,7 @@ Window {
 
                     Connections {
                         target: vidstreamproperty
-                        onTitleTextChanged: {
+                        onCaptureSuccess: {
                             loadingAnimation.duration = 10
                             loadingAnimation.loops = 1
                             loadingAnimation.restart()
@@ -133,6 +133,8 @@ Window {
             onPressed: {
                 control.resetAllContent()
                 statusText.visible = true
+                statusText.color = "white"
+                statusText.text = "Capture Image to start"
                 scannedImage.source = ""
                 captureStatus.source = ""
                 loadingAnimation.duration = 2000
@@ -247,7 +249,8 @@ Window {
                 }
                 Connections {
                     target: vidstreamproperty
-                    onTitleTextChanged: statusText.visible = false
+                    onCaptureSuccess: statusText.visible = false
+                    onCaptureFail: { statusText.color = "red"; statusText.text = "FAILED TO CAPTURE IMAGE" }
                 }
             }
             Image {
@@ -261,7 +264,7 @@ Window {
 
             Connections {
                 target: vidstreamproperty
-                onTitleTextChanged: {
+                onCaptureSuccess: {
                     scannedImage.source = StandardPaths.standardLocations(StandardPaths.PicturesLocation) + "/latestCapture.jpg"
                 }
             }

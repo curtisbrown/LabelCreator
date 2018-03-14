@@ -217,7 +217,6 @@ public:
 signals:
     void logHandle(QtMsgType,QString);
     void stopPreview(QString);
-    void titleTextChanged(QString _title,QString _text);
     void hidWarningReceived(QString _title,QString _text);
 
     void serialNumber(QString serialNumber);
@@ -238,9 +237,8 @@ public slots:
 
     /**
      * @brief Get the firmware version of the camera
-     *  - Reads the firmware version and emits the signal titleTextChanged(), "_text" variable of the signal
-     * contains the firmware version.
-     *  - Firmware version is of 4 digits
+     *  - Reads the firmware version
+     *  - Firmware version is 4 digits
      */
     void getFirmWareVersion();
 

@@ -420,7 +420,8 @@ public slots:
     bool setUvcExtControlValue(struct uvc_xu_control_query xquery);
 
 signals:
-    void titleTextChanged(QString _title,QString _text);
+    void captureSuccess();
+    void captureFail();
     void enableCaptureAndRecord();
     void newControlAdded(QString ctrlName,QString ctrlType,QString ctrlID,QString ctrlStepSize = "0",QString ctrlMinValue= "0", QString ctrlMaxValue = "0",QString ctrlDefaultValue="0", QString ctrlHardwareDefault="0");
     void deviceUnplugged(QString _title,QString _text);    

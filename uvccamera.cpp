@@ -457,7 +457,6 @@ void UvcCamera::getFirmWareVersion() {
     quint16 MinorVersion2= 0, MinorVersion3= 0;
     readFirmwareVersion(&MajorVersion, &MinorVersion1, &MinorVersion2, &MinorVersion3);
     qDebug() << "Version: " << QString::number(MajorVersion).append(".").append(QString::number(MinorVersion1)).append(".").append(QString::number(MinorVersion2)).append(".").append(QString::number(MinorVersion3));
-    emit titleTextChanged(_title,_text);
 }
 
 void UvcCamera::getSerialNumber(){

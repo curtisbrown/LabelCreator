@@ -1064,23 +1064,16 @@ void Videostreaming::makeBurstShot(QString filePath,QString imgFormatType, uint 
 
 void Videostreaming::formatSaveSuccess(uint imgSaveSuccessCount, bool burstFlag)
 {
-    QString imgSaveSuccessCntStr = QString::number(imgSaveSuccessCount);
+    Q_UNUSED(burstFlag);
+
     if (imgSaveSuccessCount) {
-        if (burstFlag){
-            _title = "Captured";
-            _text = "Captured " +imgSaveSuccessCntStr+ " image(s) and saved successfully in the location:" + m_filePath;
-        } else {
-            _title = "Captured";
-            _text = "Image saved in the location:" + filename;
-        }
         qDebug() << "Captured image(s) is(are) saved successfully";
-        emit titleTextChanged(_title,_text);
+        emit captureSuccess();
     } else {
-        _title = "Failure";
-        _text = "Image not saved in the selected location";
         qDebug() <<"Still image not saved successfully";
-        emit titleTextChanged(_title,_text);
+        emit captureFail();
     }
+
     // After capturing image need to enable RF rect in See3CAM_130 or See3CAM_30 cam
     emit enableRfRectBackInPreview();
 
@@ -1122,10 +1115,8 @@ void Videostreaming::displayFrame()
     __u32 buftype = m_buftype;
     g_fmt_cap(buftype, m_capSrcFormat);
 
-    // if (try_fmt(m_capSrcFormat)) {
     if(!s_fmt(m_capSrcFormat)) {
-        emit titleTextChanged("Error", "Device or Resource is busy");
-        qDebug() <<"Device or Resource is busy";
+        qDebug() << "Error: Device or Resource is busy";
         if (fd() >= 0) {
             v4lconvert_destroy(m_convertData);
             close();
@@ -1229,16 +1220,15 @@ void Videostreaming::closeDevice()
 
 void Videostreaming::startAgain()
 {
-    if (openSuccess) {
+    if (openSuccess)
         displayFrame();
-    }
 }
 
 void Videostreaming::lastPreviewResolution(QString resolution,QString format)
 {
     lastPreviewSize = resolution;
     lastFormat = format;
-    qDebug() << "Last Resolution displayed at::" << resolution;
+    qDebug() << "Last Resolution displayed at: " << resolution;
 }
 
 /**
