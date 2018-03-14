@@ -140,12 +140,9 @@ int UvcCamera::findEconDevice(QString parameter)
            subsystem/devtype pair of "usb"/"usb_device". This will
            be several levels up the tree, but the function will find
            it.*/
-        pdev = udev_device_get_parent_with_subsystem_devtype(
-                    dev,
-                    "usb",
-                    "usb_device");
+        pdev = udev_device_get_parent_with_subsystem_devtype(dev, "usb", "usb_device");
         if (!pdev) {
-            emit logHandle(QtCriticalMsg,"Unable to find parent usb device.");
+            qDebug() << "ERROR: Unable to find parent usb device";
             return -1;
         }
 
@@ -163,8 +160,7 @@ int UvcCamera::findEconDevice(QString parameter)
          * Previous comparision is not using the lower case comparision
          */
         if (((QString::fromUtf8(udev_device_get_sysattr_value(pdev,"idVendor"))).toLower() == econCameraVid.toLower()) ||
-                (QString::fromUtf8(udev_device_get_sysattr_value(pdev,"idVendor"))).toLower() == ascellaCameraVid.toLower())
-        {
+                (QString::fromUtf8(udev_device_get_sysattr_value(pdev,"idVendor"))).toLower() == ascellaCameraVid.toLower()) {
             QString hid_device = udev_device_get_devnode(dev);
             QString productName = udev_device_get_sysattr_value(pdev,"product");
             QString serialNumber = udev_device_get_sysattr_value(pdev,"serial");
