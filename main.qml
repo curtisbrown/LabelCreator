@@ -121,7 +121,18 @@ Window {
 
                 Connections {
                     target: control
-                    onPrintingComplete: printStatus.source = "qrc:/images/images/pass.png"
+                    onPrintingComplete: {
+                        printingAnimation.duration = 10
+                        printingAnimation.loops = 1
+                        printingAnimation.restart()
+                        printStatus.source = "qrc:/images/images/pass.png"
+                    }
+                    onPrintingError: {
+                        printingAnimation.duration = 10
+                        printingAnimation.loops = 1
+                        printingAnimation.restart()
+                        printStatus.source = "qrc:/images/images/fail.png"
+                    }
                 }
             }
         }
