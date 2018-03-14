@@ -1244,7 +1244,7 @@ void Videostreaming::lastFPS(QString fps)
 void Videostreaming::setResolution(QString resolution)
 {
 
-    qDebug() << "Resolution set at::" << resolution;
+    qDebug() << "Resolution set to: " << resolution;
     v4l2_format fmt;
     unsigned int width, height;
     QStringList tempResList = resolution.split('x');
