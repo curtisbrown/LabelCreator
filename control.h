@@ -24,6 +24,7 @@ signals:
     void captureComplete();
     void printLabel();
     void printingComplete();
+    void printingError();
 
 public slots:
     Q_INVOKABLE void setFocus();

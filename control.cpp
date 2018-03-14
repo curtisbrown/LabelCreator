@@ -17,6 +17,7 @@ Control::Control(QObject *parent) :
     connect(this, &Control::printLabel, &m_labelPrint, &LabelPrinter::printLabel);
     connect(this, &Control::resetAllContent, &m_labelPrint, &LabelPrinter::resetContent);
     connect(&m_labelPrint, &LabelPrinter::printDone, this, &Control::printingComplete);
+    connect(&m_labelPrint, &LabelPrinter::printFailed, this, &Control::printingError);
 
     m_cameraProperty.checkforDevice();
     m_cameraProperty.setCurrentDevice("1", "See3CAM_81");

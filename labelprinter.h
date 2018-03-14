@@ -12,6 +12,7 @@ public:
     explicit LabelPrinter(QObject *parent = nullptr, Utilities *utilities = nullptr);
 
 signals:
+    void printFailed();
     void printDone();
 
 public slots:
