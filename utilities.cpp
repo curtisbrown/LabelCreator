@@ -2,6 +2,7 @@
 
 #include <QTextStream>
 #include <QDebug>
+#include <QDateTime>
 
 Utilities::Utilities(QObject *parent) :
     QObject(parent),
@@ -32,10 +33,13 @@ void Utilities::initialiseLogFile()
 
 void Utilities::debugLogMessage(QString string)
 {
-    qDebug() << Q_FUNC_INFO << string;
+    qDebug() << string;
     if (m_debugLog.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
         QTextStream out(&m_debugLog);
         out << endl
+            << "[ "
+            << QDateTime::currentDateTime().toString(Qt::ISODate)
+            << " ] "
             << string;
         m_debugLog.close();
     } else {
