@@ -16,7 +16,12 @@ LabelPrinter::LabelPrinter(QObject *parent, Utilities *utilities)
         m_connected = true;
     });
     connect(m_socket, &QTcpSocket::readyRead, this, [=]() {
-        m_utilities->debugLogMessage(m_socket->readAll());
+        QString data = m_socket->readAll();
+        m_utilities->debugLogMessage(QString("Data recevied from scoket: %1").arg(data));
+        if (data.contains("ACK\n"))
+            m_utilities->debugLogMessage("Received ACK Packet");
+        else
+            m_utilities->debugLogMessage("Unknown data received, doing nothing");
     });
     connect(m_socket, &QTcpSocket::disconnected, this, [=]() {
         m_utilities->debugLogMessage("Host has disconnected");
@@ -53,7 +58,10 @@ void LabelPrinter::printLabel()
 void LabelPrinter::resetContent()
 {
     m_utilities->debugLogMessage(Q_FUNC_INFO);
-    connectToPrinterServer();
+    if (!m_connected)
+        connectToPrinterServer();
+    else
+        writeDataToSocket("RESET BUFFER CONTENT");
 }
 
 void LabelPrinter::connectToPrinterServer()
