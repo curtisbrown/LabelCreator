@@ -27,7 +27,7 @@ signals:
     void printingError();
 
 public slots:
-    Q_INVOKABLE void setFocus();
+    Q_INVOKABLE bool setFocus();
 
 private:
     Utilities m_utilities;

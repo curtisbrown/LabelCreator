@@ -24,12 +24,18 @@ Control::Control(QObject *parent) :
     m_uvc.getFirmWareVersion();
 }
 
-void Control::setFocus()
+bool Control::setFocus()
 {
     m_utilities.debugLogMessage(Q_FUNC_INFO);
 
     m_see3Cam81.setFocusMode(See3CAM_81::MANUAL_FOCUS_81);
-    m_see3Cam81.setFocusPosition(311);
 
-    m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE);
+    if (m_see3Cam81.setFocusPosition(311)
+            && m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
+        m_utilities.debugLogMessage("SUCCESS setting zoom and greyscale");
+        return true;
+    } else {
+        m_utilities.debugLogMessage("ERROR setting camera values");
+        return false;
+    }
 }
