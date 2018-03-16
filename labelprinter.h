@@ -22,11 +22,14 @@ public slots:
     void resetContent();
     void connectToPrinterServer();
 
+    bool writeDataToSocket(QString data);
+
 private:
     Utilities *m_utilities;
     QTcpSocket *m_socket;
     QString m_hostAddress;
     quint16 m_hostPort;
+    bool m_connected;
 };
 
 #endif // LABELPRINTER_H
