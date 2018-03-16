@@ -155,7 +155,6 @@ Window {
                 printStatus.source = ""
                 printingAnimation.duration = 2000
                 printingAnimation.loops = Animation.Infinite
-
             }
             Text {
                 id: resetText
@@ -226,6 +225,7 @@ Window {
                     }
                     onPressed: {
                         console.log("RESET CAMERA pressed")
+                        vidstreamproperty.startCam()
                     }
                 }
             }
@@ -241,7 +241,14 @@ Window {
                     }
                 }
 
-                Component.onCompleted: {
+                Component.onCompleted: { startCam() }
+                Timer {
+                    id: timer
+                    interval: 5000; repeat: false
+                    onTriggered: { control.setFocus() }
+                }
+
+                function startCam() {
                     stopCapture()
                     closeDevice()
                     setDevice("/dev/video")
@@ -260,18 +267,14 @@ Window {
                     vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
                     vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
                     vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
-
+                    vidstreamproperty.startAgain()
                     width = "640"
                     height = "460"
                     lastFPS("0")
                     masterModeEnabled()
-                }
-                Timer {
-                    interval: 5000; running: true; repeat: false
-                    onTriggered: { control.setFocus(); vidstreamproperty.startAgain() }
+                    timer.start()
                 }
             }
-
         }
         // Last Picture Taken by Camera
         Rectangle {
@@ -378,7 +381,7 @@ Window {
             }
         }
     }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 }
+
