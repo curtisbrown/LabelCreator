@@ -22,6 +22,8 @@ private:
     Utilities m_utilities;
 
     QHostAddress m_hostAddress;
+    QString m_address;
+    quint16 m_port;
     QString m_filename;
     QString m_fileLocation;
     QString m_socketData;
