@@ -200,6 +200,36 @@ Window {
                 }
             }
 
+            Item {
+                id: resetCamera
+                height: 40
+                width: height
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                Image {
+                    id: resetImage
+                    source: "qrc:/images/images/resetCamera.png"
+                    sourceSize.height: parent.height
+                    sourceSize.width: parent.width
+                }
+                MouseArea {
+                    id: resetCameraBtnArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    ToolTip {
+                        parent: resetCameraBtnArea
+                        visible: resetCameraBtnArea.containsMouse
+                        text:"Refresh Camera Preview"
+                    }
+                    onPressed: {
+                        console.log("RESET CAMERA pressed")
+                    }
+                }
+            }
+
             Videostreaming {
                 id: vidstreamproperty
                 anchors.centerIn: parent
@@ -230,7 +260,7 @@ Window {
                     vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
                     vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
                     vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
-                    startAgain()
+
                     width = "640"
                     height = "460"
                     lastFPS("0")
@@ -238,7 +268,7 @@ Window {
                 }
                 Timer {
                     interval: 5000; running: true; repeat: false
-                    onTriggered: control.setFocus()
+                    onTriggered: { control.setFocus(); vidstreamproperty.startAgain() }
                 }
             }
 

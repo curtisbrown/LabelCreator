@@ -5,5 +5,6 @@
         <file>images/pass.png</file>
         <file>images/Running.gif</file>
         <file>images/barcode.png</file>
+        <file>images/resetCamera.png</file>
     </qresource>
 </RCC>
