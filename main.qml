@@ -45,7 +45,7 @@ Window {
         Item {
             height: parent.height
             width: 200
-            Button {
+            RoundButton {
                 id: captureButton
                 anchors.fill: parent
                 onPressed: {
@@ -89,7 +89,7 @@ Window {
             }
         }
 
-        Button {
+        RoundButton {
             id: printButton
             height: parent.height
             width: 200
@@ -137,7 +137,7 @@ Window {
             }
         }
 
-        Button {
+        RoundButton {
             id: resetButton
             height: parent.height
             width: 200
