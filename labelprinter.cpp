@@ -41,7 +41,6 @@ LabelPrinter::~LabelPrinter()
 void LabelPrinter::printLabel()
 {
     m_utilities->debugLogMessage(Q_FUNC_INFO);
-    m_utilities->debugLogMessage("Printing label");
 
     if (writeDataToSocket("INSERT DATA HERE FOR BARTENDER")) {
         m_utilities->debugLogMessage("bytes written successfully");
