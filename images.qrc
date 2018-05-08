@@ -6,5 +6,7 @@
         <file>images/Running.gif</file>
         <file>images/barcode.png</file>
         <file>images/resetCamera.png</file>
+        <file>images/takePicture.png</file>
+        <file>images/print.png</file>
     </qresource>
 </RCC>

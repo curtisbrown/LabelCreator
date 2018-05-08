@@ -200,13 +200,75 @@ Window {
             }
 
             Item {
-                id: resetCamera
-                height: 40
+                id: takePicture
+                height: 60
                 width: height
                 anchors.top: parent.top
                 anchors.topMargin: 10
                 anchors.left: parent.left
                 anchors.leftMargin: 10
+                Image {
+                    id: captureImage
+                    source: "qrc:/images/images/takePicture.png"
+                    sourceSize.height: parent.height
+                    sourceSize.width: parent.width
+                }
+                MouseArea {
+                    id: takePictureBtnArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    ToolTip {
+                        parent: takePictureBtnArea
+                        visible: takePictureBtnArea.containsMouse
+                        text:"Capture image"
+                    }
+                    onPressed: {
+                        captureStatus2.source = "qrc:/images/images/Running.gif"
+                        loadingAnimation2.start()
+                        vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
+                        control.captureImage()
+                    }
+                }
+            }
+
+            Image {
+                id: captureStatus2
+                source: ""
+                height: 50
+                width: height
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                anchors.left: takePicture.right
+                anchors.leftMargin: 10
+                RotationAnimator {
+                    id: loadingAnimation2
+                    target: captureStatus2;
+                    from: 0;
+                    to: 360;
+                    duration: 2000;
+                    loops: Animation.Infinite
+                }
+
+                Connections {
+                    target: vidstreamproperty
+                    onCaptureSuccess: {
+                        loadingAnimation2.duration = 10
+                        loadingAnimation2.loops = 1
+                        loadingAnimation2.restart()
+                        captureStatus2.source = "qrc:/images/images/pass.png"
+                    }
+                }
+            }
+
+            Item {
+                id: resetCamera
+                height: 60
+                width: height
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                anchors.right: parent.right
+                anchors.rightMargin: 10
                 Image {
                     id: resetImage
                     source: "qrc:/images/images/resetCamera.png"
