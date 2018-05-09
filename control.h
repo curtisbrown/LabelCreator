@@ -6,6 +6,7 @@
 
 #include "utilities.h"
 #include "cameracapture.h"
+#include "imageprocessing.h"
 #include "labelprinter.h"
 
 #include "cameraproperty.h"
@@ -32,6 +33,7 @@ public slots:
 private:
     Utilities m_utilities;
     CameraCapture m_cameraCapture;
+    ImageProcessing m_imageProcessing;
     LabelPrinter m_labelPrint;
     Cameraproperty m_cameraProperty;
     UvcCamera m_uvc;

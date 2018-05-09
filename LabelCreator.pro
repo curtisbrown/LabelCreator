@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     v4l2-api.cpp \
     videoencoder.cpp \
     h264decoder.cpp \
-    seecam_81.cpp
+    seecam_81.cpp \
+    imageprocessing.cpp
 
 HEADERS += \
     control.h \
@@ -38,7 +39,8 @@ HEADERS += \
     h264decoder.h \
     seecam_81.h \
     common_enums.h \
-    common.h
+    common.h \
+    imageprocessing.h
 
 
 RESOURCES += qml.qrc \

@@ -6,12 +6,15 @@ Control::Control(QObject *parent) :
     QObject(parent),
     m_utilities(this),
     m_cameraCapture(this, &m_utilities),
+    m_imageProcessing(this, &m_utilities),
     m_labelPrint(this, &m_utilities)
 {
     // Connections
     connect(this, &Control::captureImage, &m_cameraCapture, &CameraCapture::captureImage);
     connect(this, &Control::resetAllContent, &m_cameraCapture, &CameraCapture::resetContent);
     connect(&m_cameraCapture, &CameraCapture::captureDone, this, &Control::captureComplete);
+
+    connect(this, &Control::resetAllContent, &m_imageProcessing, &ImageProcessing::resetContent);
 
     connect(this, &Control::printLabel, &m_labelPrint, &LabelPrinter::printLabel);
     connect(this, &Control::resetAllContent, &m_labelPrint, &LabelPrinter::resetContent);
