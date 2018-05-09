@@ -5,6 +5,7 @@ import QtQuick.Controls.Styles 1.4
 import QtMultimedia 5.9
 import Qt.labs.platform 1.0
 import com.ctdi.labelcreator.control 1.0
+import QtGraphicalEffects 1.0
 
 import econ.camera.property 1.0
 import econ.camera.stream 1.0
@@ -19,7 +20,7 @@ Window {
     title: qsTr("CTDI Label Creator")
 
     property int buttonMargin: 20
-    property bool animatePrint : false
+    property bool readyToPrint : false
 
     Item {
         id: logo
@@ -35,132 +36,49 @@ Window {
         }
     }
 
-    Row {
-        id: buttonRow
-        height: 40
-        anchors.top: logo.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 5
-
-        Item {
+    Item {
+        id: resetButton
+        height: 60
+        width: height
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: mainWindow.buttonMargin
+        Image {
+            id: resetBtnImage
+            source: "qrc:/images/images/resetCamera.png"
             height: parent.height
-            width: 200
-            RoundButton {
-                id: captureButton
+            fillMode: Image.PreserveAspectFit
+            ColorOverlay {
+                anchors.fill: resetBtnImage
+                source: resetBtnImage
+                color: "#ff0000"  // make image red
+            }
+            MouseArea {
+                id: resetBtnArea
                 anchors.fill: parent
+                hoverEnabled: true
+
+                ToolTip {
+                    parent: resetBtnArea
+                    visible: resetBtnArea.containsMouse
+                    text:"Reset Capture"
+                }
                 onPressed: {
-                    captureStatus.source = "qrc:/images/images/Running.gif"
-                    loadingAnimation.start()
-                    vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
-                    control.captureImage()
+                    control.resetAllContent()
+                    cameraText.color = "black"
+                    cameraText.text = "Loading Camera..."
+                    statusText.visible = true
+                    statusText.color = "white"
+                    statusText.text = "Capture Image to start"
+                    scannedImage.source = ""
+                    captureStatus.source = ""
+                    loadingAnimation.duration = 2000
+                    loadingAnimation.loops = Animation.Infinite
+                    printingAnimation.stop()
+                    imageColour.color = "white"
+                    readyToPrint = false
                 }
-                Text {
-                    id: captureText
-                    text: qsTr("Capture image")
-                    color: "blue"
-                    anchors.centerIn: parent
-                }
-
-                Image {
-                    id: captureStatus
-                    source: ""
-                    anchors.right: captureButton.right
-                    anchors.rightMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
-                    RotationAnimator {
-                        id: loadingAnimation
-                        target: captureStatus;
-                        from: 0;
-                        to: 360;
-                        duration: 2000;
-                        loops: Animation.Infinite
-                    }
-
-                    Connections {
-                        target: vidstreamproperty
-                        onCaptureSuccess: {
-                            loadingAnimation.duration = 10
-                            loadingAnimation.loops = 1
-                            loadingAnimation.restart()
-                            captureStatus.source = "qrc:/images/images/pass.png"
-                        }
-                    }
-                }
-            }
-        }
-
-        RoundButton {
-            id: printButton
-            height: parent.height
-            width: 200
-            onPressed: {
-                printStatus.source = "qrc:/images/images/Running.gif"
-                printingAnimation.start()
-                control.printLabel()
-            }
-            Text {
-                id: printText
-                text: qsTr("Print label")
-                color: "blue"
-                anchors.centerIn: parent
-            }
-            Image {
-                id: printStatus
-                source: ""
-                anchors.right: printButton.right
-                anchors.rightMargin: 5
-                anchors.verticalCenter: parent.verticalCenter
-                RotationAnimator {
-                    id: printingAnimation
-                    target: printStatus;
-                    from: 0;
-                    to: 360;
-                    duration: 2000;
-                    loops: Animation.Infinite
-                }
-
-                Connections {
-                    target: control
-                    onPrintingComplete: {
-                        printingAnimation.duration = 10
-                        printingAnimation.loops = 1
-                        printingAnimation.restart()
-                        printStatus.source = "qrc:/images/images/pass.png"
-                    }
-                    onPrintingError: {
-                        printingAnimation.duration = 10
-                        printingAnimation.loops = 1
-                        printingAnimation.restart()
-                        printStatus.source = "qrc:/images/images/fail.png"
-                    }
-                }
-            }
-        }
-
-        RoundButton {
-            id: resetButton
-            height: parent.height
-            width: 200
-            onPressed: {
-                control.resetAllContent()
-                cameraText.color = "black"
-                cameraText.text = "Loading Camera..."
-                statusText.visible = true
-                statusText.color = "white"
-                statusText.text = "Capture Image to start"
-                scannedImage.source = ""
-                captureStatus.source = ""
-                loadingAnimation.duration = 2000
-                loadingAnimation.loops = Animation.Infinite
-                printStatus.source = ""
-                printingAnimation.duration = 2000
-                printingAnimation.loops = Animation.Infinite
-            }
-            Text {
-                id: resetText
-                text: qsTr("Reset")
-                color: "red"
-                anchors.centerIn: parent
             }
         }
     }
@@ -169,9 +87,9 @@ Window {
     Grid {
         id: pictureActivityGrid
         width: parent.width
-        height: parent.height - (mainWindow.buttonMargin * 2) - 20 - 40 - 10
+        height: parent.height - (mainWindow.buttonMargin * 2) - 40
 
-        anchors.top: buttonRow.bottom
+        anchors.top: logo.bottom
         anchors.topMargin: 20
 
         rows: 2
@@ -224,8 +142,8 @@ Window {
                         text:"Capture image"
                     }
                     onPressed: {
-                        captureStatus2.source = "qrc:/images/images/Running.gif"
-                        loadingAnimation2.start()
+                        captureStatus.source = "qrc:/images/images/Running.gif"
+                        loadingAnimation.start()
                         vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
                         control.captureImage()
                     }
@@ -233,7 +151,7 @@ Window {
             }
 
             Image {
-                id: captureStatus2
+                id: captureStatus
                 source: ""
                 height: 50
                 width: height
@@ -242,8 +160,8 @@ Window {
                 anchors.left: takePicture.right
                 anchors.leftMargin: 10
                 RotationAnimator {
-                    id: loadingAnimation2
-                    target: captureStatus2;
+                    id: loadingAnimation
+                    target: captureStatus;
                     from: 0;
                     to: 360;
                     duration: 2000;
@@ -253,10 +171,11 @@ Window {
                 Connections {
                     target: vidstreamproperty
                     onCaptureSuccess: {
-                        loadingAnimation2.duration = 10
-                        loadingAnimation2.loops = 1
-                        loadingAnimation2.restart()
-                        captureStatus2.source = "qrc:/images/images/pass.png"
+                        loadingAnimation.duration = 10
+                        loadingAnimation.loops = 1
+                        loadingAnimation.restart()
+                        captureStatus.source = "qrc:/images/images/pass.png"
+                        readyToPrint = true
                     }
                 }
             }
@@ -432,6 +351,7 @@ Window {
                 id: statusText3
                 text: qsTr("Capture Image to start")
                 color: "white"
+                visible: !printRegion.visible
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 font.pointSize: 20
@@ -439,6 +359,93 @@ Window {
                     ColorAnimation { to: "orange"; duration: 1500 }
                     ColorAnimation { to: "white"; duration: 800 }
                     loops: Animation.Infinite
+                }
+            }
+
+            Item {
+                id: printRegion
+                visible: readyToPrint  // N.B: To be changed once process routine is completed, needs to be a dynamic value
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                height: parent.height - statusText3.height - 50
+                width: parent.width - 50
+                Rectangle {
+                    id: textToPrintRegion
+                    height: parent.height / 2
+                    width: 300
+                    anchors.left: parent.left
+                    anchors.leftMargin: ((printRegion.width / 2) - width) / 2
+                    anchors.topMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: "white"
+                    border.color: "black"
+                    TextEdit {
+                        id: textBox
+                        width: 250
+                        anchors.topMargin: 10
+                        text: qsTr("Hello World!")
+                        font.family: "Helvetica"
+                        font.pointSize: 20
+                        color: "black"
+                    }
+                }
+
+                Rectangle {
+                    id: lineDivider
+                    height: parent.height - statusText3.height - 30
+                    width: 2
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: "white"
+                }
+
+                Image {
+                    id: printLabelButton
+                    anchors.right: parent.right
+                    anchors.rightMargin: parent.width / 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: "qrc:/images/images/print.png"
+                    ColorOverlay {
+                        id: imageColour
+                        anchors.fill: printLabelButton
+                        source: printLabelButton
+                        color: "white"  // make image white to start with
+                        SequentialAnimation on color {
+                            id: printingAnimation
+                            ColorAnimation { to: "orange"; duration: 1500 }
+                            ColorAnimation { to: "white"; duration: 800 }
+                            loops: Animation.Infinite
+                            running: false
+                        }
+                    }
+                    MouseArea {
+                        id: printLabelBtnArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        ToolTip {
+                            parent: printLabelBtnArea
+                            visible: printLabelBtnArea.containsMouse
+                            text:"Print text to label"
+                        }
+                        onPressed: {
+                            console.log("PRINT LABEL pressed")
+                            printingAnimation.start()
+                            control.printLabel()
+                        }
+                    }
+
+                    Connections {
+                        target: control
+                        onPrintingComplete: {
+                            printingAnimation.stop()
+                            imageColour.color = "green"
+                        }
+                        onPrintingError: {
+                            printingAnimation.stop()
+                            imageColour.color = "red"
+                        }
+                    }
                 }
             }
         }
