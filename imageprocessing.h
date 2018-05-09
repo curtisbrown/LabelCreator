@@ -2,6 +2,7 @@
 #define IMAGEPROCESSING_H
 
 #include <QObject>
+#include <QProcess>
 
 #include "utilities.h"
 
@@ -15,9 +16,11 @@ signals:
 
 public slots:
     void resetContent();
+    void processImageStart();
 
 private:
     Utilities *m_utilities;
+    QProcess m_process;
 };
 
 #endif // IMAGEPROCESSING_H
