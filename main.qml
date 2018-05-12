@@ -293,8 +293,8 @@ Window {
                 id: scannedImage
                 source: ""
                 anchors.centerIn: parent
-                height: parent.height / 2
-                width: parent.width / 2
+                height: parent.height / 1.25
+                width: parent.width / 1.25
                 fillMode: Image.PreserveAspectFit
             }
 
