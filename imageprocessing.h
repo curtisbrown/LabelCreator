@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QProcess>
+#include <QStandardPaths>
 
 #include "utilities.h"
 
@@ -21,6 +22,8 @@ public slots:
 private:
     Utilities *m_utilities;
     QProcess m_process;
+    QString m_homeDir;
+    QString m_ocrSwInstallDir;
 };
 
 #endif // IMAGEPROCESSING_H
