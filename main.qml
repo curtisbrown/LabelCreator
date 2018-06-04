@@ -364,7 +364,7 @@ Window {
 
             Item {
                 id: printRegion
-                visible: readyToPrint  // N.B: To be changed once process routine is completed, needs to be a dynamic value
+                visible: readyToPrint
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 height: parent.height - statusText3.height - 50
@@ -372,21 +372,107 @@ Window {
                 Rectangle {
                     id: textToPrintRegion
                     height: parent.height / 2
-                    width: 300
+                    width: 400
                     anchors.left: parent.left
-                    anchors.leftMargin: ((printRegion.width / 2) - width) / 2
+                    anchors.leftMargin: ((printRegion.width / 2) - width) / 4
                     anchors.topMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
                     color: "white"
                     border.color: "black"
-                    TextEdit {
-                        id: textBox
-                        width: 250
-                        anchors.topMargin: 10
-                        text: qsTr("Hello World!")
-                        font.family: "Helvetica"
-                        font.pointSize: 20
-                        color: "black"
+                    Column {
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 5
+                        Row {
+                            spacing: 5
+                            TextArea {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "SSID 2.4GHz: "
+                                font.family: "Helvetica"
+                                font.pointSize: 16
+                                color: "blue"
+                                readOnly: true
+                            }
+                            TextEdit {
+                                id: ssid24
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 250
+                                text: qsTr(control.ssid24)
+                                font.family: "Helvetica"
+                                font.pointSize: 14
+                                color: "black"
+                                onEditingFinished: control.setSsid24Control(text)
+                            }
+                        }
+
+                        Row {
+                            spacing: 5
+                            TextArea {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "SSID 5.0GHz: "
+                                font.family: "Helvetica"
+                                font.pointSize: 16
+                                color: "blue"
+                                readOnly: true
+                            }
+                            TextEdit {
+                                id: ssid50
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 250
+                                text: qsTr(control.ssid50)
+                                font.family: "Helvetica"
+                                font.pointSize: 14
+                                color: "black"
+                                onEditingFinished: control.setSsid50Control(text)
+                            }
+                        }
+
+                        Row {
+                            spacing: 5
+                            TextArea {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "SSID Passphrase: "
+                                font.family: "Helvetica"
+                                font.pointSize: 16
+                                color: "blue"
+                                readOnly: true
+                            }
+                            TextEdit {
+                                id: wirelessKey
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 250
+                                text: qsTr(control.wirelessKey)
+                                font.family: "Helvetica"
+                                font.pointSize: 14
+                                color: "black"
+                                onEditingFinished: control.setWirelessKeyControl(text)
+                            }
+                        }
+
+                        Row {
+                            spacing: 5
+                            TextArea {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "User Password: "
+                                font.family: "Helvetica"
+                                font.pointSize: 16
+                                color: "blue"
+                                readOnly: true
+                            }
+                            TextEdit {
+                                id: homePagePwd
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 250
+                                text: qsTr(control.usrPwd)
+                                font.family: "Helvetica"
+                                font.pointSize: 14
+                                color: "black"
+                                onEditingFinished: control.setUsrPwdControl(text)
+                            }
+                        }
+                    }
+                    Connections {
+                        target: control
+                        onImageProcessingComplete: readyToPrint = true
                     }
                 }
 

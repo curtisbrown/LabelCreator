@@ -17,7 +17,7 @@ LabelPrinter::LabelPrinter(QObject *parent, Utilities *utilities)
     });
     connect(m_socket, &QTcpSocket::readyRead, this, [=]() {
         QString data = m_socket->readAll();
-        m_utilities->debugLogMessage(QString("Data recevied from scoket: %1").arg(data));
+        m_utilities->debugLogMessage(QString("Data recevied from socket: %1").arg(data));
         if (data.contains("ACK\n"))
             m_utilities->debugLogMessage("Received ACK Packet");
         else
