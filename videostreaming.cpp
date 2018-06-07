@@ -1161,7 +1161,7 @@ void Videostreaming::displayFrame()
     h264Decode->initH264Decoder(width, height);
 
     if (startCapture()) {
-        sprintf(header,"P6\n%d %d 255\n",width,height);
+        sprintf(header,"P6\n%d %d 255\n", width, height);
         m_capNotifier = new QSocketNotifier(fd(), QSocketNotifier::Read);
         connect(m_capNotifier, SIGNAL(activated(int)), this, SLOT(capFrame()));
     }

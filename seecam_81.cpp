@@ -573,7 +573,7 @@ bool See3CAM_81::setFocusPosition(int focusPosition)
         qDebug() << Q_FUNC_INFO << "ERROR: write to FD invalid";
         return false;
     } else {
-        qDebug() << "Successfuly wrote " << ret << "bytes";
+        qDebug() << "Successfuly wrote" << ret << "bytes";
         return true;
     }
 }
@@ -608,7 +608,7 @@ bool See3CAM_81::getFocusMode()
         qDebug() << Q_FUNC_INFO << "ERROR: write to FD invalid";
         return false;
     } else {
-        qDebug() << "Successfuly wrote " << ret << "bytes";
+        qDebug() << "Successfuly wrote" << ret << "bytes";
     }
 
     /* Read the Status code from the device */
