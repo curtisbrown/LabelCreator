@@ -175,7 +175,6 @@ Window {
                         loadingAnimation.loops = 1
                         loadingAnimation.restart()
                         captureStatus.source = "qrc:/images/images/pass.png"
-                        readyToPrint = true
                     }
                 }
             }
@@ -374,7 +373,7 @@ Window {
                     height: parent.height / 2
                     width: 400
                     anchors.left: parent.left
-                    anchors.leftMargin: ((printRegion.width / 2) - width) / 4
+                    anchors.leftMargin: printRegion.width / 8
                     anchors.topMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
                     color: "white"
@@ -476,19 +475,10 @@ Window {
                     }
                 }
 
-                Rectangle {
-                    id: lineDivider
-                    height: parent.height - statusText3.height - 30
-                    width: 2
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: "white"
-                }
-
                 Image {
                     id: printLabelButton
                     anchors.right: parent.right
-                    anchors.rightMargin: parent.width / 6
+                    anchors.rightMargin: parent.width / 8
                     anchors.verticalCenter: parent.verticalCenter
                     source: "qrc:/images/images/print.png"
                     ColorOverlay {
