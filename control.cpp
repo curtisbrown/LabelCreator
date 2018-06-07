@@ -7,7 +7,12 @@ Control::Control(QObject *parent) :
     m_utilities(this),
     m_cameraCapture(this, &m_utilities),
     m_imageProcessing(new ImageProcessing(this, &m_utilities)),
-    m_labelPrint(this, &m_utilities)
+    m_labelPrint(this, &m_utilities),
+    m_ssid24Control(""),
+    m_ssid50Control(""),
+    m_wirelessKeyControl(""),
+    m_usrPwdControl(""),
+    m_cameraDiscovery(false)
 {
     // Connections
     connect(this, &Control::resetAllContent, &m_cameraCapture, &CameraCapture::resetContent);
@@ -33,8 +38,12 @@ Control::Control(QObject *parent) :
 
     m_cameraProperty.checkforDevice();
     m_cameraProperty.setCurrentDevice("1", "See3CAM_81");
-    m_cameraProperty.openHIDDevice("See3CAM_81 ");
-    m_uvc.getFirmWareVersion();
+    if (m_cameraProperty.openHIDDevice("See3CAM_81 ")) {
+        m_uvc.getFirmWareVersion();
+        m_cameraDiscovery = true;
+    } else {
+        m_utilities.debugLogMessage("failed to open HID Device, communication with camera unavailable");
+    }
 }
 
 bool Control::setFocus()
@@ -64,6 +73,16 @@ void Control::setUsrPwdControl(const QString &usrPwdControl)
     m_usrPwdControl = usrPwdControl;
     m_imageProcessing->setHomepagePwd(m_usrPwdControl);
     emit infoChanged();
+}
+
+bool Control::cameraDiscovery() const
+{
+    return m_cameraDiscovery;
+}
+
+void Control::setCameraDiscovery(bool cameraDiscovery)
+{
+    m_cameraDiscovery = cameraDiscovery;
 }
 
 QString Control::wirelessKeyControl() const

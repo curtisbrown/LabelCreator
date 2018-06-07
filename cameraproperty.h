@@ -87,7 +87,7 @@ public slots:
     /**
      * @brief openHIDDevice - This slot is used to open HID device
      */
-    void openHIDDevice(QString deviceName);
+    bool openHIDDevice(QString deviceName);
 
     // TO BE DELETED
     void notifyUser(QString title, QString text);

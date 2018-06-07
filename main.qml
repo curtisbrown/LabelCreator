@@ -113,6 +113,7 @@ Window {
                     onUnableToOpenCam: {
                         cameraText.text = "Error opening Camera"
                         cameraText.color = "red"
+                        control.setCameraDiscovery(false)
                     }
                 }
             }
@@ -205,6 +206,7 @@ Window {
                     }
                     onPressed: {
                         console.log("RESET CAMERA pressed")
+                        control.setCameraDiscovery(true)
                         vidstreamproperty.startCam()
                     }
                 }
@@ -229,30 +231,35 @@ Window {
                 }
 
                 function startCam() {
-                    stopCapture()
-                    closeDevice()
-                    setDevice("/dev/video")
-                    displayOutputFormat()
-                    displayStillResolution()
-                    displayVideoResolution()
-                    displayEncoderList()
-                    vidCapFormatChanged("0")
-                    setResolution("640x480")
-                    updateFrameInterval("YUYV (YUYV 4:2:2)", "640x480")
-                    // Camera settings section
-                    vidstreamproperty.changeSettings("9963776", "2")    // Brightness
-                    vidstreamproperty.changeSettings("9963777", "5")    // Contrast
-                    vidstreamproperty.changeSettings("9963778", "3")    // Saturation
-                    vidstreamproperty.changeSettings("9963788", "0")    // White Balance Temperature, Auto
-                    vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
-                    vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
-                    vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
-                    vidstreamproperty.startAgain()
-                    width = "640"
-                    height = "460"
-                    lastFPS("0")
-                    masterModeEnabled()
-                    timer.start()
+                    if (control.cameraDiscovery()) {
+                        stopCapture()
+                        closeDevice()
+                        setDevice("/dev/video")
+                        displayOutputFormat()
+                        displayStillResolution()
+                        displayVideoResolution()
+                        displayEncoderList()
+                        vidCapFormatChanged("0")
+                        setResolution("640x480")
+                        updateFrameInterval("YUYV (YUYV 4:2:2)", "640x480")
+                        // Camera settings section
+                        vidstreamproperty.changeSettings("9963776", "2")    // Brightness
+                        vidstreamproperty.changeSettings("9963777", "5")    // Contrast
+                        vidstreamproperty.changeSettings("9963778", "3")    // Saturation
+                        vidstreamproperty.changeSettings("9963788", "0")    // White Balance Temperature, Auto
+                        vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
+                        vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
+                        vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
+                        vidstreamproperty.startAgain()
+                        width = "640"
+                        height = "460"
+                        lastFPS("0")
+                        masterModeEnabled()
+                        timer.start()
+                    } else {
+                        // Emit to tell GUI to display error message
+                        unableToOpenCam()
+                    }
                 }
             }
         }

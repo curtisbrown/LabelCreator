@@ -72,7 +72,7 @@ void Cameraproperty::checkforDevice()
         deviceEndNumber = list.value(list.count()-1).mid(5).toInt();
         for (int qDevCount = deviceBeginNumber; qDevCount <= deviceEndNumber; qDevCount++) {
             QString qTempStr = qDir.path().append("/video" + QString::number(qDevCount));
-            if(open("/dev/video" +QString::number(qDevCount),false)) {
+            if (open("/dev/video" + QString::number(qDevCount),false)) {
                 struct v4l2_capability quearyCap;
                 if (querycap(quearyCap)) {
                     QString cameraName = (char*)quearyCap.card;
@@ -86,14 +86,16 @@ void Cameraproperty::checkforDevice()
                     close();
                 } else {
                     qDebug() << "Cannot open device: /dev/video" << qDevCount;
-                    return void();
+                    return;
                 }
             } else {
                 qDebug() << qTempStr << "Device opening failed" << qDevCount;
+                return;
             }
         }
     } else {
         qDebug() << "/sys/class/video4linux/ path is Not available";
+        return;
     }
 
     qDebug() << "Camera devices Connected to System: " << m_availableCam.join(", ");
@@ -122,15 +124,18 @@ void Cameraproperty::setCurrentDevice(QString deviceIndex,QString deviceName)
     }
 }
 
-void Cameraproperty::openHIDDevice(QString deviceName)
+bool Cameraproperty::openHIDDevice(QString deviceName)
 {
     m_uvcCam.exitExtensionUnit();
     deviceName.remove(QRegExp("[\n\t\r]"));
     bool hidInit = m_uvcCam.initExtensionUnit(deviceName);
-    if(hidInit)
+    if (hidInit) {
         emit initExtensionUnitSuccess();
-    else
+        return true;
+    } else {
         qDebug() << "ERROR opening HID device";
+        return false;
+    }
 }
 
 void Cameraproperty::notifyUser(QString title, QString text)

@@ -20,10 +20,10 @@ class Control : public QObject
     Q_PROPERTY(QString ssid50 READ ssid50Control WRITE setSsid50Control NOTIFY infoChanged)
     Q_PROPERTY(QString wirelessKey READ wirelessKeyControl WRITE setWirelessKeyControl NOTIFY infoChanged)
     Q_PROPERTY(QString usrPwd READ usrPwdControl WRITE setUsrPwdControl NOTIFY infoChanged)
+    Q_PROPERTY(bool cameraDiscoveryState READ cameraDiscovery WRITE setCameraDiscovery NOTIFY cameraStatusChanged)
+
 public:
     explicit Control(QObject *parent = nullptr);
-
-
 
 signals:
     void resetAllContent();
@@ -35,6 +35,7 @@ signals:
     void printingComplete();
     void printingError();
     void infoChanged();
+    void cameraStatusChanged();
 
 public slots:
     Q_INVOKABLE bool setFocus();
@@ -51,6 +52,9 @@ public slots:
     Q_INVOKABLE QString usrPwdControl() const;
     Q_INVOKABLE void setUsrPwdControl(const QString &usrPwdControl);
 
+    bool cameraDiscovery() const;
+    void setCameraDiscovery(bool cameraDiscovery);
+
 private:
     Utilities m_utilities;
     CameraCapture m_cameraCapture;
@@ -63,7 +67,7 @@ private:
     QString m_ssid50Control;
     QString m_wirelessKeyControl;
     QString m_usrPwdControl;
-
+    bool m_cameraDiscovery;
 };
 
 #endif // CONTROL_H

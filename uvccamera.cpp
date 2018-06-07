@@ -288,7 +288,7 @@ bool UvcCamera::initExtensionUnit(QString cameraName)
     if (hid_fd >= 0)
         close(hid_fd);
 
-    if(hidNode == "")
+    if (hidNode == "")
         return false;
 
     int ret, desc_size = 0;
@@ -302,31 +302,30 @@ bool UvcCamera::initExtensionUnit(QString cameraName)
     openNode = "";
     while (ii != cameraMap.end() && ii.key() == cameraName) {
         hid_fd = open(ii.value().toLatin1().data(), O_RDWR|O_NONBLOCK);
-        memset(buf, 0x0, sizeof(buf));
-        /* Get Physical Location */
-        ret = ioctl(hid_fd, HIDIOCGRAWPHYS(256), buf);
-        if (ret < 0) {
-            // Added by Sankari: To notify user about hid access
-            // 07 Dec 2017
-            _title = "Warning";
-            _text = "Unable to access extension unit controls. Please use the command \"sudo qtcam\" while launching application.";
-            emit hidWarningReceived(_title,_text);
-            return false;
-        }
-        QString tempBuf = buf;
-        if(tempBuf.contains(hidNode)) {
-            openNode = ii.value();
+        if (hid_fd != -1) {
+            memset(buf, 0x0, sizeof(buf));
+            /* Get Physical Location */
+            ret = ioctl(hid_fd, HIDIOCGRAWPHYS(256), buf);
+            if (ret < 0) {
+                // Added by Sankari: To notify user about hid access
+                // 07 Dec 2017
+                _title = "Warning";
+                _text = "Unable to access extension unit controls. Please use the command \"sudo qtcam\" while launching application.";
+                emit hidWarningReceived(_title,_text);
+                return false;
+            }
+            QString tempBuf = buf;
+            if (tempBuf.contains(hidNode)) {
+                openNode = ii.value();
+                close(hid_fd);
+                break;
+            }
             close(hid_fd);
-            break;
         }
-        close(hid_fd);
         ++ii;
     }
 
     hid_fd = open(openNode.toLatin1().data(), O_RDWR|O_NONBLOCK);
-    //Directly open from map value
-    //hid_fd = open(cameraMap.value(getCameraName()).toLatin1().data(), O_RDWR|O_NONBLOCK);
-
     if (hid_fd < 0) {
         perror("Unable to open device");
         return false;
@@ -376,10 +375,9 @@ bool UvcCamera::initExtensionUnit(QString cameraName)
      * Added camera enum comparision
      * Before its like camera name comparision
      */
-    if (selectedDeviceEnum != CommonEnums::SEE3CAM_CU130 && selectedDeviceEnum != CommonEnums::SEE3CAM_CU40) { //this condition is put temporary until cu130 and cu40 hardware support this
-        if (!sendOSCode())
-            qDebug() << "OS Identification failed";
-    }
+    if (!sendOSCode())
+        return false;
+
     return true;
 }
 
@@ -418,7 +416,7 @@ bool UvcCamera::sendOSCode()
     ret = write(hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         perror("write");
-        qDebug() <<"\nOS Identification Failed";
+        qDebug() << Q_FUNC_INFO <<"OS Identification Failed";
         return false;
     }
     start = getTickCount();

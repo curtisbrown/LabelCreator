@@ -552,11 +552,12 @@ bool See3CAM_81::getFocusStatus()
 bool See3CAM_81::setFocusPosition(int focusPosition)
 {
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
-
-    if (UvcCamera::hid_fd < 0)
-        return false;
-
     int ret = 0;
+
+    if (UvcCamera::hid_fd < 0) {
+        qDebug() << Q_FUNC_INFO << "File handle for HID device is less than 0";
+        return false;
+    }
 
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
@@ -569,10 +570,12 @@ bool See3CAM_81::setFocusPosition(int focusPosition)
     ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
     if (ret < 0) {
-        qDebug() << ("ERROR: write to Fd invalid");
+        qDebug() << Q_FUNC_INFO << "ERROR: write to FD invalid";
         return false;
+    } else {
+        qDebug() << "Successfuly wrote " << ret << "bytes";
+        return true;
     }
-    return true;
 }
 
 /**
@@ -583,13 +586,14 @@ bool See3CAM_81::getFocusMode()
 {
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
-
-    if(UvcCamera::hid_fd < 0)
-        return false;
-
     bool timeout = true;
     int ret = 0;
     unsigned int start, end = 0;
+
+    if (UvcCamera::hid_fd < 0) {
+        qDebug() << Q_FUNC_INFO << "File handle for HID device is less than 0";
+        return false;
+    }
 
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
@@ -600,28 +604,28 @@ bool See3CAM_81::getFocusMode()
     g_out_packet_buf[2] = GET_FOCUS_MODE; /* Report Number */
 
     ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
-
     if (ret < 0) {
-        qDebug() << Q_FUNC_INFO << "write";
+        qDebug() << Q_FUNC_INFO << "ERROR: write to FD invalid";
         return false;
+    } else {
+        qDebug() << "Successfuly wrote " << ret << "bytes";
     }
+
     /* Read the Status code from the device */
     start = uvc.getTickCount();
-    while(timeout) {
+    while (timeout) {
         /* Get a report from the device */
         ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
-        if (ret < 0) {
-            //qDebug() << Q_FUNC_INFO << " ERROR: read";
-        } else {
-            if((g_in_packet_buf[0] == CAMERA_CONTROL_81)&&
-                    (g_in_packet_buf[1]==GET_FOCUS_MODE)) {		
+        if (ret > 0) {
+            if((g_in_packet_buf[0] == CAMERA_CONTROL_81) && (g_in_packet_buf[1] == GET_FOCUS_MODE)) {
                 emit focusModeValue((unsigned int)g_in_packet_buf[2]);
-                timeout=false;
+                timeout = false;
             }
         }
         end = uvc.getTickCount();
         if(end - start > TIMEOUT) {
             timeout = false;
+            qDebug() << Q_FUNC_INFO << "Read function timed out";
             return false;
         }
     }
@@ -632,20 +636,21 @@ bool See3CAM_81::getFocusMode()
  * @brief See3CAM_81::getFocusPosition
  * @return true/false
  */
-bool See3CAM_81::getFocusPosition() {    
+bool See3CAM_81::getFocusPosition()
+{
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
-
-    if(UvcCamera::hid_fd < 0)
-    {
-        return false;
-    }
-
     quint16 focusPosition;
     bool timeout = true;
     int ret =0;
     unsigned int start, end = 0;
     unsigned short int MSB = 0, LSB = 0;
+
+    if (UvcCamera::hid_fd < 0) {
+        qDebug() << Q_FUNC_INFO << "File handle for HID device is less than 0";
+        return false;
+    }
+
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
     memset(g_in_packet_buf, 0x00, sizeof(g_in_packet_buf));
@@ -661,8 +666,7 @@ bool See3CAM_81::getFocusPosition() {
     }
     /* Read the position code from the device */
     start = uvc.getTickCount();
-    while(timeout)
-    {
+    while(timeout) {
         /* Get a report from the device */
         ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
         if (ret < 0) {
@@ -692,18 +696,18 @@ bool See3CAM_81::getFocusPosition() {
  * @brief See3CAM_81::setToDefault - set the default values in camera`
  * @return true/false
  */
-bool See3CAM_81::setToDefault(){
-
+bool See3CAM_81::setToDefault()
+{
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
-
-    if(UvcCamera::hid_fd < 0)
-    {
-        return false;
-    }
     bool timeout = true;
     int ret =0;
     unsigned int start, end = 0;
+
+    if (UvcCamera::hid_fd < 0) {
+        qDebug() << Q_FUNC_INFO << "File handle for HID device is less than 0";
+        return false;
+    }
 
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
@@ -714,7 +718,6 @@ bool See3CAM_81::setToDefault(){
     g_out_packet_buf[2] = SET_TO_DEFAULT_CAM81; /* Report Number */
 
     ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
-
     if (ret < 0) {
         perror("write");
         return false;
@@ -723,8 +726,7 @@ bool See3CAM_81::setToDefault(){
     /* Read the Status code from the device */
     start = uvc.getTickCount();
 
-    while(timeout)
-    {
+    while(timeout) {
 
         /* Get a report from the device */
         ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
