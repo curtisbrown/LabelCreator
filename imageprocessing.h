@@ -41,7 +41,6 @@ signals:
 
 public slots:
     void resetContent();
-    void processImageStart();
     void processImage();
 
 private:

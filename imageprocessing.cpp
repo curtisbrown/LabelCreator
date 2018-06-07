@@ -9,14 +9,12 @@ ImageProcessing::ImageProcessing(QObject *parent, Utilities *utilities) :
     m_homeDir(QStandardPaths::locate(QStandardPaths::HomeLocation, QString(), QStandardPaths::LocateDirectory)),
     m_ocrDir(m_homeDir + "OCR"),
     m_ocrSwInstallDir(m_ocrDir + "/ocropy-master"),
-    m_ssid24("x"),
-    m_ssid50("y"),
-    m_wirelessKey("z"),
-    m_homepagePwd("1")
+    m_ssid24(""),
+    m_ssid50(""),
+    m_wirelessKey(""),
+    m_homepagePwd("")
 {
     m_utilities->debugLogMessage(Q_FUNC_INFO);
-    m_utilities->debugLogMessage(m_homeDir);
-    m_utilities->debugLogMessage(m_ocrSwInstallDir);
 }
 
 void ImageProcessing::resetContent()
@@ -27,84 +25,6 @@ void ImageProcessing::resetContent()
     m_ssid50.clear();
     m_wirelessKey.clear();
     m_homepagePwd.clear();
-}
-
-void ImageProcessing::processImageStart()
-{
-    m_utilities->debugLogMessage(Q_FUNC_INFO);
-
-    // Convert image to BMP format
-    m_process1.start(QString("mogrify -format bmp %1/latestCapture.jpeg -path %1").arg(m_ocrDir));
-    m_process1.waitForFinished(5000);
-
-    m_process2.start(QString("python %1/universal.py %2").arg(m_ocrDir).arg(m_homeDir));
-    m_process2.waitForFinished(10000);
-
-    // Remove Book contents of old capture
-    m_process3.start(QString("rm -r %1/book").arg(m_ocrSwInstallDir));
-    m_process3.waitForFinished(5000);
-
-    m_process4.start(QString("python %1/ocropus-nlbin -n %1/tests/crop.tif -o %1/book").arg(m_ocrSwInstallDir));
-    m_process4.waitForFinished(5000);
-
-    m_process5.start(QString("python %1/ocropus-gpageseg -n --minscale 11.0 --maxcolseps 0 %1/book/0001.bin.png").arg(m_ocrSwInstallDir));
-    m_process5.waitForFinished(5000);
-
-    m_process6.start(QString("python %1/ocropus-rpred -m arial2.pyrnn.gz %1/book/0001/*.png").arg(m_ocrSwInstallDir));
-    m_process6.waitForFinished(5000);
-
-    //m_process.start(QString("python %1/ocropus-rpred -m sansculottes.pyrnn.gz %1/book/0001/*.png").arg(m_ocrSwInstallDir));
-    //m_process.waitForFinished(5000);
-
-    //m_process.start(QString("python %1/ocropus-rpred -m en-default.pyrnn.gz %1/book/0001/*.png").arg(m_ocrSwInstallDir));
-    //m_process.waitForFinished(5000);
-
-    //m_process.start(QString("python %1/ocropus-rpred -n -m %1/consolas1.pyrnn.gz %1/book/0001/*.png").arg(m_ocrSwInstallDir));
-    //m_process.waitForFinished(5000);
-
-    QDir files(m_ocrSwInstallDir + "/book/0001");
-    QStringList tempList;
-    foreach (QString name, files.entryList()) {
-        QFile file(m_ocrSwInstallDir + "/book/0001/" + name);
-        if (file.fileName().endsWith(".txt")) {
-            if (file.open(QIODevice::ReadOnly)) {
-
-                QTextStream in(&file);
-                QString line = in.readAll();
-                tempList.append(line);
-
-                file.close();
-            } else {
-                m_utilities->debugLogMessage("ERROR: Couldn't open file");
-            }
-
-        }
-    }
-
-    if (tempList.isEmpty()) {
-        m_utilities->debugLogMessage("ERROR: No information retrieved via OCR SW");
-        emit infoRetrievalError();
-    } else {
-        foreach (QString line, tempList) {
-            m_utilities->debugLogMessage(line);
-        }
-
-        if (tempList.count() == 5) {
-            // remove first as this is rubbish information
-            tempList.removeFirst();
-            foreach (QString entry, tempList) {
-                m_fileContents.append(entry.remove("\n"));
-            }
-
-            setSsid24(m_fileContents.at(0));
-            setSsid50(m_fileContents.at(1));
-            setWirelessKey(m_fileContents.at(2));
-            setHomepagePwd(m_fileContents.at(3));
-            emit infoRetrievalComplete();
-        } else {
-            emit infoRetrievalError();
-        }
-    }
 }
 
 QString ImageProcessing::ssid24() { return m_ssid24; }
@@ -249,7 +169,9 @@ void ImageProcessing::processImage()
                 // remove first as this is rubbish information
                 tempList.removeFirst();
                 foreach (QString entry, tempList) {
-                    m_fileContents.append(entry.remove("\n"));
+                    entry = entry.remove("\n");
+                    QStringList list = entry.split(":");
+                    m_fileContents.append(list.at(1));
                 }
 
                 setSsid24(m_fileContents.at(0));
