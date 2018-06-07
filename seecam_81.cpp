@@ -32,13 +32,14 @@ bool See3CAM_81::setEffectMode(const See3CAM_81::specialEffects &specialEffect)
 {
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
-
-    if(UvcCamera::hid_fd < 0)
-        return false;
-
     bool timeout = true;
     int ret = 0;
     unsigned int start, end = 0;
+
+    if (UvcCamera::hid_fd < 0) {
+        qDebug() << Q_FUNC_INFO << "File handle for HID device is less than 0";
+        return false;
+    }
 
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
@@ -61,27 +62,25 @@ bool See3CAM_81::setEffectMode(const See3CAM_81::specialEffects &specialEffect)
     while (timeout) {
         /* Get a report from the device */
         ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
-        if (ret < 0) {
-            //qDebug() << Q_FUNC_INFO << "ERROR: read";
-        } else {
+        if (ret > 0) {
             if (g_in_packet_buf[3] == SET_FAIL) {
+                qDebug() << Q_FUNC_INFO << "Read failed";
                 return false;
             } else if(g_in_packet_buf[0] == CAMERA_CONTROL_81 &&
                 g_in_packet_buf[1] == SETSPECIALEFFECT_81 &&
                 g_in_packet_buf[2] == specialEffect &&
                 g_in_packet_buf[3] == SET_SUCCESS) {
-                    timeout=false;
+                    timeout = false;
             }
         }
         end = uvc.getTickCount();
-        if(end - start > TIMEOUT) {
+        if (end - start > TIMEOUT) {
             timeout = false;
             return false;
         }
     }
     return true;
 }
-
 
 /**
  * @brief See3CAM_81::getEffectMode - getting effect mode from the camera *
@@ -91,15 +90,16 @@ bool See3CAM_81::getEffectMode()
 {
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
-    if(UvcCamera::hid_fd < 0)
-    {
-        return false;
-    }
     bool timeout = true;
     int ret =0;
     unsigned int start, end = 0;
-
     uint effectMode;
+
+    if (UvcCamera::hid_fd < 0) {
+        qDebug() << Q_FUNC_INFO << "File handle for HID device is less than 0";
+        return false;
+    }
+
     //Initialize the buffer
     memset(g_out_packet_buf, 0x00, sizeof(g_out_packet_buf));
     memset(g_in_packet_buf, 0x00, sizeof(g_in_packet_buf));
@@ -118,11 +118,9 @@ bool See3CAM_81::getEffectMode()
     /* Read the Status code from the device */
     start = uvc.getTickCount();
 
-    while(timeout)
-    {
+    while (timeout) {
         /* Get a report from the device */
         ret = read(UvcCamera::hid_fd, g_in_packet_buf, BUFFER_LENGTH);
-
         if (ret < 0) {
             //perror("read");
         } else {
@@ -137,8 +135,7 @@ bool See3CAM_81::getEffectMode()
             }
         }
         end = uvc.getTickCount();
-        if(end - start > TIMEOUT)
-        {
+        if(end - start > TIMEOUT) {
             timeout = false;
             return false;
         }
@@ -146,13 +143,13 @@ bool See3CAM_81::getEffectMode()
     return true;
 }
 
-
 /**
  * @brief See3CAM_81::setFlipMirrorMode - Setting Flip Mirror mode
  * @param flipMirrorMode - mode selected / unselected in UI
  * @return true/false
  */
-bool See3CAM_81::setFlipMirrorMode(bool flipMode, bool mirrorMode){
+bool See3CAM_81::setFlipMirrorMode(bool flipMode, bool mirrorMode)
+{
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
 

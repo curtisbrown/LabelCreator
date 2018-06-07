@@ -52,8 +52,7 @@ bool Control::setFocus()
 
     m_see3Cam81.setFocusMode(See3CAM_81::MANUAL_FOCUS_81);
 
-    if (m_see3Cam81.setFocusPosition(311)
-            && m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
+    if (m_see3Cam81.setFocusPosition(311) && m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
         m_utilities.debugLogMessage("SUCCESS setting zoom and greyscale");
         return true;
     } else {
