@@ -94,8 +94,8 @@ Window {
 
         rows: 2
         columns: 2
-
-        // Camera output
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Section 1: Camera output
         Rectangle {
             id: cameraOutput
             height: parent.height / 2
@@ -256,7 +256,10 @@ Window {
                 }
             }
         }
-        // Last Picture Taken by Camera
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Section 2: Last Picture Taken by Camera
         Rectangle {
             id: latestImageCaptured
             height: parent.height / 2
@@ -270,22 +273,12 @@ Window {
                 font.pointSize: 20
             }
 
-            Text {
+            StatusText {
                 id: statusText
-                text: qsTr("Capture Image to start")
-                color: "white"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pointSize: 20
-                SequentialAnimation on color {
-                    ColorAnimation { to: "orange"; duration: 1500 }
-                    ColorAnimation { to: "white"; duration: 800 }
-                    loops: Animation.Infinite
-                }
                 Connections {
                     target: vidstreamproperty
-                    onCaptureSuccess: statusText.visible = false
-                    onCaptureFail: { statusText.color = "red"; statusText.text = "FAILED TO CAPTURE IMAGE" }
+                    onCaptureSuccess: visible = false
+                    onCaptureFail: { color = "red"; text = "FAILED TO CAPTURE IMAGE" }
                 }
             }
             Image {
@@ -304,7 +297,10 @@ Window {
                 }
             }
         }
-        // Cropped Image
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Section 3: Cropped Image
         Rectangle {
             id: croppedVersionLatestImage
             height: parent.height / 2
@@ -318,21 +314,19 @@ Window {
                 font.pointSize: 20
             }
 
-            Text {
+            StatusText {
                 id: statusText2
-                text: qsTr("Capture Image to start")
-                color: "white"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pointSize: 20
-                SequentialAnimation on color {
-                    ColorAnimation { to: "orange"; duration: 1500 }
-                    ColorAnimation { to: "white"; duration: 800 }
-                    loops: Animation.Infinite
+                Connections {
+                    target: vidstreamproperty
+                    onCaptureSuccess: visible = false
+                    onCaptureFail: { color = "red"; text = "FAILED TO CAPTURE IMAGE" }
                 }
             }
         }
-        // Text from Cropped image that is going to be used to print label
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Section 4: Text from Cropped image that is going to be used to print label
         Rectangle {
             id: infoToBePrinted
             height: parent.height / 2
@@ -346,18 +340,12 @@ Window {
                 font.pointSize: 20
             }
 
-            Text {
+            StatusText {
                 id: statusText3
-                text: qsTr("Capture Image to start")
-                color: "white"
-                visible: !printRegion.visible
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pointSize: 20
-                SequentialAnimation on color {
-                    ColorAnimation { to: "orange"; duration: 1500 }
-                    ColorAnimation { to: "white"; duration: 800 }
-                    loops: Animation.Infinite
+                Connections {
+                    target: vidstreamproperty
+                    onCaptureSuccess: visible = false
+                    onCaptureFail: { color = "red"; text = "FAILED TO CAPTURE IMAGE" }
                 }
             }
 
@@ -525,6 +513,7 @@ Window {
                 }
             }
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
