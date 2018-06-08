@@ -20,8 +20,6 @@ Control::Control(QObject *parent) :
     connect(&m_cameraCapture, &CameraCapture::captureDone, this, &Control::captureComplete);
 
     connect(this, &Control::resetAllContent, m_imageProcessing, &ImageProcessing::resetContent);
-    //connect(this, &Control::captureComplete, m_imageProcessing, &ImageProcessing::processImageStart);
-    connect(this, &Control::captureComplete, m_imageProcessing, &ImageProcessing::processImage);
     connect(m_imageProcessing, &ImageProcessing::infoRetrievalComplete, this, [=]() {
         setSsid24Control(m_imageProcessing->ssid24());
         setSsid50Control(m_imageProcessing->ssid50());
