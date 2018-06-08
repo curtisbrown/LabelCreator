@@ -240,8 +240,8 @@ Window {
                         displayVideoResolution()
                         displayEncoderList()
                         vidCapFormatChanged("0")
-                        setResolution("640x480")
-                        updateFrameInterval("YUYV (YUYV 4:2:2)", "640x480")
+                        setResolution("1920x1080")
+                        updateFrameInterval("YUYV (YUYV 4:2:2)", "1920x1080")
                         // Camera settings section
                         vidstreamproperty.changeSettings("9963776", "2")    // Brightness
                         vidstreamproperty.changeSettings("9963777", "5")    // Contrast
@@ -250,6 +250,7 @@ Window {
                         vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
                         vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
                         vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
+                        lastPreviewResolution("1920x1080", "0")
                         vidstreamproperty.startAgain()
                         width = "640"
                         height = "460"
