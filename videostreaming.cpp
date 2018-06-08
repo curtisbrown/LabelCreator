@@ -114,7 +114,7 @@ void Videostreaming::setDevice(QString deviceName) {
         m_buftype= V4L2_BUF_TYPE_VIDEO_CAPTURE;
         openSuccess = true;
     } else {
-        qDebug() <<"Device Opening Failed - " << deviceName;
+        qDebug() << Q_FUNC_INFO << "Device Opening Failed - " << deviceName;
     }
 }
 
@@ -903,8 +903,7 @@ void Videostreaming::changeFPSandTakeShot(QString filePath,QString imgFormatType
     fpsChangedForStill = false;
 
     // If lastly setfpsvalue and currently set fps value is different, then set currently selected fps to take still.
-    if (!((fpsIndex == lastFPSValue.toUInt()) && (stillSize == lastPreviewSize) && (stillOutFormat == lastFormat)))
-    {
+    if (!((fpsIndex == lastFPSValue.toUInt()) && (stillSize == lastPreviewSize) && (stillOutFormat == lastFormat))) {
         emit stillSkipCountWhenFPSChange(true);
         stopCapture();
         vidCapFormatChanged(stillOutFormat);
@@ -912,7 +911,7 @@ void Videostreaming::changeFPSandTakeShot(QString filePath,QString imgFormatType
         frameIntervalChanged(fpsIndex);
         startAgain();
         fpsChangedForStill = true;
-    }else{
+    } else {
         emit stillSkipCountWhenFPSChange(false);
     }
 
@@ -1225,7 +1224,7 @@ void Videostreaming::startAgain()
         displayFrame();
 }
 
-void Videostreaming::lastPreviewResolution(QString resolution,QString format)
+void Videostreaming::lastPreviewResolution(QString resolution, QString format)
 {
     lastPreviewSize = resolution;
     lastFormat = format;
