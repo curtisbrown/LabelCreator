@@ -81,7 +81,7 @@ void ImageProcessing::processImage()
     stateMachine->setInitialState(convertImgtoBmp);
 
     connect(convertImgtoBmp, &QState::entered, this, [=]() {
-        m_utilities->debugLogMessage("......................convertImgtoBmp");
+        m_utilities->debugLogMessage("Entering state: convertImgtoBmp");
         m_process1.start(QString("mogrify -format bmp %1/latestCapture.jpeg -path %1").arg(m_ocrDir));
         m_process1.waitForStarted(5000);
     });
@@ -90,7 +90,7 @@ void ImageProcessing::processImage()
             emit process1ok();
     });
     connect(universal, &QState::entered, this, [=]() {
-        m_utilities->debugLogMessage("......................universal");
+        m_utilities->debugLogMessage("Entering state: universal");
         m_process2.start(QString("python %1/universal.py %2").arg(m_ocrDir).arg(m_homeDir));
         m_process2.waitForStarted(10000);
     });
@@ -99,7 +99,7 @@ void ImageProcessing::processImage()
             emit process2ok();
     });
     connect(removeOldBook, &QState::entered, this, [=]() {
-        m_utilities->debugLogMessage("......................removeOldBook");
+        m_utilities->debugLogMessage("Entering state: removeOldBook");
         m_process3.start(QString("rm -r %1/book").arg(m_ocrSwInstallDir));
         m_process3.waitForStarted(5000);
     });
@@ -108,7 +108,7 @@ void ImageProcessing::processImage()
             emit process3ok();
     });
     connect(ocropus_nlbin, &QState::entered, this, [=]() {
-        m_utilities->debugLogMessage("......................ocropus_nlbin");
+        m_utilities->debugLogMessage("Entering state: ocropus_nlbin");
         m_process4.start(QString("python %1/ocropus-nlbin -n %1/tests/crop.tif -o %1/book").arg(m_ocrSwInstallDir));
         m_process4.waitForStarted(5000);
     });
@@ -117,7 +117,7 @@ void ImageProcessing::processImage()
             emit process4ok();
     });
     connect(ocropus_gpageseg, &QState::entered, this, [=]() {
-        m_utilities->debugLogMessage("......................ocropus_gpageseg");
+        m_utilities->debugLogMessage("Entering state: ocropus_gpageseg");
         m_process5.start(QString("python %1/ocropus-gpageseg -n --minscale 11.0 --maxcolseps 0 %1/book/0001.bin.png").arg(m_ocrSwInstallDir));
         m_process5.waitForStarted(5000);
     });
@@ -126,7 +126,7 @@ void ImageProcessing::processImage()
             emit process5ok();
     });
     connect(ocropus_rpred, &QState::entered, this, [=]() {
-        m_utilities->debugLogMessage("......................ocropus_rpred");
+        m_utilities->debugLogMessage("Entering state: ocropus_rpred");
         m_process7.start(QString("python %1/ocropus-rpred -m arial2.pyrnn.gz %1/book/0001/*.png").arg(m_ocrSwInstallDir));
         m_process7.waitForFinished(5000);
         //m_process6.start(QString("python %1/ocropus-rpred -m sansculottes.pyrnn.gz %1/book/0001/*.png").arg(m_ocrSwInstallDir));
@@ -190,7 +190,7 @@ void ImageProcessing::processImage()
         }
     });
     connect(done, &QFinalState::entered, this, [=]() {
-        m_utilities->debugLogMessage("......................Image processing completed");
+        m_utilities->debugLogMessage("Entering state: Image processing completed");
     });
 
     convertImgtoBmp->addTransition(this, &ImageProcessing::process1ok, universal);
