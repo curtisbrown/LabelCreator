@@ -66,9 +66,13 @@ void LabelPrinter::resetContent()
 
 void LabelPrinter::connectToPrinterServer()
 {
+#ifdef QT_DEBUG
+    m_utilities->debugLogMessage("Not Attempting to connect to server while in DEBUG mode");
+#else
     m_utilities->debugLogMessage("Attempting to connect to Server");
     m_socket->abort();
     m_socket->connectToHost(m_hostAddress, m_hostPort);
+#endif
 }
 
 bool LabelPrinter::writeDataToSocket(QString data)
