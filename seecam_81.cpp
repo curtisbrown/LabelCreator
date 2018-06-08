@@ -30,6 +30,8 @@ See3CAM_81::See3CAM_81(){}
  */
 bool See3CAM_81::setEffectMode(const See3CAM_81::specialEffects &specialEffect)
 {
+    qDebug() << Q_FUNC_INFO;
+
     unsigned char g_out_packet_buf[BUFFER_LENGTH];
     unsigned char g_in_packet_buf[BUFFER_LENGTH];
     bool timeout = true;
@@ -76,7 +78,6 @@ bool See3CAM_81::setEffectMode(const See3CAM_81::specialEffects &specialEffect)
         end = uvc.getTickCount();
         if (end - start > TIMEOUT) {
             timeout = false;
-            return false;
         }
     }
     return true;
@@ -124,20 +125,19 @@ bool See3CAM_81::getEffectMode()
         if (ret < 0) {
             //perror("read");
         } else {
-            if (g_in_packet_buf[3]==GET_FAIL_CAM81) {
+            if (g_in_packet_buf[3] == GET_FAIL_CAM81) {
                 return false;
             } else if(g_in_packet_buf[0] == CAMERA_CONTROL_81 &&
-                g_in_packet_buf[1]==GETSPECIALEFFECT_81 &&
-                g_in_packet_buf[3]==GET_SUCCESS_CAM81) {
+                g_in_packet_buf[1] == GETSPECIALEFFECT_81 &&
+                g_in_packet_buf[3] == GET_SUCCESS_CAM81) {
                     effectMode = g_in_packet_buf[2];
                     emit effectModeValue(effectMode);
                     timeout = false;
             }
         }
         end = uvc.getTickCount();
-        if(end - start > TIMEOUT) {
+        if (end - start > TIMEOUT) {
             timeout = false;
-            return false;
         }
     }
     return true;
@@ -570,7 +570,7 @@ bool See3CAM_81::setFocusPosition(int focusPosition)
         qDebug() << Q_FUNC_INFO << "ERROR: write to FD invalid";
         return false;
     } else {
-        qDebug() << "Successfuly wrote" << ret << "bytes";
+        qDebug() << Q_FUNC_INFO << "Successfuly wrote" << ret << "bytes";
         return true;
     }
 }
@@ -605,7 +605,7 @@ bool See3CAM_81::getFocusMode()
         qDebug() << Q_FUNC_INFO << "ERROR: write to FD invalid";
         return false;
     } else {
-        qDebug() << "Successfuly wrote" << ret << "bytes";
+        qDebug() << Q_FUNC_INFO << "Successfuly wrote" << ret << "bytes";
     }
 
     /* Read the Status code from the device */
