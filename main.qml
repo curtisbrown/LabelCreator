@@ -22,6 +22,63 @@ Window {
     property int buttonMargin: 20
     property bool readyToPrint : false
 
+    CameraPreview {
+        id: preview
+        visible: false
+
+        Videostreaming {
+            id: vidstreamproperty
+            anchors.centerIn: parent
+            See3Cam81 {
+                id: see3Cam81
+                Component.onCompleted: {
+                    setEffectMode(See3Cam81.EFFECT_NORMAL)
+                    setFocusMode(See3Cam81.CONTINUOUS_FOCUS_81)
+                }
+            }
+
+            Component.onCompleted: { startCam() }
+            Timer {
+                id: timer
+                interval: 5000; repeat: false
+                onTriggered: { control.setFocus() }
+            }
+
+            function startCam() {
+                if (control.cameraDiscovery()) {
+                    stopCapture()
+                    closeDevice()
+                    setDevice("/dev/video")
+                    displayOutputFormat()
+                    displayStillResolution()
+                    displayVideoResolution()
+                    displayEncoderList()
+                    vidCapFormatChanged("0")
+                    setResolution("1920x1080")
+                    updateFrameInterval("YUYV (YUYV 4:2:2)", "1920x1080")
+                    // Camera settings section
+                    vidstreamproperty.changeSettings("9963776", "2")    // Brightness
+                    vidstreamproperty.changeSettings("9963777", "5")    // Contrast
+                    vidstreamproperty.changeSettings("9963778", "3")    // Saturation
+                    vidstreamproperty.changeSettings("9963788", "0")    // White Balance Temperature, Auto
+                    vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
+                    vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
+                    vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
+                    lastPreviewResolution("1920x1080", "0")
+                    vidstreamproperty.startAgain()
+                    width = "1920"
+                    height = "1080"
+                    lastFPS("0")
+                    masterModeEnabled()
+                    timer.start()
+                } else {
+                    // Emit to tell GUI to display error message
+                    unableToOpenCam()
+                }
+            }
+        }
+    }
+
     Item {
         id: logo
         height: 40
@@ -151,6 +208,34 @@ Window {
                 }
             }
 
+            Item {
+                id: showPreview
+                height: 60
+                width: height
+                anchors.top: takePicture.bottom
+                anchors.topMargin: 10
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                Image {
+                    id: previewImage
+                    source: "qrc:/images/images/look.png"
+                    sourceSize.height: parent.height
+                    sourceSize.width: parent.width
+                }
+                MouseArea {
+                    id: showPreviewArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    ToolTip {
+                        parent: showPreviewArea
+                        visible: showPreviewArea.containsMouse
+                        text:"Show camera preview"
+                    }
+                    onPressed: { preview.visible = true }
+                }
+            }
+
             Image {
                 id: captureStatus
                 source: ""
@@ -208,58 +293,6 @@ Window {
                         console.log("RESET CAMERA pressed")
                         control.setCameraDiscovery(true)
                         vidstreamproperty.startCam()
-                    }
-                }
-            }
-
-            Videostreaming {
-                id: vidstreamproperty
-                anchors.centerIn: parent
-                See3Cam81 {
-                    id: see3Cam81
-                    Component.onCompleted: {
-                        setEffectMode(See3Cam81.EFFECT_NORMAL)
-                        setFocusMode(See3Cam81.CONTINUOUS_FOCUS_81)
-                    }
-                }
-
-                Component.onCompleted: { startCam() }
-                Timer {
-                    id: timer
-                    interval: 5000; repeat: false
-                    onTriggered: { control.setFocus() }
-                }
-
-                function startCam() {
-                    if (control.cameraDiscovery()) {
-                        stopCapture()
-                        closeDevice()
-                        setDevice("/dev/video")
-                        displayOutputFormat()
-                        displayStillResolution()
-                        displayVideoResolution()
-                        displayEncoderList()
-                        vidCapFormatChanged("0")
-                        setResolution("1920x1080")
-                        updateFrameInterval("YUYV (YUYV 4:2:2)", "1920x1080")
-                        // Camera settings section
-                        vidstreamproperty.changeSettings("9963776", "2")    // Brightness
-                        vidstreamproperty.changeSettings("9963777", "5")    // Contrast
-                        vidstreamproperty.changeSettings("9963778", "3")    // Saturation
-                        vidstreamproperty.changeSettings("9963788", "0")    // White Balance Temperature, Auto
-                        vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
-                        vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
-                        vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
-                        lastPreviewResolution("1920x1080", "0")
-                        vidstreamproperty.startAgain()
-                        width = "640"
-                        height = "460"
-                        lastFPS("0")
-                        masterModeEnabled()
-                        timer.start()
-                    } else {
-                        // Emit to tell GUI to display error message
-                        unableToOpenCam()
                     }
                 }
             }
