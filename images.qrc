@@ -8,5 +8,6 @@
         <file>images/resetCamera.png</file>
         <file>images/takePicture.png</file>
         <file>images/print.png</file>
+        <file>images/look.png</file>
     </qresource>
 </RCC>

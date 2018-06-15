@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>StatusText.qml</file>
+        <file>CameraPreview.qml</file>
     </qresource>
 </RCC>
