@@ -64,7 +64,6 @@ Window {
                     vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
                     vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
                     vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
-                    lastPreviewResolution("1920x1080", "0")
                     vidstreamproperty.startAgain()
                     width = "1920"
                     height = "1080"

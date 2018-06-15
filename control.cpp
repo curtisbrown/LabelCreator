@@ -20,6 +20,7 @@ Control::Control(QObject *parent) :
     connect(&m_cameraCapture, &CameraCapture::captureDone, this, &Control::captureComplete);
 
     connect(this, &Control::resetAllContent, m_imageProcessing, &ImageProcessing::resetContent);
+    connect(this, &Control::captureComplete, m_imageProcessing, &ImageProcessing::processImage);
     connect(m_imageProcessing, &ImageProcessing::infoRetrievalComplete, this, [=]() {
         setSsid24Control(m_imageProcessing->ssid24());
         setSsid50Control(m_imageProcessing->ssid50());
@@ -50,11 +51,17 @@ bool Control::setFocus()
 
     m_see3Cam81.setFocusMode(See3CAM_81::MANUAL_FOCUS_81);
 
-    if (m_see3Cam81.setFocusPosition(311) && m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
-        m_utilities.debugLogMessage("SUCCESS setting zoom and greyscale");
-        return true;
+    if (m_see3Cam81.setFocusPosition(270)) {
+        QThread::msleep(3000);
+        if (m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
+            m_utilities.debugLogMessage("SUCCESS setting zoom and greyscale");
+            return true;
+        } else {
+            m_utilities.debugLogMessage("ERROR setting GREYSCALE");
+            return false;
+        }
     } else {
-        m_utilities.debugLogMessage("ERROR setting camera values");
+        m_utilities.debugLogMessage("ERROR setting ZOOM");
         return false;
     }
 }

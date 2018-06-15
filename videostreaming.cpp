@@ -871,7 +871,6 @@ void Videostreaming::makeShot(QString filePath,QString imgFormatType)
 
     if (!((stillSize == lastPreviewSize) && (stillOutFormat == lastFormat))) {
         stopCapture();
-        lastPreviewResolution(stillSize, stillOutFormat);
         qDebug() << "STILLOUTFORMAT: " << stillOutFormat << ", STILLSIZE: " << stillSize;
         vidCapFormatChanged(stillOutFormat);
         setResolution(stillSize);

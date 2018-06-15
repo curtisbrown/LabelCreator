@@ -564,8 +564,8 @@ bool See3CAM_81::setFocusPosition(int focusPosition)
     g_out_packet_buf[2] = SET_FOCUS_POSITION; /* Report Number */
     g_out_packet_buf[3] = ((focusPosition & 0xFF00 ) >> 8); /* MSB of focus postion */
     g_out_packet_buf[4] = (focusPosition & 0x00FF); /* LSB of focus postion */
-    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
 
+    ret = write(UvcCamera::hid_fd, g_out_packet_buf, BUFFER_LENGTH);
     if (ret < 0) {
         qDebug() << Q_FUNC_INFO << "ERROR: write to FD invalid";
         return false;
