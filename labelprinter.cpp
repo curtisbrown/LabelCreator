@@ -7,10 +7,22 @@ LabelPrinter::LabelPrinter(QObject *parent, Utilities *utilities)
     , m_hostAddress("172.168.1.200")
     , m_hostPort(9999)
     , m_connected(false)
+    , m_host("10.40.10.165")
+    , m_user("ctdi")
+    , m_password("ctdi")
+    , m_dataBuffer("")
+
 {
     m_utilities->debugLogMessage(Q_FUNC_INFO);
 
+    m_timer.setInterval(3000);
+    m_timer.setSingleShot(true);
+
     // Connections
+    connect(this, &LabelPrinter::uploadComplete, &m_timer, static_cast<void (QTimer::*)()>(&QTimer::start));
+    connect(&m_timer, &QTimer::timeout, this, &LabelPrinter::checkPrintStatus);
+    connect(this, &LabelPrinter::uploadFail, this, &LabelPrinter::printFailed);
+
     connect(m_socket, &QTcpSocket::connected, this, [=]() {
         m_utilities->debugLogMessage("Successfully connected to the host");
         m_connected = true;
@@ -34,7 +46,12 @@ LabelPrinter::LabelPrinter(QObject *parent, Utilities *utilities)
         m_socket->abort();
     });
 
-    connectToPrinterServer();
+    connect(&m_curlProcess, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &LabelPrinter::ftpUploadStatus);
+    connect(&m_printProcess, &QProcess::readyRead, [=]() {
+        // Copy printer data
+        this->m_dataBuffer += this->m_printProcess.readAll();
+    });
+    connect(&m_printProcess, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &LabelPrinter::checkPrintStatus);
 }
 
 LabelPrinter::~LabelPrinter()
@@ -43,25 +60,15 @@ LabelPrinter::~LabelPrinter()
     m_socket->close();
 }
 
-void LabelPrinter::printLabel()
-{
-    m_utilities->debugLogMessage(Q_FUNC_INFO);
-
-    if (writeDataToSocket("INSERT DATA HERE FOR BARTENDER")) {
-        m_utilities->debugLogMessage("bytes written successfully");
-        emit printDone();
-    } else {
-        emit printFailed();
-    }
-}
-
 void LabelPrinter::resetContent()
 {
     m_utilities->debugLogMessage(Q_FUNC_INFO);
-    if (!m_connected)
+    if (!m_connected) {
         connectToPrinterServer();
-    else
-        writeDataToSocket("RESET BUFFER CONTENT");
+    } else {
+        m_serial.clear();
+        m_dataBuffer.clear();
+    }
 }
 
 void LabelPrinter::connectToPrinterServer()
@@ -73,6 +80,80 @@ void LabelPrinter::connectToPrinterServer()
     m_socket->abort();
     m_socket->connectToHost(m_hostAddress, m_hostPort);
 #endif
+}
+
+bool LabelPrinter::createFileToUpload(QString serial, QString ssid, QString wifiKey, QString password)
+{
+    m_utilities->debugLogMessage(Q_FUNC_INFO);
+
+    QFile bartenderFile(serial + ".pr1");
+    QString data = password + "," + ssid.right(4) + "," + wifiKey;
+
+    if (bartenderFile.exists())
+        bartenderFile.remove();
+
+    m_utilities->debugLogMessage("Writing content to file");
+    if (bartenderFile.open(QIODevice::WriteOnly)) {
+        QTextStream in(&bartenderFile);
+        in << data;
+
+        bartenderFile.close();
+        return true;
+    } else {
+        m_utilities->debugLogMessage("ERROR opening file");
+        return false;
+    }
+}
+
+void LabelPrinter::startFtpUpload(QString serial, QString ssid, QString wifiKey, QString password)
+{
+    m_utilities->debugLogMessage(Q_FUNC_INFO);
+
+    // Set serial for checking print status later
+    m_serial = serial;
+
+    if (createFileToUpload(serial, ssid, wifiKey, password)) {
+        m_curlProcess.start(QString("curl --connect-timeout 25 -T %1.txt ftp://%2 --user \"%3:%4\"").arg(serial).arg(m_host).arg(m_user).arg(m_password));
+        if (m_curlProcess.waitForStarted(2000))
+            m_utilities->debugLogMessage("FTP upload started");
+        else
+            m_utilities->debugLogMessage("FTP upload failed to start");
+    }
+}
+
+void LabelPrinter::ftpUploadStatus(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    m_utilities->debugLogMessage(Q_FUNC_INFO);
+    if (exitCode == 0 && exitStatus == QProcess::NormalExit) {
+        m_utilities->debugLogMessage("FTP upload completed");
+        emit uploadComplete();
+    } else {
+        m_utilities->debugLogMessage("FTP upload ERROR");
+        emit uploadFail();
+    }
+}
+
+void LabelPrinter::startCheckPrint()
+{
+    m_utilities->debugLogMessage(Q_FUNC_INFO);
+    m_curlProcess.start(QString("curl -u %1:%2 'ftp://%3:/%4.done' -v").arg(m_user).arg(m_password).arg(m_host).arg(m_serial));
+    if (m_curlProcess.waitForStarted(2000))
+        m_utilities->debugLogMessage("FTP upload started");
+    else
+        m_utilities->debugLogMessage("FTP upload failed to start");
+}
+
+void LabelPrinter::checkPrintStatus()
+{
+    m_utilities->debugLogMessage(Q_FUNC_INFO);
+
+    if (m_dataBuffer.contains(QString("Successfully transferred /%1.done").arg(m_serial))) {
+        m_utilities->debugLogMessage("Printing completed");
+        emit printDone();
+    } else {
+        m_utilities->debugLogMessage("Printing Failed");
+        emit printFailed();
+    }
 }
 
 bool LabelPrinter::writeDataToSocket(QString data)
