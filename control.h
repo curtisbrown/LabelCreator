@@ -25,7 +25,9 @@ class Control : public QObject
 public:
     explicit Control(QObject *parent = nullptr);
 
+
 signals:
+    void cameraReady();
     void resetAllContent();
     void captureImage();
     void captureComplete();
@@ -39,6 +41,9 @@ signals:
 
 public slots:
     Q_INVOKABLE bool setFocus();
+
+    Q_INVOKABLE QString serialControl() const;
+    Q_INVOKABLE void setSerialControl(const QString &serialControl);
 
     Q_INVOKABLE QString ssid24Control() const;
     Q_INVOKABLE void setSsid24Control(const QString &ssid24Control);
@@ -63,6 +68,7 @@ private:
     Cameraproperty m_cameraProperty;
     UvcCamera m_uvc;
     See3CAM_81 m_see3Cam81;
+    QString m_serialControl;
     QString m_ssid24Control;
     QString m_ssid50Control;
     QString m_wirelessKeyControl;

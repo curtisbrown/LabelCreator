@@ -8,6 +8,7 @@ Control::Control(QObject *parent) :
     m_cameraCapture(this, &m_utilities),
     m_imageProcessing(new ImageProcessing(this, &m_utilities)),
     m_labelPrint(this, &m_utilities),
+    m_serialControl(""),
     m_ssid24Control(""),
     m_ssid50Control(""),
     m_wirelessKeyControl(""),
@@ -31,7 +32,12 @@ Control::Control(QObject *parent) :
     connect(m_imageProcessing, &ImageProcessing::infoRetrievalError, this, &Control::imageProcessingError);
 
     connect(this, &Control::resetAllContent, &m_labelPrint, &LabelPrinter::resetContent);
-    connect(this, &Control::printLabel, &m_labelPrint, &LabelPrinter::printLabel);
+    connect(this, &Control::printLabel, [=]() {
+        this->m_labelPrint.startFtpUpload(this->m_serialControl,
+                                          this->m_ssid24Control,
+                                          this->m_wirelessKeyControl,
+                                          this->m_usrPwdControl);
+    });
     connect(&m_labelPrint, &LabelPrinter::printDone, this, &Control::printingComplete);
     connect(&m_labelPrint, &LabelPrinter::printFailed, this, &Control::printingError);
 
@@ -41,7 +47,7 @@ Control::Control(QObject *parent) :
         m_uvc.getFirmWareVersion();
         m_cameraDiscovery = true;
     } else {
-        m_utilities.debugLogMessage("failed to open HID Device, communication with camera unavailable");
+        m_utilities.debugLogMessage("ERROR failed to open HID Device, communication with camera unavailable");
     }
 }
 
@@ -55,6 +61,7 @@ bool Control::setFocus()
         QThread::msleep(3000);
         if (m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
             m_utilities.debugLogMessage("SUCCESS setting zoom and greyscale");
+            emit cameraReady();
             return true;
         } else {
             m_utilities.debugLogMessage("ERROR setting GREYSCALE");
@@ -87,6 +94,16 @@ bool Control::cameraDiscovery() const
 void Control::setCameraDiscovery(bool cameraDiscovery)
 {
     m_cameraDiscovery = cameraDiscovery;
+}
+
+QString Control::serialControl() const
+{
+    return m_serialControl;
+}
+
+void Control::setSerialControl(const QString &serialControl)
+{
+    m_serialControl = serialControl;
 }
 
 QString Control::wirelessKeyControl() const
