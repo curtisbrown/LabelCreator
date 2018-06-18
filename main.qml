@@ -157,11 +157,149 @@ Window {
             height: parent.height / 2
             width: parent.width / 2
             border.color: "black"
+
+            Rectangle {
+                id: spacer
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width - 10
+                height: 20
+                y: parent.height * 0.01
+            }
+
+            Row {
+                id: buttonRow
+                anchors.top: spacer.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 10
+                Item {
+                    id: takePicture
+                    height: 60
+                    width: height
+                    Image {
+                        id: captureImage
+                        source: "qrc:/images/images/takePicture.png"
+                        sourceSize.height: parent.height
+                        sourceSize.width: parent.width
+                    }
+                    MouseArea {
+                        id: takePictureBtnArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        ToolTip {
+                            parent: takePictureBtnArea
+                            visible: takePictureBtnArea.containsMouse
+                            text:"Capture image"
+                        }
+                        onPressed: {
+                            captureStatus.source = "qrc:/images/images/Running.gif"
+                            loadingAnimation.start()
+                            vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
+                            control.captureImage()
+                        }
+                    }
+                }
+
+                Image {
+                    id: captureStatus
+                    source: ""
+                    height: 50
+                    width: height
+                    RotationAnimator {
+                        id: loadingAnimation
+                        target: captureStatus;
+                        from: 0;
+                        to: 360;
+                        duration: 2000;
+                        loops: Animation.Infinite
+                    }
+
+                    Connections {
+                        target: vidstreamproperty
+                        onCaptureSuccess: {
+                            loadingAnimation.duration = 10
+                            loadingAnimation.loops = 1
+                            loadingAnimation.restart()
+                            captureStatus.source = "qrc:/images/images/pass.png"
+                        }
+                    }
+                }
+
+                Item {
+                    id: showPreview
+                    height: 60
+                    width: height
+                    Image {
+                        id: previewImage
+                        source: "qrc:/images/images/look.png"
+                        sourceSize.height: parent.height
+                        sourceSize.width: parent.width
+                    }
+                    MouseArea {
+                        id: showPreviewArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        ToolTip {
+                            parent: showPreviewArea
+                            visible: showPreviewArea.containsMouse
+                            text:"Show camera preview"
+                        }
+                        onPressed: { preview.visible = true }
+                    }
+                }
+
+                Item {
+                    id: resetCamera
+                    height: 60
+                    width: height
+                    Image {
+                        id: resetImage
+                        source: "qrc:/images/images/resetCamera.png"
+                        sourceSize.height: parent.height
+                        sourceSize.width: parent.width
+                    }
+                    MouseArea {
+                        id: resetCameraBtnArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        ToolTip {
+                            parent: resetCameraBtnArea
+                            visible: resetCameraBtnArea.containsMouse
+                            text:"Refresh Camera Preview"
+                        }
+                        onPressed: {
+                            console.log("RESET CAMERA pressed")
+                            control.setCameraDiscovery(true)
+                            vidstreamproperty.startCam()
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: spacer2
+                anchors.top: buttonRow.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width - 10
+                height: 20
+            }
+
+            Text {
+                id: cameraTextStatic
+                text: qsTr("Camera Status: ")
+                color: "black"
+                font.pointSize: 20
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: spacer2.bottom
+            }
             Text {
                 id: cameraText
                 text: qsTr("Loading Camera...")
                 color: "black"
-                anchors.centerIn: parent
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: cameraTextStatic.bottom
                 font.pointSize: 20
 
                 Connections {
@@ -172,128 +310,35 @@ Window {
                         control.setCameraDiscovery(false)
                     }
                 }
-            }
-
-            Item {
-                id: takePicture
-                height: 60
-                width: height
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.left: parent.left
-                anchors.leftMargin: 10
-                Image {
-                    id: captureImage
-                    source: "qrc:/images/images/takePicture.png"
-                    sourceSize.height: parent.height
-                    sourceSize.width: parent.width
-                }
-                MouseArea {
-                    id: takePictureBtnArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-
-                    ToolTip {
-                        parent: takePictureBtnArea
-                        visible: takePictureBtnArea.containsMouse
-                        text:"Capture image"
-                    }
-                    onPressed: {
-                        captureStatus.source = "qrc:/images/images/Running.gif"
-                        loadingAnimation.start()
-                        vidstreamproperty.makeShot("/home/curtis/Desktop", "jpg")
-                        control.captureImage()
-                    }
-                }
-            }
-
-            Item {
-                id: showPreview
-                height: 60
-                width: height
-                anchors.top: takePicture.bottom
-                anchors.topMargin: 10
-                anchors.left: parent.left
-                anchors.leftMargin: 10
-                Image {
-                    id: previewImage
-                    source: "qrc:/images/images/look.png"
-                    sourceSize.height: parent.height
-                    sourceSize.width: parent.width
-                }
-                MouseArea {
-                    id: showPreviewArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-
-                    ToolTip {
-                        parent: showPreviewArea
-                        visible: showPreviewArea.containsMouse
-                        text:"Show camera preview"
-                    }
-                    onPressed: { preview.visible = true }
-                }
-            }
-
-            Image {
-                id: captureStatus
-                source: ""
-                height: 50
-                width: height
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.left: takePicture.right
-                anchors.leftMargin: 10
-                RotationAnimator {
-                    id: loadingAnimation
-                    target: captureStatus;
-                    from: 0;
-                    to: 360;
-                    duration: 2000;
-                    loops: Animation.Infinite
-                }
-
                 Connections {
-                    target: vidstreamproperty
-                    onCaptureSuccess: {
-                        loadingAnimation.duration = 10
-                        loadingAnimation.loops = 1
-                        loadingAnimation.restart()
-                        captureStatus.source = "qrc:/images/images/pass.png"
+                    target: control
+                    onCameraReady: {
+                        cameraText.text = "Camera load Success"
+                        cameraText.color = "green"
                     }
                 }
             }
 
-            Item {
-                id: resetCamera
-                height: 60
-                width: height
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.right: parent.right
-                anchors.rightMargin: 10
-                Image {
-                    id: resetImage
-                    source: "qrc:/images/images/resetCamera.png"
-                    sourceSize.height: parent.height
-                    sourceSize.width: parent.width
-                }
-                MouseArea {
-                    id: resetCameraBtnArea
-                    anchors.fill: parent
-                    hoverEnabled: true
+            Rectangle {
+                id: spacer3
+                anchors.top: cameraText.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width - 10
+                height: 20
+            }
 
-                    ToolTip {
-                        parent: resetCameraBtnArea
-                        visible: resetCameraBtnArea.containsMouse
-                        text:"Refresh Camera Preview"
-                    }
-                    onPressed: {
-                        console.log("RESET CAMERA pressed")
-                        control.setCameraDiscovery(true)
-                        vidstreamproperty.startCam()
-                    }
-                }
+            TextField {
+                id: serialField
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: spacer3.bottom
+                placeholderText: qsTr("Scan serial number")
+            }
+
+            TextField {
+                id: macField
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: serialField.bottom
+                placeholderText: qsTr("Scan MAC address")
             }
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
