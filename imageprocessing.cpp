@@ -7,6 +7,7 @@ ImageProcessing::ImageProcessing(QObject *parent, Utilities *utilities) :
     QObject(parent),
     m_utilities(utilities),
     m_homeDir(QStandardPaths::locate(QStandardPaths::HomeLocation, QString(), QStandardPaths::LocateDirectory)),
+    m_captureDir(QStandardPaths::QStandardPaths::locate(QStandardPaths::PicturesLocation, QString(), QStandardPaths::LocateDirectory)),
     m_ocrDir(m_homeDir + "OCR"),
     m_ocrSwInstallDir(m_ocrDir + "/ocropy-master"),
     m_ssid24(""),
@@ -15,6 +16,9 @@ ImageProcessing::ImageProcessing(QObject *parent, Utilities *utilities) :
     m_homepagePwd("")
 {
     m_utilities->debugLogMessage(Q_FUNC_INFO);
+    m_utilities->debugLogMessage(m_homeDir);
+    m_utilities->debugLogMessage(m_captureDir);
+    m_utilities->debugLogMessage(m_ocrDir);
 }
 
 void ImageProcessing::resetContent()
@@ -82,7 +86,7 @@ void ImageProcessing::processImage()
 
     connect(convertImgtoBmp, &QState::entered, this, [=]() {
         m_utilities->debugLogMessage("Entering state: convertImgtoBmp");
-        m_process1.start(QString("mogrify -format bmp %1/latestCapture.jpeg -path %1").arg(m_ocrDir));
+        m_process1.start(QString("mogrify -format bmp  -path %1 %2/latestCapture.jpg").arg(m_ocrDir).arg(m_captureDir));
         m_process1.waitForStarted(5000);
     });
     connect(&m_process1, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),[=](int exitCode, QProcess::ExitStatus exitStatus) {
@@ -91,7 +95,7 @@ void ImageProcessing::processImage()
     });
     connect(universal, &QState::entered, this, [=]() {
         m_utilities->debugLogMessage("Entering state: universal");
-        m_process2.start(QString("python %1/universal.py %2").arg(m_ocrDir).arg(m_homeDir));
+        m_process2.start(QString("python %1/universal.py %1").arg(m_ocrDir));
         m_process2.waitForStarted(10000);
     });
     connect(&m_process2, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),[=](int exitCode, QProcess::ExitStatus exitStatus) {

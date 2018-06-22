@@ -47,6 +47,7 @@ private:
     Utilities *m_utilities;
     QProcess m_process1, m_process2, m_process3, m_process4, m_process5, m_process6, m_process7;
     QString m_homeDir;
+    QString m_captureDir;
     QString m_ocrDir;
     QString m_ocrSwInstallDir;
     QStringList m_fileContents;
