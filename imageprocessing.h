@@ -7,6 +7,7 @@
 #include <QState>
 #include <QFinalState>
 #include <QStateMachine>
+#include <QTimer>
 
 #include "utilities.h"
 
@@ -55,6 +56,7 @@ private:
     QString m_ssid50;
     QString m_wirelessKey;
     QString m_homepagePwd;
+    QTimer m_processTimeout;
 
 };
 

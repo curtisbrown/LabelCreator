@@ -19,6 +19,9 @@ ImageProcessing::ImageProcessing(QObject *parent, Utilities *utilities) :
     m_utilities->debugLogMessage(m_homeDir);
     m_utilities->debugLogMessage(m_captureDir);
     m_utilities->debugLogMessage(m_ocrDir);
+
+    m_processTimeout.setInterval(15000);
+    m_processTimeout.setSingleShot(true);
 }
 
 void ImageProcessing::resetContent()
@@ -84,10 +87,24 @@ void ImageProcessing::processImage()
     QFinalState *done = new QFinalState(stateMachine);
     stateMachine->setInitialState(convertImgtoBmp);
 
+    connect(&m_processTimeout, &QTimer::timeout, this, [=]() {
+        this->m_utilities->debugLogMessage("TIMEOUT Reached!!!");
+        this->m_process1.kill();
+        this->m_process1.kill();
+        this->m_process3.kill();
+        this->m_process4.kill();
+        this->m_process5.kill();
+        this->m_process6.kill();
+        this->m_process7.kill();
+        stateMachine->stop();
+        emit infoRetrievalError();
+    });
+
     connect(convertImgtoBmp, &QState::entered, this, [=]() {
         m_utilities->debugLogMessage("Entering state: convertImgtoBmp");
         m_process1.start(QString("mogrify -format bmp  -path %1 %2/latestCapture.jpg").arg(m_ocrDir).arg(m_captureDir));
         m_process1.waitForStarted(5000);
+        m_processTimeout.start();
     });
     connect(&m_process1, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),[=](int exitCode, QProcess::ExitStatus exitStatus) {
         if (exitStatus == QProcess::NormalExit and exitCode == 0)
