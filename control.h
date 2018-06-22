@@ -5,7 +5,6 @@
 #include <QSharedPointer>
 
 #include "utilities.h"
-#include "cameracapture.h"
 #include "imageprocessing.h"
 #include "labelprinter.h"
 
@@ -62,7 +61,6 @@ public slots:
 
 private:
     Utilities m_utilities;
-    CameraCapture m_cameraCapture;
     ImageProcessing *m_imageProcessing;
     LabelPrinter m_labelPrint;
     Cameraproperty m_cameraProperty;

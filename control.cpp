@@ -5,7 +5,6 @@
 Control::Control(QObject *parent) :
     QObject(parent),
     m_utilities(this),
-    m_cameraCapture(this, &m_utilities),
     m_imageProcessing(new ImageProcessing(this, &m_utilities)),
     m_labelPrint(this, &m_utilities),
     m_serialControl(""),
@@ -16,10 +15,6 @@ Control::Control(QObject *parent) :
     m_cameraDiscovery(false)
 {
     // Connections
-    connect(this, &Control::resetAllContent, &m_cameraCapture, &CameraCapture::resetContent);
-    connect(this, &Control::captureImage, &m_cameraCapture, &CameraCapture::captureImage);
-    connect(&m_cameraCapture, &CameraCapture::captureDone, this, &Control::captureComplete);
-
     connect(this, &Control::resetAllContent, m_imageProcessing, &ImageProcessing::resetContent);
     connect(this, &Control::captureComplete, m_imageProcessing, &ImageProcessing::processImage);
     connect(m_imageProcessing, &ImageProcessing::infoRetrievalComplete, this, [=]() {
