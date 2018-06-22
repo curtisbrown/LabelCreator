@@ -20,6 +20,7 @@ Text {
     anchors.verticalCenter: parent.verticalCenter
     font.pointSize: 20
     SequentialAnimation on color {
+        id: colorAnimate
         ColorAnimation { to: "orange"; duration: 1500 }
         ColorAnimation { to: "white"; duration: 800 }
         loops: Animation.Infinite

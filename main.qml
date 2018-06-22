@@ -122,11 +122,12 @@ Window {
                 }
                 onPressed: {
                     control.resetAllContent()
-                    cameraText.color = "black"
-                    cameraText.text = "Loading Camera..."
                     statusText.visible = true
-                    statusText.color = "white"
                     statusText.text = "Capture Image to start"
+                    statusText2.visible = true
+                    statusText2.text = "Capture Image to start"
+                    statusText3.visible = true
+                    statusText3.text = "Capture Image to start"
                     scannedImage.source = ""
                     captureStatus.source = ""
                     loadingAnimation.duration = 2000
@@ -332,7 +333,7 @@ Window {
                 id: serialField
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: spacer3.bottom
-                placeholderText: qsTr("Scan serial number")
+                placeholderText: qsTr("Scan Serial number")
             }
 
             TextField {
@@ -363,8 +364,11 @@ Window {
                 id: statusText
                 Connections {
                     target: vidstreamproperty
-                    onCaptureSuccess: statusText.visible = false
-                    onCaptureFail: { statusText.color = "red"; statusText.text = "FAILED TO CAPTURE IMAGE" }
+                    onCaptureSuccess: statusText.text = "Processing image capture..."
+                    onCaptureFail: {
+                        statusText.color = "red"
+                        statusText.text = "ERROR: Failed to capture image"
+                    }
                 }
             }
             Image {
@@ -404,8 +408,20 @@ Window {
                 id: statusText2
                 Connections {
                     target: vidstreamproperty
-                    onCaptureSuccess: statusText2.visible = false
-                    onCaptureFail: { statusText2.color = "red"; statusText2.text = "FAILED TO CAPTURE IMAGE" }
+                    onCaptureSuccess: statusText2.text = "Processing image capture..."
+                    onCaptureFail: {
+                        statusText2.color = "red"
+                        statusText2.text = "ERROR: Failed to capture Image"
+                    }
+                }
+                Connections {
+                    target: control
+                    onImageProcessingComplete: statusText2.visible = false
+                    onImageProcessingError: {
+                        statusText2.visible = true
+                        statusText2.color = "red"
+                        statusText2.text = "ERROR: Image processing failed"
+                    }
                 }
             }
         }
@@ -430,8 +446,20 @@ Window {
                 id: statusText3
                 Connections {
                     target: vidstreamproperty
-                    onCaptureSuccess: statusText3.visible = false
-                    onCaptureFail: { statusText3.color = "red"; statusText3.text = "FAILED TO CAPTURE IMAGE" }
+                    onCaptureSuccess: statusText3.text = "Processing image capture..."
+                    onCaptureFail: {
+                        statusText3.color = "red"
+                        statusText3.text = "ERROR: Failed to capture Image"
+                    }
+                }
+                Connections {
+                    target: control
+                    onImageProcessingComplete: statusText3.visible = false
+                    onImageProcessingError: {
+                        statusText3.visible = true
+                        statusText3.color = "red"
+                        statusText3.text = "ERROR: Image processing failed"
+                    }
                 }
             }
 
