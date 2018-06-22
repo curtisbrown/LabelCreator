@@ -189,7 +189,7 @@ Window {
                         ToolTip {
                             parent: takePictureBtnArea
                             visible: takePictureBtnArea.containsMouse
-                            text:"Capture image"
+                            text: "Capture image"
                         }
                         onPressed: {
                             captureStatus.source = "qrc:/images/images/Running.gif"
@@ -221,6 +221,7 @@ Window {
                             loadingAnimation.loops = 1
                             loadingAnimation.restart()
                             captureStatus.source = "qrc:/images/images/pass.png"
+                            control.captureComplete()
                         }
                     }
                 }
