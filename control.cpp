@@ -50,21 +50,26 @@ bool Control::setFocus()
 {
     m_utilities.debugLogMessage(Q_FUNC_INFO);
 
-    m_see3Cam81.setFocusMode(See3CAM_81::MANUAL_FOCUS_81);
+    if (m_cameraDiscovery) {
+       m_utilities.debugLogMessage("ERROR: Not attempting to set focus");
+       return false;
+    } else {
+        m_see3Cam81.setFocusMode(See3CAM_81::MANUAL_FOCUS_81);
 
-    if (m_see3Cam81.setFocusPosition(270)) {
-        QThread::msleep(3000);
-        if (m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
-            m_utilities.debugLogMessage("SUCCESS setting zoom and greyscale");
-            emit cameraReady();
-            return true;
+        if (m_see3Cam81.setFocusPosition(270)) {
+            QThread::msleep(3000);
+            if (m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
+                m_utilities.debugLogMessage("SUCCESS setting zoom and greyscale");
+                emit cameraReady();
+                return true;
+            } else {
+                m_utilities.debugLogMessage("ERROR setting GREYSCALE");
+                return false;
+            }
         } else {
-            m_utilities.debugLogMessage("ERROR setting GREYSCALE");
+            m_utilities.debugLogMessage("ERROR setting ZOOM");
             return false;
         }
-    } else {
-        m_utilities.debugLogMessage("ERROR setting ZOOM");
-        return false;
     }
 }
 
