@@ -9,5 +9,6 @@
         <file>images/takePicture.png</file>
         <file>images/print.png</file>
         <file>images/look.png</file>
+        <file>images/Refresh_icon.png</file>
     </qresource>
 </RCC>

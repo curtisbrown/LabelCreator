@@ -255,7 +255,7 @@ Window {
                     width: height
                     Image {
                         id: resetImage
-                        source: "qrc:/images/images/resetCamera.png"
+                        source: "qrc:/images/images/Refresh_icon.png"
                         sourceSize.height: parent.height
                         sourceSize.width: parent.width
                     }
