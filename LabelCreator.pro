@@ -15,7 +15,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp \
     control.cpp \
     utilities.cpp \
-    cameracapture.cpp \
     labelprinter.cpp \
     cameraproperty.cpp \
     videostreaming.cpp \
@@ -29,7 +28,6 @@ SOURCES += main.cpp \
 HEADERS += \
     control.h \
     utilities.h \
-    cameracapture.h \
     labelprinter.h \
     cameraproperty.h \
     videostreaming.h \
