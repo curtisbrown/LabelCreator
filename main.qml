@@ -362,8 +362,8 @@ Window {
                 id: statusText
                 Connections {
                     target: vidstreamproperty
-                    onCaptureSuccess: visible = false
-                    onCaptureFail: { color = "red"; text = "FAILED TO CAPTURE IMAGE" }
+                    onCaptureSuccess: statusText.visible = false
+                    onCaptureFail: { statusText.color = "red"; statusText.text = "FAILED TO CAPTURE IMAGE" }
                 }
             }
             Image {
@@ -403,8 +403,8 @@ Window {
                 id: statusText2
                 Connections {
                     target: vidstreamproperty
-                    onCaptureSuccess: visible = false
-                    onCaptureFail: { color = "red"; text = "FAILED TO CAPTURE IMAGE" }
+                    onCaptureSuccess: statusText2.visible = false
+                    onCaptureFail: { statusText2.color = "red"; statusText2.text = "FAILED TO CAPTURE IMAGE" }
                 }
             }
         }
@@ -429,8 +429,8 @@ Window {
                 id: statusText3
                 Connections {
                     target: vidstreamproperty
-                    onCaptureSuccess: visible = false
-                    onCaptureFail: { color = "red"; text = "FAILED TO CAPTURE IMAGE" }
+                    onCaptureSuccess: statusText3.visible = false
+                    onCaptureFail: { statusText3.color = "red"; statusText3.text = "FAILED TO CAPTURE IMAGE" }
                 }
             }
 
