@@ -259,13 +259,17 @@ Window {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 placeholderText: qsTr("Scan Serial number")
+                font.pixelSize: 30
+                onEditingFinished: control.setSerialControl(serialField.text)
             }
 
             TextField {
                 id: macField
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: serialField.bottom
+                anchors.topMargin: 20
                 placeholderText: qsTr("Scan MAC address")
+                font.pixelSize: 30
             }
 
             Item {
@@ -273,7 +277,7 @@ Window {
                 height: 60
                 width: height
                 anchors.top: macField.bottom
-                anchors.topMargin: 10
+                anchors.topMargin: 20
                 anchors.horizontalCenter: parent.horizontalCenter
                 Image {
                     id: captureImage
