@@ -58,6 +58,7 @@ public slots:
 
     bool cameraDiscovery() const;
     void setCameraDiscovery(bool cameraDiscovery);
+    void resetContent();
 
 private:
     Utilities m_utilities;

@@ -15,6 +15,8 @@ Control::Control(QObject *parent) :
     m_cameraDiscovery(false)
 {
     // Connections
+    connect(this, &Control::resetAllContent, this, &Control::resetContent);
+
     connect(this, &Control::resetAllContent, m_imageProcessing, &ImageProcessing::resetContent);
     connect(this, &Control::captureComplete, m_imageProcessing, &ImageProcessing::processImage);
     connect(m_imageProcessing, &ImageProcessing::infoRetrievalComplete, this, [=]() {
@@ -96,6 +98,17 @@ void Control::setCameraDiscovery(bool cameraDiscovery)
     m_cameraDiscovery = cameraDiscovery;
 }
 
+void Control::resetContent()
+{
+    m_utilities.debugLogMessage(Q_FUNC_INFO);
+
+    m_serialControl.clear();
+    m_ssid24Control.clear();
+    m_ssid50Control.clear();
+    m_usrPwdControl.clear();
+    m_wirelessKeyControl.clear();
+}
+
 QString Control::serialControl() const
 {
     return m_serialControl;
@@ -103,7 +116,9 @@ QString Control::serialControl() const
 
 void Control::setSerialControl(const QString &serialControl)
 {
+    m_utilities.debugLogMessage(Q_FUNC_INFO);
     m_serialControl = serialControl;
+    m_utilities.debugLogMessage(m_serialControl);
 }
 
 QString Control::wirelessKeyControl() const
