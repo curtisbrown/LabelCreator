@@ -102,6 +102,15 @@ void Control::setUsrPwdControl(const QString &usrPwdControl)
     emit infoChanged();
 }
 
+void Control::validateSerial()
+{
+    if (m_serialControl.length() == 9) {
+        m_utilities.debugLogMessage("Serial number valid");
+    } else {
+        m_utilities.debugLogMessage("ERROR: Serial number INVALID");
+    }
+}
+
 bool Control::cameraDiscovery() const
 {
     return m_cameraDiscovery;
@@ -130,9 +139,11 @@ QString Control::serialControl() const
 
 void Control::setSerialControl(const QString &serialControl)
 {
-    m_utilities.debugLogMessage(Q_FUNC_INFO);
-    m_serialControl = serialControl;
-    m_utilities.debugLogMessage(m_serialControl);
+    if (m_serialControl != serialControl) {
+        m_utilities.debugLogMessage(Q_FUNC_INFO);
+        m_serialControl = serialControl;
+        m_utilities.debugLogMessage(m_serialControl);
+    }
 }
 
 QString Control::wirelessKeyControl() const

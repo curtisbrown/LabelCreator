@@ -57,6 +57,8 @@ public slots:
     Q_INVOKABLE QString usrPwdControl() const;
     Q_INVOKABLE void setUsrPwdControl(const QString &usrPwdControl);
 
+    Q_INVOKABLE void validateSerial();
+
     bool cameraDiscovery() const;
     void setCameraDiscovery(bool cameraDiscovery);
     void resetContent();
