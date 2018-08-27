@@ -30,14 +30,6 @@ Window {
         Videostreaming {
             id: vidstreamproperty
             anchors.centerIn: parent
-            See3Cam81 {
-                id: see3Cam81
-                Component.onCompleted: {
-                    setEffectMode(See3Cam81.EFFECT_NORMAL)
-                    setFocusMode(See3Cam81.CONTINUOUS_FOCUS_81)
-                }
-            }
-
             Component.onCompleted: { startCam() }
             Timer {
                 id: timer

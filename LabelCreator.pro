@@ -23,6 +23,7 @@ SOURCES += main.cpp \
     videoencoder.cpp \
     h264decoder.cpp \
     seecam_81.cpp \
+    see3cam_130.cpp \
     imageprocessing.cpp
 
 HEADERS += \
@@ -36,6 +37,7 @@ HEADERS += \
     videoencoder.h \
     h264decoder.h \
     seecam_81.h \
+    see3cam_130.h \
     common_enums.h \
     common.h \
     imageprocessing.h
