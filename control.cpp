@@ -12,7 +12,8 @@ Control::Control(QObject *parent) :
     m_ssid50Control(""),
     m_wirelessKeyControl(""),
     m_usrPwdControl(""),
-    m_cameraDiscovery(false)
+    m_cameraDiscovery(false),
+    m_selectedCam("")
 {
     // Connections
     connect(this, &Control::resetAllContent, this, &Control::resetContent);
@@ -39,10 +40,11 @@ Control::Control(QObject *parent) :
     connect(&m_labelPrint, &LabelPrinter::printFailed, this, &Control::printingError);
 
     m_cameraProperty.checkforDevice();
-    m_cameraProperty.setCurrentDevice("1", "See3CAM_81");
-    if (m_cameraProperty.openHIDDevice("See3CAM_81 ")) {
+    m_cameraProperty.setCurrentDevice("1", "See3CAM_130");
+    if (m_cameraProperty.openHIDDevice("See3CAM_130")) {
         m_uvc.getFirmWareVersion();
         m_cameraDiscovery = true;
+        m_selectedCam = "See3CAM_130";
     } else {
         m_utilities.debugLogMessage("ERROR failed to open HID Device, communication with camera unavailable");
     }
@@ -56,11 +58,10 @@ bool Control::setFocus()
        m_utilities.debugLogMessage("ERROR: Not attempting to set focus");
        return false;
     } else {
-        m_see3Cam81.setFocusMode(See3CAM_81::MANUAL_FOCUS_81);
 
-        if (m_see3Cam81.setFocusPosition(270)) {
-            QThread::msleep(3000);
-            if (m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
+        if (m_selectedCam == "See3CAM_130") {
+            m_see3Cam130.setAutoFocusMode(See3CAM_130::Continuous);
+            if (m_see3Cam130.setEffectMode(See3CAM_130::EFFECT_GREYSCALE)) {
                 m_utilities.debugLogMessage("SUCCESS setting zoom and greyscale");
                 emit cameraReady();
                 return true;
@@ -68,9 +69,22 @@ bool Control::setFocus()
                 m_utilities.debugLogMessage("ERROR setting GREYSCALE");
                 return false;
             }
-        } else {
-            m_utilities.debugLogMessage("ERROR setting ZOOM");
-            return false;
+        } else {    // Currently only supporting 2 camera types
+            m_see3Cam81.setFocusMode(See3CAM_81::MANUAL_FOCUS_81);
+            if (m_see3Cam81.setFocusPosition(270)) {
+                QThread::msleep(3000);
+                if (m_see3Cam81.setEffectMode(See3CAM_81::EFFECT_GRAYSCALE)) {
+                    m_utilities.debugLogMessage("SUCCESS setting zoom and greyscale");
+                    emit cameraReady();
+                    return true;
+                } else {
+                    m_utilities.debugLogMessage("ERROR setting GREYSCALE");
+                    return false;
+                }
+            } else {
+                m_utilities.debugLogMessage("ERROR setting ZOOM");
+                return false;
+            }
         }
     }
 }

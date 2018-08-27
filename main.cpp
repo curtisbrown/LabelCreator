@@ -8,6 +8,7 @@
 #include "videostreaming.h"
 #include "uvccamera.h"
 #include "seecam_81.h"
+#include "see3cam_130.h"
 #include "common.h"
 #include "common_enums.h"
 
@@ -24,6 +25,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Cameraproperty>("econ.camera.property",1,0,"Camproperty");
     qmlRegisterType<Videostreaming>("econ.camera.stream", 1, 0, "Videostreaming");
     qmlRegisterType<See3CAM_81>("econ.camera.see3cam81", 1, 0, "See3Cam81");
+    qmlRegisterType<See3CAM_130>("econ.camera.see3cam130", 1, 0, "See3Cam130");
     qmlRegisterType<See3CAM_GPIOControl>("econ.camera.see3camGpioControl", 1, 0, "See3CamGpio");
     qmlRegisterType<CommonEnums>("cameraenum", 1, 0, "CommonEnums");
 

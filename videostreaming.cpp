@@ -848,7 +848,7 @@ void Videostreaming::makeShot(QString filePath,QString imgFormatType)
     qDebug() << filePath << imgFormatType;
     captureTime.start();
     // Added by Sankari : to set still skip
-    emit stillSkipCount("1920x1080", "640x480");
+    emit stillSkipCount("1920x1080", "1920x1080");
     m_snapShot = true;
     m_burstShot = false;
     m_burstNumber = 1;

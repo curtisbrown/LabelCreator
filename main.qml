@@ -11,6 +11,7 @@ import econ.camera.property 1.0
 import econ.camera.stream 1.0
 import cameraenum 1.0
 import econ.camera.see3cam81 1.0
+import econ.camera.see3cam130 1.0
 
 Window {
     id: mainWindow
@@ -40,7 +41,7 @@ Window {
             Component.onCompleted: { startCam() }
             Timer {
                 id: timer
-                interval: 5000; repeat: false
+                interval: 3000; repeat: false
                 onTriggered: { control.setFocus() }
             }
 
@@ -68,6 +69,7 @@ Window {
                     width = "1920"
                     height = "1080"
                     lastFPS("0")
+                    lastPreviewResolution("1920x1080", "0")
                     masterModeEnabled()
                     timer.start()
                 } else {
@@ -215,7 +217,7 @@ Window {
                     ToolTip {
                         parent: showPreviewArea
                         visible: showPreviewArea.containsMouse
-                        text:"Show camera preview"
+                        text: "Show camera preview"
                     }
                     onPressed: { preview.visible = true }
                 }

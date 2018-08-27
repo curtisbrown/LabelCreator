@@ -11,6 +11,7 @@
 #include "cameraproperty.h"
 #include "uvccamera.h"
 #include "seecam_81.h"
+#include "see3cam_130.h"
 
 class Control : public QObject
 {
@@ -67,12 +68,14 @@ private:
     Cameraproperty m_cameraProperty;
     UvcCamera m_uvc;
     See3CAM_81 m_see3Cam81;
+    See3CAM_130 m_see3Cam130;
     QString m_serialControl;
     QString m_ssid24Control;
     QString m_ssid50Control;
     QString m_wirelessKeyControl;
     QString m_usrPwdControl;
     bool m_cameraDiscovery;
+    QString m_selectedCam;
 };
 
 #endif // CONTROL_H

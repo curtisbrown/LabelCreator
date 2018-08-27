@@ -12,6 +12,7 @@ import econ.camera.property 1.0
 import econ.camera.stream 1.0
 import cameraenum 1.0
 import econ.camera.see3cam81 1.0
+import econ.camera.see3cam130 1.0
 
 Window {
     id: previewWindow
