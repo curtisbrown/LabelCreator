@@ -54,7 +54,7 @@ bool Control::setFocus()
 {
     m_utilities.debugLogMessage(Q_FUNC_INFO);
 
-    if (m_cameraDiscovery) {
+    if (!m_cameraDiscovery) {
        m_utilities.debugLogMessage("ERROR: Not attempting to set focus");
        return false;
     } else {
