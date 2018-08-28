@@ -8,11 +8,14 @@ Control::Control(QObject *parent) :
     m_imageProcessing(new ImageProcessing(this, &m_utilities)),
     m_labelPrint(this, &m_utilities),
     m_serialControl(""),
+    m_macControl(""),
     m_ssid24Control(""),
     m_ssid50Control(""),
     m_wirelessKeyControl(""),
     m_usrPwdControl(""),
     m_cameraDiscovery(false),
+    m_validSerial(false),
+    m_validMac(false),
     m_selectedCam("")
 {
     // Connections
@@ -89,11 +92,6 @@ bool Control::setFocus()
     }
 }
 
-QString Control::usrPwdControl() const
-{
-    return m_usrPwdControl;
-}
-
 void Control::setUsrPwdControl(const QString &usrPwdControl)
 {
     m_utilities.debugLogMessage(Q_FUNC_INFO);
@@ -106,49 +104,86 @@ void Control::validateSerial()
 {
     if (m_serialControl.length() == 9) {
         m_utilities.debugLogMessage("Serial number valid");
+        setValidSerial(true);
+        emit serialValid();
     } else {
         m_utilities.debugLogMessage("ERROR: Serial number INVALID");
+        setValidSerial(false);
+        emit serialInvalid();
     }
 }
 
-bool Control::cameraDiscovery() const
+void Control::validateMac()
 {
-    return m_cameraDiscovery;
+    if (m_macControl.length() == 12) {
+        m_utilities.debugLogMessage("MAC address valid");
+        setValidMac(true);
+        emit macValid();
+    } else {
+        m_utilities.debugLogMessage("ERROR: MAC address INVALID");
+        setValidMac(false);
+        emit macInvalid();
+    }
 }
 
-void Control::setCameraDiscovery(bool cameraDiscovery)
-{
-    m_cameraDiscovery = cameraDiscovery;
-}
+bool Control::cameraDiscovery() const { return m_cameraDiscovery; }
+void Control::setCameraDiscovery(bool cameraDiscovery) { m_cameraDiscovery = cameraDiscovery; }
 
 void Control::resetContent()
 {
     m_utilities.debugLogMessage(Q_FUNC_INFO);
 
     m_serialControl.clear();
+    m_macControl.clear();
     m_ssid24Control.clear();
     m_ssid50Control.clear();
     m_usrPwdControl.clear();
     m_wirelessKeyControl.clear();
+    setValidSerial(false);
+    setValidMac(false);
 }
 
-QString Control::serialControl() const
+void Control::setValidMac(bool validMac)
 {
-    return m_serialControl;
+    if (m_validMac != validMac) {
+        m_validMac = validMac;
+        emit macValidChanged();
+    }
 }
+
+void Control::setValidSerial(bool validSerial)
+{
+    if (m_validSerial != validSerial) {
+        m_validSerial = validSerial;
+        emit serialValidChanged();
+    }
+}
+
+bool Control::validMac() const { return m_validMac; }
+bool Control::validSerial() const { return m_validSerial; }
+QString Control::serialControl() const { return m_serialControl; }
+QString Control::macControl() const { return m_macControl; }
+QString Control::wirelessKeyControl() const { return m_wirelessKeyControl; }
+QString Control::ssid50Control() const { return m_ssid50Control; }
+QString Control::ssid24Control() const { return m_ssid24Control; }
+QString Control::usrPwdControl() const { return m_usrPwdControl; }
 
 void Control::setSerialControl(const QString &serialControl)
 {
+    m_utilities.debugLogMessage(Q_FUNC_INFO);
     if (m_serialControl != serialControl) {
-        m_utilities.debugLogMessage(Q_FUNC_INFO);
         m_serialControl = serialControl;
         m_utilities.debugLogMessage(m_serialControl);
     }
 }
 
-QString Control::wirelessKeyControl() const
+void Control::setMacControl(const QString &macControl)
 {
-    return m_wirelessKeyControl;
+    m_utilities.debugLogMessage(Q_FUNC_INFO);
+    if (m_macControl != macControl) {
+        m_macControl = macControl;
+        m_utilities.debugLogMessage(m_macControl);
+    }
 }
 
 void Control::setWirelessKeyControl(const QString &wirelessKeyControl)
@@ -159,22 +194,12 @@ void Control::setWirelessKeyControl(const QString &wirelessKeyControl)
     emit infoChanged();
 }
 
-QString Control::ssid50Control() const
-{
-    return m_ssid50Control;
-}
-
 void Control::setSsid50Control(const QString &ssid50Control)
 {
     m_utilities.debugLogMessage(Q_FUNC_INFO);
     m_ssid50Control = ssid50Control;
     m_imageProcessing->setSsid50(m_ssid50Control);
     emit infoChanged();
-}
-
-QString Control::ssid24Control() const
-{
-    return m_ssid24Control;
 }
 
 void Control::setSsid24Control(const QString &ssid24Control)

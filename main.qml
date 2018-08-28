@@ -251,10 +251,17 @@ Window {
             TextField {
                 id: serialField
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter / 2
-                placeholderText: qsTr("Scan Serial number")
+                anchors.top: cameraText.bottom
+                anchors.topMargin: 20
+                placeholderText: qsTr("Scan Serial Number")
                 font.pixelSize: 30
                 onEditingFinished: control.setSerialControl(serialField.text)
+
+                Connections {
+                    target: control
+                    onSerialValid: { serialField.color = "green" }
+                    onSerialInvalid: { serialField.color = "red" }
+                }
             }
 
             Button {
@@ -262,7 +269,7 @@ Window {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: serialField.bottom
                 anchors.topMargin: 20
-                text: "Validate Serial"
+                text: "Validate Serial Number"
                 onPressed: control.validateSerial()
             }
 
@@ -271,17 +278,34 @@ Window {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: validateSerialButton.bottom
                 anchors.topMargin: 20
-                placeholderText: qsTr("Scan MAC address")
+                placeholderText: qsTr("Scan MAC Address")
                 font.pixelSize: 30
+                onEditingFinished: control.setMacControl(macField.text)
+
+                Connections {
+                    target: control
+                    onMacValid: { macField.color = "green" }
+                    onMacInvalid: { macField.color = "red" }
+                }
+            }
+
+            Button {
+                id: validateMacButton
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: macField.bottom
+                anchors.topMargin: 20
+                text: "Validate MAC Address"
+                onPressed: control.validateMac()
             }
 
             Item {
                 id: takePicture
                 height: 60
                 width: height
-                anchors.top: macField.bottom
+                anchors.top: validateMacButton.bottom
                 anchors.topMargin: 20
                 anchors.horizontalCenter: parent.horizontalCenter
+                visible: control.serialNumValid && control.macAddrValid
                 Image {
                     id: captureImage
                     source: "qrc:/images/images/takePicture.png"

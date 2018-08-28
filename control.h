@@ -21,6 +21,8 @@ class Control : public QObject
     Q_PROPERTY(QString wirelessKey READ wirelessKeyControl WRITE setWirelessKeyControl NOTIFY infoChanged)
     Q_PROPERTY(QString usrPwd READ usrPwdControl WRITE setUsrPwdControl NOTIFY infoChanged)
     Q_PROPERTY(bool cameraDiscoveryState READ cameraDiscovery WRITE setCameraDiscovery NOTIFY cameraStatusChanged)
+    Q_PROPERTY(bool serialNumValid READ validSerial NOTIFY serialValidChanged)
+    Q_PROPERTY(bool macAddrValid READ validMac NOTIFY macValidChanged)
 
 public:
     explicit Control(QObject *parent = nullptr);
@@ -29,6 +31,12 @@ public:
 signals:
     void cameraReady();
     void resetAllContent();
+    void serialValid();
+    void serialInvalid();
+    void macValid();
+    void macInvalid();
+    void serialValidChanged();
+    void macValidChanged();
     void captureImage();
     void captureComplete();
     void imageProcessingComplete();
@@ -45,6 +53,9 @@ public slots:
     Q_INVOKABLE QString serialControl() const;
     Q_INVOKABLE void setSerialControl(const QString &serialControl);
 
+    Q_INVOKABLE QString macControl() const;
+    Q_INVOKABLE void setMacControl(const QString &macControl);
+
     Q_INVOKABLE QString ssid24Control() const;
     Q_INVOKABLE void setSsid24Control(const QString &ssid24Control);
 
@@ -58,9 +69,17 @@ public slots:
     Q_INVOKABLE void setUsrPwdControl(const QString &usrPwdControl);
 
     Q_INVOKABLE void validateSerial();
+    Q_INVOKABLE void validateMac();
 
     bool cameraDiscovery() const;
     void setCameraDiscovery(bool cameraDiscovery);
+
+    bool validSerial() const;
+    void setValidSerial(bool validSerial);
+
+    bool validMac() const;
+    void setValidMac(bool validMac);
+
     void resetContent();
 
 private:
@@ -72,11 +91,14 @@ private:
     See3CAM_81 m_see3Cam81;
     See3CAM_130 m_see3Cam130;
     QString m_serialControl;
+    QString m_macControl;
     QString m_ssid24Control;
     QString m_ssid50Control;
     QString m_wirelessKeyControl;
     QString m_usrPwdControl;
     bool m_cameraDiscovery;
+    bool m_validSerial;
+    bool m_validMac;
     QString m_selectedCam;
 };
 
