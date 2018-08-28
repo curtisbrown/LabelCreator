@@ -129,6 +129,8 @@ Window {
                     printingAnimation.stop()
                     imageColour.color = "white"
                     readyToPrint = false
+                    serialField.text = ""
+                    macField.text = ""
                 }
             }
         }
@@ -256,12 +258,7 @@ Window {
                 placeholderText: qsTr("Scan Serial Number")
                 font.pixelSize: 30
                 onEditingFinished: control.setSerialControl(serialField.text)
-
-                Connections {
-                    target: control
-                    onSerialValid: { serialField.color = "green" }
-                    onSerialInvalid: { serialField.color = "red" }
-                }
+                color: control.serialNumValid ? "green" : "red"
             }
 
             Button {
@@ -281,12 +278,7 @@ Window {
                 placeholderText: qsTr("Scan MAC Address")
                 font.pixelSize: 30
                 onEditingFinished: control.setMacControl(macField.text)
-
-                Connections {
-                    target: control
-                    onMacValid: { macField.color = "green" }
-                    onMacInvalid: { macField.color = "red" }
-                }
+                color: control.macAddrValid ? "green" : "red"
             }
 
             Button {

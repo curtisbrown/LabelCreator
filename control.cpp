@@ -105,11 +105,9 @@ void Control::validateSerial()
     if (m_serialControl.length() == 9) {
         m_utilities.debugLogMessage("Serial number valid");
         setValidSerial(true);
-        emit serialValid();
     } else {
         m_utilities.debugLogMessage("ERROR: Serial number INVALID");
         setValidSerial(false);
-        emit serialInvalid();
     }
 }
 
@@ -118,11 +116,9 @@ void Control::validateMac()
     if (m_macControl.length() == 12) {
         m_utilities.debugLogMessage("MAC address valid");
         setValidMac(true);
-        emit macValid();
     } else {
         m_utilities.debugLogMessage("ERROR: MAC address INVALID");
         setValidMac(false);
-        emit macInvalid();
     }
 }
 

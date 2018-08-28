@@ -31,10 +31,6 @@ public:
 signals:
     void cameraReady();
     void resetAllContent();
-    void serialValid();
-    void serialInvalid();
-    void macValid();
-    void macInvalid();
     void serialValidChanged();
     void macValidChanged();
     void captureImage();
