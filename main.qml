@@ -47,8 +47,8 @@ Window {
                     displayVideoResolution()
                     displayEncoderList()
                     vidCapFormatChanged("0")
-                    setResolution("1920x1080")
-                    updateFrameInterval("YUYV (YUYV 4:2:2)", "1920x1080")
+                    setResolution("4096x2160")
+                    updateFrameInterval("YUYV (YUYV 4:2:2)", "4096x2160")
                     // Camera settings section
                     vidstreamproperty.changeSettings("9963776", "2")    // Brightness
                     vidstreamproperty.changeSettings("9963777", "5")    // Contrast
@@ -61,7 +61,7 @@ Window {
                     width = "1920"
                     height = "1080"
                     lastFPS("0")
-                    lastPreviewResolution("1920x1080", "0")
+                    lastPreviewResolution("4096x2160", "0")
                     masterModeEnabled()
                     timer.start()
                 } else {

@@ -94,7 +94,7 @@ Videostreaming::Videostreaming()
     yuvpad = 1;
     frameToSkip = 1;
     fpsChangedForStill = false;
-    stillSize = "1920x1080";
+    stillSize = "4096x2160";
     stillOutFormat = "0";
 
     connect(this, &Videostreaming::newControlAdded, this, &Videostreaming::printControlsToText);
@@ -848,7 +848,7 @@ void Videostreaming::makeShot(QString filePath,QString imgFormatType)
     qDebug() << filePath << imgFormatType;
     captureTime.start();
     // Added by Sankari : to set still skip
-    emit stillSkipCount("1920x1080", "1920x1080");
+    emit stillSkipCount("4096x2160", "4096x2160");
     m_snapShot = true;
     m_burstShot = false;
     m_burstNumber = 1;
