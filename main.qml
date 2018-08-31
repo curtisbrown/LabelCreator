@@ -131,6 +131,8 @@ Window {
                     readyToPrint = false
                     serialField.text = ""
                     macField.text = ""
+                    serialText.color = "black"
+                    macText.color = "black"
                 }
             }
         }
@@ -258,7 +260,7 @@ Window {
                 placeholderText: qsTr("Scan Serial Number")
                 font.pixelSize: 30
                 onEditingFinished: control.setSerialControl(serialField.text)
-                color: control.serialNumValid ? "green" : "red"
+                color: "black"
             }
 
             Button {
@@ -267,6 +269,21 @@ Window {
                 anchors.top: serialField.bottom
                 anchors.topMargin: 20
                 text: "Validate Serial Number"
+
+                contentItem: Text {
+                    id: serialText
+                    text: validateSerialButton.text
+                    font: validateSerialButton.font
+                    color: "black"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+
+                    Connections {
+                        target: control
+                        onSerialValidChanged: serialText.color = control.serialNumValid ? "green" : "red"
+                    }
+                }
+
                 onPressed: control.validateSerial()
             }
 
@@ -278,7 +295,7 @@ Window {
                 placeholderText: qsTr("Scan MAC Address")
                 font.pixelSize: 30
                 onEditingFinished: control.setMacControl(macField.text)
-                color: control.macAddrValid ? "green" : "red"
+                color: "black"
             }
 
             Button {
@@ -287,6 +304,21 @@ Window {
                 anchors.top: macField.bottom
                 anchors.topMargin: 20
                 text: "Validate MAC Address"
+
+                contentItem: Text {
+                    id: macText
+                    text: validateMacButton.text
+                    font: validateMacButton.font
+                    color: "black"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+
+                    Connections {
+                        target: control
+                        onMacValidChanged: macText.color = control.macAddrValid ? "green" : "red"
+                    }
+                }
+
                 onPressed: control.validateMac()
             }
 

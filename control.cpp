@@ -141,18 +141,14 @@ void Control::resetContent()
 
 void Control::setValidMac(bool validMac)
 {
-    if (m_validMac != validMac) {
-        m_validMac = validMac;
-        emit macValidChanged();
-    }
+    m_validMac = validMac;
+    emit macValidChanged();
 }
 
 void Control::setValidSerial(bool validSerial)
 {
-    if (m_validSerial != validSerial) {
-        m_validSerial = validSerial;
-        emit serialValidChanged();
-    }
+    m_validSerial = validSerial;
+    emit serialValidChanged();
 }
 
 bool Control::validMac() const { return m_validMac; }
