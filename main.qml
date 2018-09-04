@@ -29,7 +29,6 @@ Window {
 
         Videostreaming {
             id: vidstreamproperty
-            anchors.centerIn: parent
             Component.onCompleted: { startCam() }
             Timer {
                 id: timer
@@ -56,6 +55,7 @@ Window {
                     vidstreamproperty.changeSettings("9963788", "0")    // White Balance Temperature, Auto
                     vidstreamproperty.changeSettings("9963802", "2")    // White Balance Temperature
                     vidstreamproperty.changeSettings("9963803", "1")    // Sharpness
+                    vidstreamproperty.changeSettings("10094850", "103")    // Exposure (Absolute)
                     vidstreamproperty.changeSettings("10094856", "0")    // Pan (Absolute)
                     vidstreamproperty.startAgain()
                     width = "1920"

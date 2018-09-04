@@ -1095,7 +1095,7 @@ void Videostreaming::printControlsToText(QString ctrlName,QString ctrlType,QStri
     QFile m_file("/home/curtis/Desktop/controls.txt");
 
     if (m_file.open(QIODevice::Append)) {
-        QDataStream in(&m_file);
+        QTextStream in(&m_file);
         in << ctrlName << "," << ctrlType << "," << ctrlID << "," << ctrlStepSize << "," << ctrlMinValue
            << "," << ctrlMaxValue << "," << ctrlDefaultValue << "," << ctrlHardwareDefault;
 
