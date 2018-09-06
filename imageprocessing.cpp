@@ -78,6 +78,7 @@ void ImageProcessing::processImage()
 {
     QStateMachine *stateMachine = new QStateMachine(this);
     QState *convertImgtoBmp = new QState(stateMachine);
+    QState *moveJpgToOcrDir = new QState(stateMachine);
     QState *universal = new QState(stateMachine);
     QState *removeOldBook = new QState(stateMachine);
     QState *ocropus_nlbin = new QState(stateMachine);
@@ -85,17 +86,19 @@ void ImageProcessing::processImage()
     QState *ocropus_rpred = new QState(stateMachine);
     QState *organiseInformationToPrint = new QState(stateMachine);
     QFinalState *done = new QFinalState(stateMachine);
-    stateMachine->setInitialState(convertImgtoBmp);
+    //stateMachine->setInitialState(convertImgtoBmp);
+    stateMachine->setInitialState(moveJpgToOcrDir);
 
     connect(&m_processTimeout, &QTimer::timeout, this, [=]() {
         this->m_utilities->debugLogMessage("TIMEOUT Reached!!!");
         this->m_process1.kill();
-        this->m_process1.kill();
+        this->m_process2.kill();
         this->m_process3.kill();
         this->m_process4.kill();
         this->m_process5.kill();
         this->m_process6.kill();
         this->m_process7.kill();
+        this->m_process8.kill();
         stateMachine->stop();
         emit infoRetrievalError();
     });
@@ -109,6 +112,16 @@ void ImageProcessing::processImage()
     connect(&m_process1, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),[=](int exitCode, QProcess::ExitStatus exitStatus) {
         if (exitStatus == QProcess::NormalExit and exitCode == 0)
             emit process1ok();
+    });
+    connect(moveJpgToOcrDir, &QState::entered, this, [=]() {
+        m_utilities->debugLogMessage("Entering state: moveJpgToOcrDir");
+        m_process8.start(QString("cp %1/latestCapture.jpg %2/latestCapture.jpg").arg(m_captureDir).arg(m_ocrDir));
+        m_process8.waitForStarted(5000);
+        m_processTimeout.start();
+    });
+    connect(&m_process8, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),[=](int exitCode, QProcess::ExitStatus exitStatus) {
+        if (exitStatus == QProcess::NormalExit and exitCode == 0)
+            emit process8ok();
     });
     connect(universal, &QState::entered, this, [=]() {
         m_utilities->debugLogMessage("Entering state: universal");
@@ -215,6 +228,7 @@ void ImageProcessing::processImage()
     });
 
     convertImgtoBmp->addTransition(this, &ImageProcessing::process1ok, universal);
+    moveJpgToOcrDir->addTransition(this, &ImageProcessing::process8ok, universal);
     universal->addTransition(this, &ImageProcessing::process2ok, removeOldBook);
     removeOldBook->addTransition(this, &ImageProcessing::process3ok, ocropus_nlbin);
     ocropus_nlbin->addTransition(this, &ImageProcessing::process4ok, ocropus_gpageseg);
