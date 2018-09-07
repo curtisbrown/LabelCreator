@@ -42,6 +42,7 @@ signals:
     void printingError();
     void infoChanged();
     void cameraStatusChanged();
+    void croppedImageReady();
 
 public slots:
     Q_INVOKABLE bool setFocus();

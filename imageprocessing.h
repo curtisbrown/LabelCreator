@@ -32,6 +32,7 @@ public:
 signals:
     void infoRetrievalComplete();
     void infoRetrievalError();
+    void imageCroppedReady();
     void process1ok();
     void process2ok();
     void process3ok();

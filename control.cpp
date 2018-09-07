@@ -31,6 +31,8 @@ Control::Control(QObject *parent) :
         emit this->imageProcessingComplete();
     });
     connect(m_imageProcessing, &ImageProcessing::infoRetrievalError, this, &Control::imageProcessingError);
+    // Relay signal for GUI display purposes
+    connect(m_imageProcessing, &ImageProcessing::imageCroppedReady, this, &Control::croppedImageReady);
 
     connect(this, &Control::resetAllContent, &m_labelPrint, &LabelPrinter::resetContent);
     connect(this, &Control::printLabel, [=]() {

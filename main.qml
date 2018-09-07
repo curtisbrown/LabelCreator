@@ -133,6 +133,7 @@ Window {
                     macField.text = ""
                     serialText.color = "black"
                     macText.color = "black"
+                    croppedImage.source = ""
                 }
             }
         }
@@ -464,6 +465,23 @@ Window {
                         statusText2.color = "red"
                         statusText2.text = "ERROR: Image processing failed"
                     }
+                }
+            }
+
+            Image {
+                id: croppedImage
+                source: ""
+                anchors.centerIn: parent
+                height: parent.height / 1.25
+                width: parent.width / 1.25
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Connections {
+                target: control
+                onCroppedImageReady: {
+                    //croppedImage.source = "/home/curtis/OCR/crop1.tif"
+                    croppedImage.source ="file:///home/curtis/OCR/crop1.tif"
                 }
             }
         }

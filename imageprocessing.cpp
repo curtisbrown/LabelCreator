@@ -129,8 +129,13 @@ void ImageProcessing::processImage()
         m_process2.waitForStarted(10000);
     });
     connect(&m_process2, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),[=](int exitCode, QProcess::ExitStatus exitStatus) {
-        if (exitStatus == QProcess::NormalExit and exitCode == 0)
+        if (exitStatus == QProcess::NormalExit and exitCode == 0) {
+            // Tell the GUI that the cropped image is ready to be displayed
+            emit imageCroppedReady();
+
+            // Move the process on to the OCR algorithm
             emit process2ok();
+        }
     });
     connect(removeOldBook, &QState::entered, this, [=]() {
         m_utilities->debugLogMessage("Entering state: removeOldBook");
